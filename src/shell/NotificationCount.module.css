@@ -1,21 +1,24 @@
 .wrap {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-size: 13px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   color: var(--color-text);
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-surface-3);
+.bell {
+  display: flex;
+  color: var(--color-muted);
 }
 
-/* The one accent highlight on this screen */
+.bell svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Something is waiting */
 .active {
-  background: var(--color-accent);
+  color: var(--color-text);
 }

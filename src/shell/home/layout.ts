@@ -4,7 +4,9 @@
  */
 
 export const COLS = 4;
-export const ROWS = 6;
+/** The most rows a page can ever have. The real number depends on the screen. */
+export const MAX_ROWS = 6;
+export const MIN_ROWS = 2;
 export const MAX_PAGES = 5;
 
 /** One thing on the home screen: a widget or an app icon. */
@@ -31,14 +33,23 @@ export interface Slot {
   h: number;
 }
 
-function inBounds(slot: Slot): boolean {
+/**
+ * How many rows fit in `height` pixels, for cells of `cell` pixels with
+ * `gap` pixels between them. This is what stops a page from overflowing.
+ */
+export function rowsThatFit(height: number, cell: number, gap: number): number {
+  const rows = Math.floor((height + gap) / (cell + gap));
+  return Math.min(MAX_ROWS, Math.max(MIN_ROWS, rows));
+}
+
+function inBounds(slot: Slot, rows: number): boolean {
   return (
     slot.page >= 0 &&
     slot.page < MAX_PAGES &&
     slot.col >= 0 &&
     slot.row >= 0 &&
     slot.col + slot.w <= COLS &&
-    slot.row + slot.h <= ROWS
+    slot.row + slot.h <= rows
   );
 }
 
@@ -53,10 +64,10 @@ function overlaps(a: Slot, b: Slot): boolean {
 }
 
 /** The free spot on the same page that is closest to where `item` is now. */
-function nearestFreeSlot(item: HomeItem, taken: Slot[]): Slot | null {
+function nearestFreeSlot(item: HomeItem, taken: Slot[], rows: number): Slot | null {
   let best: Slot | null = null;
   let bestDistance = Infinity;
-  for (let row = 0; row <= ROWS - item.h; row++) {
+  for (let row = 0; row <= rows - item.h; row++) {
     for (let col = 0; col <= COLS - item.w; col++) {
       const slot: Slot = { page: item.page, col, row, w: item.w, h: item.h };
       if (taken.some((other) => overlaps(other, slot))) continue;
@@ -75,9 +86,14 @@ function nearestFreeSlot(item: HomeItem, taken: Slot[]): Slot | null {
  * way is pushed to the nearest free spot on that page.
  * Returns the new layout, or `null` if there is not enough room.
  */
-export function placeItem(layout: HomeItem[], id: string, target: Slot): HomeItem[] | null {
+export function placeItem(
+  layout: HomeItem[],
+  id: string,
+  target: Slot,
+  rows: number,
+): HomeItem[] | null {
   const item = layout.find((i) => i.id === id);
-  if (!item || !inBounds(target)) return null;
+  if (!item || !inBounds(target, rows)) return null;
 
   const moved: HomeItem = { ...item, ...target };
   const samePage = layout.filter((i) => i.id !== id && i.page === target.page);
@@ -87,7 +103,7 @@ export function placeItem(layout: HomeItem[], id: string, target: Slot): HomeIte
   const pushed = new Map<string, HomeItem>();
   // Find room for the biggest items first - they are the hardest to fit.
   for (const other of [...inTheWay].sort((a, b) => b.w * b.h - a.w * a.h)) {
-    const slot = nearestFreeSlot(other, taken);
+    const slot = nearestFreeSlot(other, taken, rows);
     if (!slot) return null;
     const relocated = { ...other, ...slot };
     taken.push(relocated);
@@ -97,17 +113,44 @@ export function placeItem(layout: HomeItem[], id: string, target: Slot): HomeIte
   return layout.map((i) => (i.id === id ? moved : (pushed.get(i.id) ?? i)));
 }
 
-/** The first empty cell, looking from `fromPage` onwards. */
-export function firstFreeCell(layout: HomeItem[], fromPage: number): Slot | null {
+/** The first empty spot of a given size, looking from `fromPage` onwards. */
+export function firstFreeSlot(
+  layout: Slot[],
+  size: { w: number; h: number },
+  fromPage: number,
+  rows = MAX_ROWS,
+): Slot | null {
   for (let page = fromPage; page < MAX_PAGES; page++) {
-    for (let row = 0; row < ROWS; row++) {
-      for (let col = 0; col < COLS; col++) {
-        const slot: Slot = { page, col, row, w: 1, h: 1 };
+    for (let row = 0; row <= rows - size.h; row++) {
+      for (let col = 0; col <= COLS - size.w; col++) {
+        // Only take the width and height: `size` may be a whole item with its own position.
+        const slot: Slot = { page, col, row, w: size.w, h: size.h };
         if (!layout.some((item) => overlaps(item, slot))) return slot;
       }
     }
   }
   return null;
+}
+
+/**
+ * Makes a layout fit a page that is only `rows` tall: anything that would
+ * stick out below the last row moves to the next free spot (on a later page
+ * if needed). Items that already fit stay exactly where they are.
+ */
+export function fitToRows(layout: HomeItem[], rows: number): HomeItem[] {
+  const fits = (item: HomeItem) => item.row + item.h <= rows;
+  if (layout.every(fits)) return layout;
+
+  const placed = layout.filter(fits);
+  const moved = new Map<string, HomeItem>();
+  for (const item of layout.filter((i) => !fits(i))) {
+    const slot = firstFreeSlot(placed, item, item.page, rows);
+    if (!slot) continue; // nowhere at all: it stays put (and hidden) rather than vanish
+    const relocated = { ...item, ...slot };
+    placed.push(relocated);
+    moved.set(item.id, relocated);
+  }
+  return layout.map((item) => moved.get(item.id) ?? item);
 }
 
 /** How many pages have something on them (at least 1). */

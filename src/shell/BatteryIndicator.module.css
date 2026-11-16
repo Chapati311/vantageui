@@ -8,6 +8,18 @@
   color: var(--color-text);
 }
 
+/* Lightning bolt, shown while charging */
+.bolt {
+  display: flex;
+  margin-right: -4px;
+  color: var(--color-accent);
+}
+
+.bolt svg {
+  width: 12px;
+  height: 12px;
+}
+
 /* Battery outline */
 .icon {
   position: relative;

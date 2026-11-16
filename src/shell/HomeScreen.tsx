@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getWidget } from './widgets/widgetRegistry';
 import { Dock } from './home/Dock';
 import { HomeItemView } from './home/HomeItemView';
@@ -6,9 +6,10 @@ import { PageDots } from './home/PageDots';
 import {
   COLS,
   MAX_PAGES,
-  ROWS,
+  MAX_ROWS,
   compactPages,
   countPages,
+  fitToRows,
   placeItem,
   type HomeItem,
 } from './home/layout';
@@ -37,8 +38,14 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
   const ghostRef = useRef<HTMLDivElement>(null);
   const metrics = useGridMetrics(surfaceRef, gridRef);
 
-  const [layout, setLayout] = useState<HomeItem[]>(loadLayout);
+  // What is saved on the device (laid out for the tallest screen)...
+  const [saved, setSaved] = useState<HomeItem[]>(loadLayout);
+  // ...and what is shown: the same layout, fitted to the rows this screen has room
+  // for. Anything that would stick out below the last row moves to a later page.
+  const rows = metrics?.rows ?? MAX_ROWS;
+  const layout = useMemo(() => fitToRows(saved, rows), [saved, rows]);
   const layoutRef = useRef(layout);
+  layoutRef.current = layout;
   const [editing, setEditing] = useState(false);
   const [page, setPage] = useState(0);
 
@@ -48,7 +55,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
   /** Applies a new layout and saves it on the device. */
   const commit = (next: HomeItem[]) => {
     layoutRef.current = next;
-    setLayout(next);
+    setSaved(next);
     saveLayout(next);
   };
 
@@ -64,7 +71,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
 
   const moveItem = (id: string, to: { page: number; col: number; row: number }): HomeItem => {
     const current = layoutRef.current.find((item) => item.id === id)!;
-    const next = placeItem(layoutRef.current, id, { ...to, w: current.w, h: current.h });
+    const next = placeItem(layoutRef.current, id, { ...to, w: current.w, h: current.h }, rows);
     if (!next) return current; // no room: it goes back where it was
     commit(next);
     return next.find((item) => item.id === id)!;
@@ -81,10 +88,10 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
       const next = placeItem(layoutRef.current, id, {
         page: item.page,
         col: Math.min(item.col, COLS - w),
-        row: Math.min(item.row, ROWS - h),
+        row: Math.min(item.row, rows - h),
         w,
         h,
-      });
+      }, rows);
       if (next) {
         commit(next);
         return;

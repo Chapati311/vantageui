@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
-import { COLS, ROWS, type HomeItem } from './layout';
+import { COLS, type HomeItem } from './layout';
 import { trackTransform, type GridMetrics } from './useGridMetrics';
 
 /** Hold a finger still this long to enter edit mode. */
@@ -155,7 +155,7 @@ export function useHomeGestures(
       if (!metrics || !dragItem) return;
       const step = metrics.cell + metrics.gap;
       const col = clamp(Math.round((pointerX - grabX - metrics.originX) / step), 0, COLS - dragItem.w);
-      const row = clamp(Math.round((pointerY - grabY - metrics.originY) / step), 0, ROWS - dragItem.h);
+      const row = clamp(Math.round((pointerY - grabY - metrics.originY) / step), 0, metrics.rows - dragItem.h);
       if (!target || target.col !== col || target.row !== row) {
         target = { col, row, w: dragItem.w, h: dragItem.h };
         setDropTarget(target);

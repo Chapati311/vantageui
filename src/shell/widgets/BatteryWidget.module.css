@@ -26,11 +26,17 @@
   filter: var(--glow-accent-filter);
 }
 
+/* Same dot-matrix style and weight as the date and clock widgets.
+   Three digits ("100") are a little smaller so they stay inside the ring. */
 .percent {
   position: relative;
   font-family: var(--font-display);
   font-variation-settings: var(--font-display-settings);
-  font-size: 28cqmin;
-  font-weight: 800;
+  font-size: 38cqmin;
+  font-weight: 900;
   line-height: 1;
+}
+
+.full {
+  font-size: 34cqmin;
 }

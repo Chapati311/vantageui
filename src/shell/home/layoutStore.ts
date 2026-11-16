@@ -2,10 +2,10 @@ import { APPS, DOCK_APP_IDS, getApp } from '../../system/appRegistry';
 import { getWidget } from '../widgets/widgetRegistry';
 import type { WidgetSize } from '../widgets/types';
 import { DEFAULT_LAYOUT } from './defaultLayout';
-import { COLS, MAX_PAGES, ROWS, countPages, firstFreeCell, type HomeItem } from './layout';
+import { COLS, MAX_PAGES, MAX_ROWS, countPages, firstFreeSlot, type HomeItem } from './layout';
 
 /** Change the version if the layout format ever changes (old saved layouts are then ignored). */
-const STORAGE_KEY = 'vantage.homeLayout.v2';
+const STORAGE_KEY = 'vantage.homeLayout.v3';
 
 const isWholeNumber = (value: unknown): value is number => Number.isInteger(value);
 
@@ -14,7 +14,7 @@ function isValid(item: HomeItem): boolean {
   if (typeof item?.id !== 'string' || typeof item.ref !== 'string') return false;
   if (![item.page, item.col, item.row, item.w, item.h].every(isWholeNumber)) return false;
   if (item.page < 0 || item.page >= MAX_PAGES || item.col < 0 || item.row < 0) return false;
-  if (item.col + item.w > COLS || item.row + item.h > ROWS) return false;
+  if (item.col + item.w > COLS || item.row + item.h > MAX_ROWS) return false;
   if (item.kind === 'app') {
     // Dock apps live in the dock, not on the grid.
     return item.w === 1 && item.h === 1 && !!getApp(item.ref) && !DOCK_APP_IDS.includes(item.ref);
@@ -31,7 +31,7 @@ function addMissingApps(layout: HomeItem[]): HomeItem[] {
   for (const app of APPS) {
     const id = `app:${app.id}`;
     if (DOCK_APP_IDS.includes(app.id) || result.some((item) => item.id === id)) continue;
-    const slot = firstFreeCell(result, countPages(result) - 1);
+    const slot = firstFreeSlot(result, { w: 1, h: 1 }, countPages(result) - 1);
     if (slot) result.push({ ...slot, id, kind: 'app', ref: app.id });
   }
   return result;

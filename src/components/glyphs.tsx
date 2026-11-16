@@ -176,3 +176,21 @@ export function SkipPreviousIcon() {
     </Icon>
   );
 }
+
+/** Filled, so it still reads at very small sizes. */
+export function BoltIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M13.5 2.5L5 13.5h5.5l-1 8L18 10.5h-5.5z" />
+    </svg>
+  );
+}
+
+export function BellIcon() {
+  return (
+    <Icon>
+      <path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 2h-14z" />
+      <path d="M10 20.5a2 2 0 0 0 4 0" />
+    </Icon>
+  );
+}

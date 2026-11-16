@@ -8,6 +8,7 @@ import { DateWidget } from './DateWidget';
 import { FlashlightWidget } from './FlashlightWidget';
 import { MusicWidget } from './MusicWidget';
 import { NotesWidget } from './NotesWidget';
+import { PhotoWidget } from './PhotoWidget';
 import { VoiceNoteWidget } from './VoiceNoteWidget';
 import { WeatherWidget } from './WeatherWidget';
 import type { WidgetDefinition } from './types';
@@ -44,6 +45,7 @@ export const WIDGETS: WidgetDefinition[] = [
     },
   },
   { id: 'calendar', name: 'Calendar', component: CalendarWidget, sizes: ['2x2'] },
+  { id: 'photo', name: 'Photo', component: PhotoWidget, sizes: ['2x2', '2x1'] },
   {
     id: 'notes',
     name: 'Notes',

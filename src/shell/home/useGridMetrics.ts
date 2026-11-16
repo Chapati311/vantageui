@@ -1,5 +1,5 @@
 import { useLayoutEffect, useState, type RefObject } from 'react';
-import { COLS, type Slot } from './layout';
+import { COLS, rowsThatFit, type Slot } from './layout';
 
 /** The measured size of the grid, in pixels. */
 export interface GridMetrics {
@@ -7,6 +7,8 @@ export interface GridMetrics {
   cell: number;
   /** Space between cells */
   gap: number;
+  /** How many rows fit between the top and the page dots on this screen */
+  rows: number;
   /** Distance from one page to the next (the screen width) */
   pitch: number;
   /** Where the grid starts inside the home screen */
@@ -30,9 +32,11 @@ export function useGridMetrics(
       const s = surface.getBoundingClientRect();
       const g = grid.getBoundingClientRect();
       const gap = parseFloat(getComputedStyle(grid).getPropertyValue('--space-grid')) || 12;
+      const cell = (g.width - gap * (COLS - 1)) / COLS;
       setMetrics({
-        cell: (g.width - gap * (COLS - 1)) / COLS,
+        cell,
         gap,
+        rows: rowsThatFit(g.height, cell, gap),
         pitch: s.width,
         originX: g.left - s.left,
         originY: g.top - s.top,
@@ -42,7 +46,12 @@ export function useGridMetrics(
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(surface);
-    return () => observer.disconnect();
+    // Belt and braces: also re-measure on a plain window resize / rotation.
+    window.addEventListener('resize', measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
   }, [surfaceRef, gridRef]);
 
   return metrics;
