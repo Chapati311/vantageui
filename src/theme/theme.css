@@ -10,6 +10,10 @@
   --color-accent: #2dd4bf;
   --gradient-accent: linear-gradient(135deg, #6ee7b7, #14b8a6);
 
+  /* Wallpaper dot pattern */
+  --color-pattern-dot: #3a3a3c;
+  --pattern-gap: 16px;
+
   /* Fonts */
   --font-display: 'Doto Variable', ui-monospace, monospace;
   --font-body: 'Inter Variable', system-ui, sans-serif;

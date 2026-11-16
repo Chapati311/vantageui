@@ -20,8 +20,32 @@
   pointer-events: none;
 }
 
-/* Clock sits in the exact middle: the hint below is taken out of the flow */
+/* Wallpaper: a faint grid of dots that fades out behind the clock */
+.pattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--color-pattern-dot) 1px, transparent 1.5px);
+  background-size: var(--pattern-gap) var(--pattern-gap);
+  background-position: center;
+  -webkit-mask-image: radial-gradient(ellipse 75% 45% at center, transparent 55%, #000 100%);
+  mask-image: radial-gradient(ellipse 75% 45% at center, transparent 55%, #000 100%);
+  pointer-events: none;
+}
+
+/* Top row: notifications on the left, battery on the right */
+.status {
+  position: absolute;
+  top: calc(var(--safe-top) + var(--space-screen));
+  left: calc(var(--safe-left) + var(--space-screen));
+  right: calc(var(--safe-right) + var(--space-screen));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Clock sits in the exact middle: everything else is taken out of the flow */
 .center {
+  position: relative;
   flex: 1;
   display: flex;
   align-items: center;

@@ -1,6 +1,11 @@
+import { BatteryIndicator } from './BatteryIndicator';
 import { LockClock } from './LockClock';
+import { NotificationCount } from './NotificationCount';
 import { useSwipeUp } from './gestures/useSwipeUp';
 import styles from './LockScreen.module.css';
+
+/** Placeholder until there is a real notification system. */
+const PLACEHOLDER_NOTIFICATIONS = 3;
 
 interface LockScreenProps {
   locked: boolean;
@@ -17,6 +22,11 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
       className={`${styles.lock} ${locked ? '' : styles.unlocked}`}
       aria-hidden={!locked}
     >
+      <div className={styles.pattern} />
+      <div className={styles.status}>
+        <NotificationCount count={PLACEHOLDER_NOTIFICATIONS} />
+        <BatteryIndicator />
+      </div>
       <div className={styles.center}>
         <LockClock />
       </div>
