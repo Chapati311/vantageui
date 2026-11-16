@@ -1,0 +1,43 @@
+.calendar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.day {
+  margin: 4px 0;
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-settings);
+  font-size: 30cqmin;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.event {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+}

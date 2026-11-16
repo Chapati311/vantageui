@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { getWidget } from './widgets/widgetRegistry';
+import { Dock } from './home/Dock';
 import { HomeItemView } from './home/HomeItemView';
 import { PageDots } from './home/PageDots';
 import {
@@ -27,7 +28,7 @@ interface HomeScreenProps {
 
 /**
  * The home screen: pages of a 4-column grid where widgets and app icons
- * live together. Long-press to rearrange and resize.
+ * live together, with a fixed dock underneath. Long-press to rearrange and resize.
  */
 export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeScreenProps) {
   const surfaceRef = useRef<HTMLDivElement>(null);
@@ -94,7 +95,17 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
   const tapItem = (id: string) => {
     const item = layoutRef.current.find((i) => i.id === id);
     const element = surfaceRef.current?.querySelector(`[data-item-id="${id}"]`);
-    if (item?.kind === 'app' && element) onOpenApp?.(item.ref, element.getBoundingClientRect());
+    if (!item || !element) return;
+    const rect = element.getBoundingClientRect();
+    if (item.kind === 'app') {
+      onOpenApp?.(item.ref, rect);
+    } else {
+      // Some widgets do something when tapped (see widgetRegistry).
+      getWidget(item.ref)?.onTap?.({
+        openSearch: () => onSwipeDown?.(),
+        openApp: (appId) => onOpenApp?.(appId, rect),
+      });
+    }
   };
 
   const { drag, dropTarget } = useHomeGestures(surfaceRef, trackRef, ghostRef, {
@@ -140,7 +151,8 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
         </div>
       </div>
 
-      <div className={styles.bottom}>
+      {/* Page dots sit between the pages and the dock, never on top of either */}
+      <div className={styles.dots}>
         <PageDots count={pageCount} current={Math.min(page, pageCount - 1)} />
         {editing && (
           <button type="button" className={styles.done} data-no-gesture onClick={stopEditing}>
@@ -148,6 +160,8 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
           </button>
         )}
       </div>
+
+      <Dock onOpenApp={(appId, from) => onOpenApp?.(appId, from)} />
 
       {metrics && drag && draggedItem && (
         <HomeItemView

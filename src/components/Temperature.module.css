@@ -1,0 +1,18 @@
+.temperature {
+  display: inline-flex;
+  align-items: flex-start;
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-settings);
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Sized in "em", so it scales with the number next to it */
+.ring {
+  flex-shrink: 0;
+  width: 0.2em;
+  height: 0.2em;
+  margin: 0.1em 0 0 0.06em;
+  border: max(1.5px, 0.03em) solid currentColor;
+  border-radius: var(--radius-round);
+}

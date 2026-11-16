@@ -33,6 +33,11 @@
   opacity: 0.9;
 }
 
+/* Edit mode: buttons inside widgets are switched off so you can drag the widget */
+.editing button {
+  pointer-events: none;
+}
+
 /* Edit mode */
 .wiggle {
   animation: wiggle 0.28s ease-in-out infinite alternate;

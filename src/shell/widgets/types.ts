@@ -1,11 +1,18 @@
 import type { ComponentType } from 'react';
 
 /** Width x height in grid cells. */
-export type WidgetSize = '1x1' | '2x1' | '2x2';
+export type WidgetSize = '1x1' | '2x1' | '2x2' | '4x1';
 
 /** Every widget component gets the size it is currently shown at. */
 export interface WidgetProps {
   size: WidgetSize;
+}
+
+/** What a widget is allowed to do when it is tapped. */
+export interface WidgetTapContext {
+  openSearch: () => void;
+  /** Opens an app, zooming out of this widget */
+  openApp: (appId: string) => void;
 }
 
 export interface WidgetDefinition {
@@ -14,4 +21,6 @@ export interface WidgetDefinition {
   component: ComponentType<WidgetProps>;
   /** Sizes this widget can be shown at. Resizing cycles through them. */
   sizes: WidgetSize[];
+  /** Optional: what happens when the whole widget is tapped */
+  onTap?: (context: WidgetTapContext) => void;
 }

@@ -52,6 +52,7 @@ export function HomeItemView({
     .join(' ');
   const contentClass = [
     styles.content,
+    editing && styles.editing,
     editing && !ghost && styles.wiggle,
     index % 2 === 1 && styles.wiggleAlt,
     ghost && styles.lifted,

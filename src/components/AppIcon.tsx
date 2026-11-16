@@ -6,7 +6,7 @@ export function AppIcon({ app }: { app: AppDefinition }) {
   const Glyph = app.icon;
 
   return (
-    <div className={styles.icon} role="button" aria-label={app.name}>
+    <div className={styles.icon} role="button" aria-label={app.name} data-app-icon={app.id}>
       <Glyph />
     </div>
   );

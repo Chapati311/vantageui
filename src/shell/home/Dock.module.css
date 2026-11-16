@@ -1,0 +1,16 @@
+/* Same columns and gaps as the home grid, so the icons line up exactly */
+.dock {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-grid);
+}
+
+.slot {
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-round);
+  background: none;
+  touch-action: none;
+}

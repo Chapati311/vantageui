@@ -130,16 +130,26 @@ Assistant app that connects to Vantage.
 
 ### Built so far (update this list when something is added)
 
-- Done: boot animation, living orbit lock screen, home grid with pages and edit
-  mode, app view with zoom, search, quick settings, UI sounds, light mode,
-  Settings app (Sounds, Light mode).
-- Placeholders only: every app except Settings shows a "coming soon" screen.
-  Weather data, the notification count and the quick settings controls are fake.
+- Shell: boot animation, lock screen (wallpaper: orbit / dots / plain), home
+  grid with pages and edit mode, fixed dock (4 apps from ) with
+  page dots above it, app view with zoom, search, quick settings, UI sounds,
+  light mode, accent colors.
+- Real apps: Clock (timer, stopwatch, world clock; timers keep running in a
+  store), Weather (live Open-Meteo data, shared with the widget), Notes
+  (IndexedDB, text or checklist), Settings (wallpaper, accent, light mode,
+  sounds, mode switcher).
+- Widgets: clock, weather, battery ring, date, Ask Vantage bar (opens search),
+  now playing, voice note, flashlight, calendar, notes preview.
+- Still fake: now playing tracks, the calendar event, the notification count,
+  the quick settings controls and flashlight (look only), the voice note button.
+  The mode switcher is saved but Focus and Retro change nothing yet.
+- Placeholders: Phone, Messages, Calculator, Music and Maps show "coming soon".
 - Not built yet: modes (Focus, Retro), adding/removing widgets in edit mode,
-  the real mini-apps, the native bridge beyond `getBattery`.
+  the Assistant, the native bridge beyond .
 - Known iOS limits: the battery level is unavailable in Safari (shows "--"),
-  and swipes from the very top/bottom edge of the screen belong to iOS, so
-  our edge zones are deliberately generous (top 56px, bottom 40px).
+  timers can't chime while the phone is asleep, and swipes from the very
+  top/bottom edge of the screen belong to iOS, so our edge zones are
+  deliberately generous (top 56px, bottom 40px).
 
 ## Code organization
 

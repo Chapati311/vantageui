@@ -1,3 +1,4 @@
+import { Temperature } from '../../components/Temperature';
 import { Widget } from '../../components/Widget';
 import { WEATHER_PLACE, useWeather } from '../../system/weather';
 import { WeatherArt } from './WeatherArt';
@@ -10,40 +11,48 @@ export function WeatherWidget({ size }: WidgetProps) {
   const today = data?.daily[0];
 
   const temperature = (
-    <div className={styles.temperature}>{data ? `${data.now.temperature}°` : '--'}</div>
+    <div className={styles.temperature}>
+      <Temperature value={data ? data.now.temperature : null} />
+    </div>
   );
-  const art = <div className={styles.art}>{data && <WeatherArt kind={data.now.kind} />}</div>;
+  const condition = <span className={styles.condition}>{data ? data.now.condition : 'No data'}</span>;
+  const highLow = today && (
+    <span className={styles.label}>
+      H {today.high}° · L {today.low}°
+    </span>
+  );
 
   // 1x1: just the number
   if (size === '1x1') return <Widget shape="rounded">{temperature}</Widget>;
 
-  // 2x1: place and number on the left, drawing on the right
+  // 2x1: number on the left, condition and high/low on the right
   if (size === '2x1') {
     return (
       <Widget shape="rounded">
         <div className={styles.row}>
+          {temperature}
           <div className={styles.column}>
-            <span className={styles.label}>{WEATHER_PLACE.name}</span>
-            {temperature}
+            {condition}
+            {highLow}
           </div>
-          {art}
         </div>
       </Widget>
     );
   }
 
-  // 2x2: everything
+  // 2x2: everything, plus the drawing
   return (
     <Widget shape="rounded">
       <div className={styles.tall}>
         <div className={styles.top}>
           <span className={styles.label}>{WEATHER_PLACE.name}</span>
-          {art}
+          <div className={styles.art}>{data && <WeatherArt kind={data.now.kind} />}</div>
         </div>
         {temperature}
-        <span className={styles.label}>
-          {data && today ? `${data.now.condition} · ${today.high}° / ${today.low}°` : 'No data yet'}
-        </span>
+        <div className={styles.column}>
+          {condition}
+          {highLow}
+        </div>
       </div>
     </Widget>
   );

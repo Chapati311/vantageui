@@ -151,3 +151,28 @@ export function CheckIcon() {
     </Icon>
   );
 }
+
+export function MicIcon() {
+  return (
+    <Icon>
+      <rect x="9.500" y="4" width="5" height="10" rx="2.500" />
+      <path d="M6.500 11.500a5.500 5.500 0 0 0 11 0M12 17v3" />
+    </Icon>
+  );
+}
+
+export function SkipNextIcon() {
+  return (
+    <Icon>
+      <path d="M6.500 6v12l8.500-6zM17.500 6v12" />
+    </Icon>
+  );
+}
+
+export function SkipPreviousIcon() {
+  return (
+    <Icon>
+      <path d="M17.500 6v12L9 12zM6.500 6v12" />
+    </Icon>
+  );
+}

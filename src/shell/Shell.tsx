@@ -17,9 +17,9 @@ interface OpenApp {
   from: ScreenRect | null;
 }
 
-/** Where an app's icon is on the home screen right now, if it is visible. */
+/** Where an app's icon is right now (on the grid or in the dock), if it is visible. */
 function findIconRect(appId: string): ScreenRect | null {
-  const rect = document.querySelector(`[data-item-id="app:${appId}"]`)?.getBoundingClientRect();
+  const rect = document.querySelector(`[data-app-icon="${appId}"]`)?.getBoundingClientRect();
   return rect && rect.right > 0 && rect.left < window.innerWidth ? rect : null;
 }
 

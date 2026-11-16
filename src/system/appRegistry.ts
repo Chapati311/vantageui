@@ -66,6 +66,9 @@ export const APPS: AppDefinition[] = [
   },
 ];
 
+/** The 4 apps that sit in the dock at the bottom of every home page, left to right. */
+export const DOCK_APP_IDS = ['phone', 'messages', 'notes', 'clock'];
+
 export function getApp(id: string): AppDefinition | undefined {
   return APPS.find((app) => app.id === id);
 }

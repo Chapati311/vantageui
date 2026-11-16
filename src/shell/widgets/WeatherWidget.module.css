@@ -1,19 +1,31 @@
 .temperature {
-  font-family: var(--font-display);
-  font-variation-settings: var(--font-display-settings);
-  font-size: 34cqmin;
-  font-weight: 800;
-  line-height: 1;
+  font-size: 40cqmin;
 }
 
 /* Small uppercase letter-spaced labels */
 .label {
   font-size: 9px;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  white-space: nowrap;
   color: var(--color-muted);
   font-variant-numeric: tabular-nums;
+}
+
+.condition {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 /* 2x1 */
@@ -21,22 +33,12 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 14px 0 18px;
-}
-
-.column {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+  gap: 12px;
+  padding: 0 14px 0 16px;
 }
 
 .row .temperature {
-  font-size: 42cqh;
-}
-
-.row .art {
-  width: 46cqh;
+  font-size: 44cqh;
 }
 
 /* 2x2 */
@@ -46,7 +48,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 18px;
+  padding: 16px;
 }
 
 .top {
@@ -55,10 +57,10 @@
   justify-content: space-between;
 }
 
-.tall .art {
-  width: 38cqw;
+.art {
+  width: 34cqw;
 }
 
 .tall .temperature {
-  font-size: 36cqmin;
+  font-size: 34cqmin;
 }
