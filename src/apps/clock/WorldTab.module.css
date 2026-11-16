@@ -1,0 +1,38 @@
+.world {
+  flex: 1;
+}
+
+.city {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72px;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.name {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.note {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.time {
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-settings);
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+}

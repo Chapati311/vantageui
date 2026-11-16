@@ -62,3 +62,92 @@ export function SoundIcon() {
     </Icon>
   );
 }
+
+export function PlayIcon() {
+  return (
+    <Icon>
+      <path d="M8.5 5.5v13l10.5-6.5z" />
+    </Icon>
+  );
+}
+
+export function PauseIcon() {
+  return (
+    <Icon>
+      <path d="M8.5 5.5v13M15.5 5.5v13" />
+    </Icon>
+  );
+}
+
+export function ResetIcon() {
+  return (
+    <Icon>
+      <path d="M5 12a7 7 0 1 0 2.2-5.1" />
+      <path d="M5 4.5v4h4" />
+    </Icon>
+  );
+}
+
+export function FlagIcon() {
+  return (
+    <Icon>
+      <path d="M6 20.5v-16M6 5h11l-2.5 4 2.5 4H6" />
+    </Icon>
+  );
+}
+
+export function PlusIcon() {
+  return (
+    <Icon>
+      <path d="M12 5.5v13M5.5 12h13" />
+    </Icon>
+  );
+}
+
+export function MinusIcon() {
+  return (
+    <Icon>
+      <path d="M5.5 12h13" />
+    </Icon>
+  );
+}
+
+export function BackIcon() {
+  return (
+    <Icon>
+      <path d="M14.5 5.5L8 12l6.5 6.5" />
+    </Icon>
+  );
+}
+
+export function TrashIcon() {
+  return (
+    <Icon>
+      <path d="M5 7h14M10 7V4.5h4V7M7 7l.8 12.5h8.400L17 7" />
+    </Icon>
+  );
+}
+
+export function ChecklistIcon() {
+  return (
+    <Icon>
+      <path d="M4.5 7l1.800 1.800L9.500 5.500M4.500 16l1.800 1.800 3.200-3.300M13 7.500h6.500M13 16.500h6.500" />
+    </Icon>
+  );
+}
+
+export function TextIcon() {
+  return (
+    <Icon>
+      <path d="M5 6.500h14M5 12h14M5 17.500h9" />
+    </Icon>
+  );
+}
+
+export function CheckIcon() {
+  return (
+    <Icon>
+      <path d="M5.500 12.500l4.200 4.200 8.800-9.200" />
+    </Icon>
+  );
+}

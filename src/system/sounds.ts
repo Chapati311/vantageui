@@ -6,7 +6,7 @@ import { getSettings } from './settingsStore';
  * phone is on silent.
  */
 
-export type SoundName = 'unlock' | 'openApp' | 'toggleOn' | 'toggleOff';
+export type SoundName = 'unlock' | 'openApp' | 'toggleOn' | 'toggleOff' | 'timerDone';
 
 interface Note {
   /** Pitch in Hz at the start and the end of the note */
@@ -28,6 +28,11 @@ const SOUNDS: Record<SoundName, Note[]> = {
   openApp: [{ from: 520, to: 780, at: 0, length: 0.1 }],
   toggleOn: [{ from: 880, to: 880, at: 0, length: 0.05 }],
   toggleOff: [{ from: 590, to: 590, at: 0, length: 0.05 }],
+  // A gentle two-tone chime, played three times
+  timerDone: [0, 0.6, 1.2].flatMap((at) => [
+    { from: 880, to: 880, at, length: 0.14 },
+    { from: 1175, to: 1175, at: at + 0.16, length: 0.22 },
+  ]),
 };
 
 let context: AudioContext | null = null;

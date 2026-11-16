@@ -9,6 +9,7 @@ import { HomeScreen } from './HomeScreen';
 import { LockScreen } from './LockScreen';
 import { QuickSettings } from './QuickSettings';
 import { Search, type SearchAction } from './Search';
+import { TimerBanner } from './TimerBanner';
 import styles from './Shell.module.css';
 
 interface OpenApp {
@@ -116,6 +117,7 @@ export function Shell() {
       )}
       <QuickSettings open={quickSettingsOpen} onClose={() => setQuickSettingsOpen(false)} />
       <LockScreen locked={locked} onUnlock={unlock} />
+      <TimerBanner />
       {booting && <Boot onDone={() => setBooting(false)} />}
     </div>
   );

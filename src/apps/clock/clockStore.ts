@@ -1,0 +1,177 @@
+import { useSyncExternalStore } from 'react';
+import { playSound } from '../../system/sounds';
+
+/**
+ * The timer and stopwatch live HERE, not inside the Clock app's screen.
+ * They are stored as "when did it start / when does it end" (real clock
+ * times), so they keep running when you leave the app, lock the phone, or
+ * even reload the page.
+ */
+
+export type ClockTab = 'timer' | 'stopwatch' | 'world';
+
+export interface TimerState {
+  /** What the timer was set to */
+  durationMs: number;
+  status: 'idle' | 'running' | 'paused' | 'done';
+  /** While running: the clock time at which it finishes */
+  endsAt: number;
+  /** While paused: how much was left */
+  remainingMs: number;
+}
+
+export interface StopwatchState {
+  running: boolean;
+  /** While running: the clock time at which it was (re)started */
+  startedAt: number;
+  /** Time collected before the last start */
+  elapsedMs: number;
+  /** Total elapsed time at each lap, newest last */
+  laps: number[];
+}
+
+export interface ClockState {
+  tab: ClockTab;
+  timer: TimerState;
+  stopwatch: StopwatchState;
+}
+
+export const MIN_TIMER_MS = 60_000;
+export const MAX_TIMER_MS = 99 * 60_000;
+
+const STORAGE_KEY = 'vantage.clock.v1';
+
+const DEFAULTS: ClockState = {
+  tab: 'timer',
+  timer: { durationMs: 5 * 60_000, status: 'idle', endsAt: 0, remainingMs: 5 * 60_000 },
+  stopwatch: { running: false, startedAt: 0, elapsedMs: 0, laps: [] },
+};
+
+function load(): ClockState {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
+    if (saved?.timer && saved?.stopwatch) return { ...DEFAULTS, ...saved };
+  } catch {
+    // Broken or blocked storage: start fresh.
+  }
+  return DEFAULTS;
+}
+
+let state = load();
+const listeners = new Set<() => void>();
+
+function update(patch: Partial<ClockState>): void {
+  state = { ...state, ...patch };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Storage full or blocked: it still works until reload.
+  }
+  listeners.forEach((notify) => notify());
+}
+
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+/** The whole clock state. Components re-render when it changes. */
+export function useClockState(): ClockState {
+  return useSyncExternalStore(subscribe, () => state);
+}
+
+export function setClockTab(tab: ClockTab): void {
+  update({ tab });
+}
+
+// ---- Timer ---------------------------------------------------------------
+
+/** How much time is left right now. */
+export function timerRemaining(timer: TimerState, now = Date.now()): number {
+  if (timer.status === 'running') return Math.max(0, timer.endsAt - now);
+  if (timer.status === 'paused') return timer.remainingMs;
+  if (timer.status === 'done') return 0;
+  return timer.durationMs;
+}
+
+let finishTimeout = 0;
+
+/** Makes sure "timer done" fires at the right moment, even if nobody is looking. */
+function scheduleFinish(): void {
+  window.clearTimeout(finishTimeout);
+  const { timer } = state;
+  if (timer.status !== 'running') return;
+  const left = timer.endsAt - Date.now();
+  if (left <= 0) {
+    update({ timer: { ...timer, status: 'done', remainingMs: 0 } });
+    playSound('timerDone');
+  } else {
+    finishTimeout = window.setTimeout(scheduleFinish, left);
+  }
+}
+
+export function setTimerDuration(durationMs: number): void {
+  if (state.timer.status === 'running' || state.timer.status === 'paused') return;
+  const clamped = Math.min(MAX_TIMER_MS, Math.max(MIN_TIMER_MS, durationMs));
+  update({ timer: { durationMs: clamped, status: 'idle', endsAt: 0, remainingMs: clamped } });
+}
+
+export function startTimer(): void {
+  const { timer } = state;
+  if (timer.status === 'running') return;
+  const left = timer.status === 'paused' ? timer.remainingMs : timer.durationMs;
+  update({ timer: { ...timer, status: 'running', endsAt: Date.now() + left } });
+  scheduleFinish();
+}
+
+export function pauseTimer(): void {
+  const { timer } = state;
+  if (timer.status !== 'running') return;
+  window.clearTimeout(finishTimeout);
+  update({ timer: { ...timer, status: 'paused', remainingMs: timerRemaining(timer) } });
+}
+
+/** Back to the start. Also used to dismiss a finished timer. */
+export function resetTimer(): void {
+  window.clearTimeout(finishTimeout);
+  const { timer } = state;
+  update({ timer: { ...timer, status: 'idle', endsAt: 0, remainingMs: timer.durationMs } });
+}
+
+// ---- Stopwatch -----------------------------------------------------------
+
+/** How long the stopwatch has been running in total, right now. */
+export function stopwatchElapsed(stopwatch: StopwatchState, now = Date.now()): number {
+  return stopwatch.elapsedMs + (stopwatch.running ? now - stopwatch.startedAt : 0);
+}
+
+export function startStopwatch(): void {
+  if (state.stopwatch.running) return;
+  update({ stopwatch: { ...state.stopwatch, running: true, startedAt: Date.now() } });
+}
+
+export function stopStopwatch(): void {
+  const { stopwatch } = state;
+  if (!stopwatch.running) return;
+  update({ stopwatch: { ...stopwatch, running: false, elapsedMs: stopwatchElapsed(stopwatch) } });
+}
+
+export function addLap(): void {
+  const { stopwatch } = state;
+  if (!stopwatch.running) return;
+  update({ stopwatch: { ...stopwatch, laps: [...stopwatch.laps, stopwatchElapsed(stopwatch)] } });
+}
+
+export function resetStopwatch(): void {
+  update({ stopwatch: DEFAULTS.stopwatch });
+}
+
+// ---- Start-up ------------------------------------------------------------
+
+// A timer that was running before a reload carries on (or finishes) now.
+scheduleFinish();
+
+// Timers are frozen while the phone sleeps, so check again when we wake up.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') scheduleFinish();
+});

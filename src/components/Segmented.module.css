@@ -1,0 +1,37 @@
+.segmented {
+  display: flex;
+  flex-shrink: 0;
+  padding: 3px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-round);
+}
+
+.option {
+  flex: 1;
+  min-width: 0;
+  height: 38px; /* + border and padding = a 44px tall control */
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--radius-round);
+  background: none;
+  color: var(--color-muted);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  touch-action: none;
+  transition:
+    transform var(--motion-control),
+    opacity var(--motion-control);
+}
+
+.option:active {
+  opacity: 0.6;
+}
+
+.selected {
+  background: var(--color-surface-3);
+  color: var(--color-text);
+}

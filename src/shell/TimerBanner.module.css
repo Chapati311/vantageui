@@ -1,0 +1,44 @@
+/* Hidden: parked just above the screen */
+.banner {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--safe-top) + 12px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-round);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  touch-action: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(-50%, -80px, 0);
+  transition:
+    transform var(--motion-screen),
+    opacity var(--motion-screen);
+}
+
+.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate3d(-50%, 0, 0);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-round);
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
+}

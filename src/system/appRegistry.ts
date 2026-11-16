@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import { ClockApp } from '../apps/clock/ClockApp';
 import { SettingsApp } from '../apps/settings/SettingsApp';
 import {
   CalculatorIcon,
@@ -31,7 +32,13 @@ export const APPS: AppDefinition[] = [
   { id: 'phone', name: 'Phone', icon: PhoneIcon, keywords: ['call', 'dial'] },
   { id: 'messages', name: 'Messages', icon: MessagesIcon, keywords: ['sms', 'text', 'chat'] },
   { id: 'notes', name: 'Notes', icon: NotesIcon, keywords: ['write', 'memo'] },
-  { id: 'clock', name: 'Clock', icon: ClockIcon, keywords: ['timer', 'stopwatch', 'alarm'] },
+  {
+    id: 'clock',
+    name: 'Clock',
+    icon: ClockIcon,
+    keywords: ['timer', 'stopwatch', 'world', 'time'],
+    component: ClockApp,
+  },
   { id: 'weather', name: 'Weather', icon: WeatherIcon, keywords: ['forecast', 'rain'] },
   { id: 'calculator', name: 'Calculator', icon: CalculatorIcon, keywords: ['math', 'sum'] },
   { id: 'music', name: 'Music', icon: MusicIcon, keywords: ['spotify', 'songs'] },

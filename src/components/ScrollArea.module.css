@@ -1,0 +1,23 @@
+.area {
+  min-width: 0;
+  min-height: 0;
+  overscroll-behavior: contain; /* don't drag the whole screen along */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.area::-webkit-scrollbar {
+  display: none;
+}
+
+.vertical {
+  overflow-x: hidden;
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+
+.horizontal {
+  overflow-x: auto;
+  overflow-y: hidden;
+  touch-action: pan-x;
+}

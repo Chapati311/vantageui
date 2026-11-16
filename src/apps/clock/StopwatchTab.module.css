@@ -1,0 +1,59 @@
+.stopwatch {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding-top: 36px;
+}
+
+.time {
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-settings);
+  font-size: 62px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+}
+
+.laps {
+  flex: 1;
+  align-self: stretch;
+}
+
+.lap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-height: 44px;
+  padding: 12px 0;
+  border-top: 1px solid var(--color-hairline);
+  font-variant-numeric: tabular-nums;
+}
+
+.lapNumber {
+  flex: 1;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.lapSplit {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.lapTotal {
+  width: 88px;
+  text-align: right;
+  font-size: 15px;
+  font-weight: 500;
+}
