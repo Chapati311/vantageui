@@ -1,0 +1,80 @@
+.checklist {
+  flex: 1;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+/* 44px touch target around a small round box */
+.check {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  width: 40px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  touch-action: pan-y;
+}
+
+.box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1.5px solid var(--color-muted);
+  border-radius: var(--radius-round);
+  color: var(--color-on-accent);
+  transition: transform var(--motion-control);
+}
+
+.box svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.6;
+}
+
+.dashed {
+  border-style: dashed;
+  border-color: var(--color-hairline);
+}
+
+.done .box {
+  border-color: transparent;
+  background: var(--color-accent);
+}
+
+.check:active .box {
+  transform: scale(0.85);
+}
+
+/* 17px: iOS zooms the page in on text fields smaller than 16px */
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: none;
+  background: none;
+  color: var(--color-text);
+  caret-color: var(--color-accent);
+  font: inherit;
+  font-size: 17px;
+}
+
+.input::placeholder {
+  color: var(--color-muted);
+}
+
+.done .input {
+  color: var(--color-muted);
+  text-decoration: line-through;
+}

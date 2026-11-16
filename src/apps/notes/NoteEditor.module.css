@@ -1,0 +1,39 @@
+.editor {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* 17px: iOS zooms the page in on text fields smaller than 16px */
+.text {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: none;
+  color: var(--color-text);
+  caret-color: var(--color-accent);
+  font: inherit;
+  font-size: 17px;
+  line-height: 1.5;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+
+.text::placeholder {
+  color: var(--color-muted);
+}

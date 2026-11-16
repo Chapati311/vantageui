@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import { ClockApp } from '../apps/clock/ClockApp';
+import { NotesApp } from '../apps/notes/NotesApp';
 import { SettingsApp } from '../apps/settings/SettingsApp';
 import { WeatherApp } from '../apps/weather/WeatherApp';
 import {
@@ -32,7 +33,13 @@ export interface AppDefinition {
 export const APPS: AppDefinition[] = [
   { id: 'phone', name: 'Phone', icon: PhoneIcon, keywords: ['call', 'dial'] },
   { id: 'messages', name: 'Messages', icon: MessagesIcon, keywords: ['sms', 'text', 'chat'] },
-  { id: 'notes', name: 'Notes', icon: NotesIcon, keywords: ['write', 'memo'] },
+  {
+    id: 'notes',
+    name: 'Notes',
+    icon: NotesIcon,
+    keywords: ['write', 'memo', 'todo', 'checklist', 'list'],
+    component: NotesApp,
+  },
   {
     id: 'clock',
     name: 'Clock',
