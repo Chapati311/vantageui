@@ -32,3 +32,14 @@ body {
   -webkit-user-select: none;
   -webkit-touch-callout: none; /* no long-press menu */
 }
+
+/* Typing still has to work inside text fields */
+input,
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+button {
+  cursor: pointer;
+}

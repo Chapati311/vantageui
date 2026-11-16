@@ -1,0 +1,58 @@
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.open {
+  pointer-events: auto;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg);
+  opacity: 0;
+  transition: opacity var(--motion-screen);
+}
+
+.open .backdrop {
+  opacity: 0.7;
+}
+
+/* Closed: parked above the top of the screen */
+.panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: calc(var(--safe-top) + var(--space-screen))
+    calc(var(--safe-right) + var(--space-screen)) 12px
+    calc(var(--safe-left) + var(--space-screen));
+  border-radius: 0 0 var(--radius-widget) var(--radius-widget);
+  background: var(--color-grey-900);
+  touch-action: none;
+  will-change: transform;
+  transform: translate3d(0, -100%, 0);
+  transition: transform var(--motion-screen);
+}
+
+.open .panel {
+  transform: translate3d(0, 0, 0);
+}
+
+.toggles {
+  display: flex;
+  justify-content: space-between;
+}
+
+.handle {
+  align-self: center;
+  width: 44px;
+  height: 5px;
+  border-radius: var(--radius-round);
+  background: var(--color-grey-700);
+}

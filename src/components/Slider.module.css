@@ -1,0 +1,32 @@
+.slider {
+  position: relative;
+  height: 56px;
+  border-radius: var(--radius-round);
+  background: var(--color-grey-700);
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* Grows from the left. Only its transform changes, so dragging is smooth. */
+.fill {
+  position: absolute;
+  inset: 0;
+  background: var(--color-text);
+  transform-origin: left center;
+}
+
+.icon {
+  position: absolute;
+  left: 18px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  color: var(--color-grey-400);
+  pointer-events: none;
+}
+
+.icon svg {
+  width: 22px;
+  height: 22px;
+}

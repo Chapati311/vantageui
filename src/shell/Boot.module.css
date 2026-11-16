@@ -1,0 +1,59 @@
+.boot {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  background: var(--color-bg);
+  touch-action: none;
+  transition: opacity var(--motion-screen);
+}
+
+.fading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.logo {
+  width: 120px;
+  height: 120px;
+}
+
+.name {
+  display: flex;
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-settings);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+/* Each letter flickers on, like the dots of the logo */
+.letter {
+  opacity: 0;
+  animation: letterOn 0.3s steps(3, end) forwards;
+}
+
+@keyframes letterOn {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter {
+    opacity: 1;
+    animation: none;
+  }
+}

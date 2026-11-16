@@ -8,7 +8,9 @@
   --color-grey-700: #2c2c2e;
   --color-grey-400: #8e8e93;
   --color-accent: #2dd4bf;
-  --gradient-accent: linear-gradient(135deg, #6ee7b7, #14b8a6);
+  --color-accent-from: #6ee7b7;
+  --color-accent-to: #14b8a6;
+  --gradient-accent: linear-gradient(135deg, var(--color-accent-from), var(--color-accent-to));
 
   /* Wallpaper dot pattern */
   --color-pattern-dot: #3a3a3c;
@@ -25,6 +27,8 @@
   --radius-round: 9999px;
   --space-screen: 24px;
   --space-grid: 12px;
+  /* Height of the strip at the bottom of an app you swipe up from */
+  --size-home-zone: 40px;
 
   /* Motion */
   --duration-fast: 150ms;

@@ -1,0 +1,50 @@
+.logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.gradientFrom {
+  stop-color: var(--color-accent-from);
+}
+
+.gradientTo {
+  stop-color: var(--color-accent-to);
+}
+
+/* The dark dots of the matrix that are not part of the V */
+.unlit {
+  fill: var(--color-grey-900);
+}
+
+.lit {
+  fill: url(#vantage-logo-gradient);
+}
+
+/* Each dot flickers on, like a dot-matrix display warming up */
+.appear {
+  opacity: 0;
+  animation: dotOn 0.3s steps(3, end) forwards;
+}
+
+@keyframes dotOn {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .appear {
+    opacity: 1;
+    animation: none;
+  }
+}

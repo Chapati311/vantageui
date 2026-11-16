@@ -1,0 +1,98 @@
+.search {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: calc(var(--safe-top) + var(--space-screen) * 2)
+    calc(var(--safe-right) + var(--space-screen))
+    calc(var(--safe-bottom) + var(--space-screen))
+    calc(var(--safe-left) + var(--space-screen));
+  background: var(--color-bg);
+  touch-action: none;
+
+  /* Closed: invisible, slightly above, and it ignores touches */
+  opacity: 0;
+  transform: translate3d(0, -16px, 0);
+  pointer-events: none;
+  transition:
+    transform var(--motion-screen),
+    opacity var(--motion-screen);
+}
+
+.open {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  pointer-events: auto;
+}
+
+.input {
+  width: 100%;
+  padding: 0 0 12px;
+  border: 0;
+  border-bottom: 1.5px solid var(--color-grey-700);
+  border-radius: 0;
+  outline: none;
+  background: none;
+  color: var(--color-text);
+  caret-color: var(--color-accent);
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-settings);
+  font-size: 34px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.input::placeholder {
+  color: var(--color-grey-700);
+}
+
+.results {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-grid);
+  pointer-events: none; /* taps between tiles fall through to "close" */
+}
+
+.tile {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px;
+  border: 0;
+  border-radius: var(--radius-widget);
+  background: var(--color-grey-900);
+  color: var(--color-text);
+  font: inherit;
+  touch-action: none;
+  transition:
+    transform var(--motion-control),
+    opacity var(--motion-control);
+}
+
+.open .tile {
+  pointer-events: auto;
+}
+
+.tile:active {
+  transform: scale(0.94);
+  opacity: 0.7;
+}
+
+.tile svg {
+  width: 36px;
+  height: 36px;
+}
+
+.name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-grey-400);
+}

@@ -1,0 +1,38 @@
+/* 44px tall touch target with a 32px tall switch drawn inside */
+.toggle {
+  position: relative;
+  width: 56px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  touch-action: none;
+}
+
+.toggle::before {
+  content: '';
+  position: absolute;
+  inset: 6px 0;
+  border-radius: var(--radius-round);
+  background: var(--color-grey-700);
+}
+
+.on::before {
+  background: var(--color-accent);
+}
+
+.knob {
+  position: absolute;
+  left: 4px;
+  top: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-round);
+  background: var(--color-text);
+  transition: transform var(--motion-control);
+}
+
+.on .knob {
+  transform: translate3d(24px, 0, 0);
+  background: var(--color-bg);
+}

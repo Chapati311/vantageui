@@ -1,0 +1,40 @@
+.view {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg);
+  transform-origin: 0 0;
+  will-change: transform, opacity;
+  transition:
+    transform var(--motion-screen),
+    opacity var(--motion-screen);
+}
+
+/* Where the app itself is drawn */
+.content {
+  position: absolute;
+  inset: 0;
+  padding: calc(var(--safe-top) + var(--space-screen))
+    calc(var(--safe-right) + var(--space-screen))
+    calc(var(--safe-bottom) + var(--size-home-zone))
+    calc(var(--safe-left) + var(--space-screen));
+}
+
+/* The strip at the bottom edge you swipe up from to go home */
+.homeZone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--safe-bottom) + var(--size-home-zone));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+
+.homeBar {
+  width: 120px;
+  height: 5px;
+  border-radius: var(--radius-round);
+  background: var(--color-grey-700);
+}

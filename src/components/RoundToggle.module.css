@@ -1,0 +1,48 @@
+.toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-grey-400);
+  font: inherit;
+  touch-action: none;
+}
+
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  border-radius: var(--radius-round);
+  background: var(--color-grey-700);
+  color: var(--color-text);
+  transition:
+    transform var(--motion-control),
+    opacity var(--motion-control);
+}
+
+.circle svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Active toggles use the accent */
+.on .circle {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.toggle:active .circle {
+  transform: scale(0.92);
+  opacity: 0.7;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}

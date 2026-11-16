@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import { SettingsApp } from '../apps/settings/SettingsApp';
 import {
   CalculatorIcon,
   ClockIcon,
@@ -35,7 +36,13 @@ export const APPS: AppDefinition[] = [
   { id: 'calculator', name: 'Calculator', icon: CalculatorIcon, keywords: ['math', 'sum'] },
   { id: 'music', name: 'Music', icon: MusicIcon, keywords: ['spotify', 'songs'] },
   { id: 'maps', name: 'Maps', icon: MapsIcon, keywords: ['navigation', 'directions'] },
-  { id: 'settings', name: 'Settings', icon: SettingsIcon, keywords: ['preferences', 'options'] },
+  {
+    id: 'settings',
+    name: 'Settings',
+    icon: SettingsIcon,
+    keywords: ['preferences', 'options', 'sound'],
+    component: SettingsApp,
+  },
 ];
 
 export function getApp(id: string): AppDefinition | undefined {
