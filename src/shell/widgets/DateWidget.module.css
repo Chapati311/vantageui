@@ -1,15 +1,25 @@
+/* A thin ring just inside the edge */
+.ring {
+  position: absolute;
+  inset: 7cqmin;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-round);
+}
+
 .weekday {
-  font-size: max(10px, 13cqmin);
+  position: relative;
+  font-size: max(9px, 12cqmin);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-grey-400);
+  color: var(--color-muted);
 }
 
 .day {
+  position: relative;
   font-family: var(--font-display);
   font-variation-settings: var(--font-display-settings);
-  font-size: 38cqmin;
+  font-size: 36cqmin;
   font-weight: 800;
   line-height: 1;
 }

@@ -4,22 +4,26 @@
   width: 100%;
   height: 100%;
   transform: rotate(-90deg); /* start filling at the top */
+  overflow: visible;
 }
 
 .track,
 .level {
   fill: none;
-  stroke-width: 6;
 }
 
+/* A thin hairline circle... */
 .track {
-  stroke: var(--color-grey-700);
+  stroke: var(--color-hairline);
+  stroke-width: 1;
 }
 
-/* The one accent highlight on the home screen */
+/* ...with a glowing accent arc on top: the one highlight on the home screen */
 .level {
   stroke: var(--color-accent);
+  stroke-width: 3;
   stroke-linecap: round;
+  filter: var(--glow-accent-filter);
 }
 
 .percent {

@@ -3,6 +3,8 @@ import { useSyncExternalStore } from 'react';
 /** Small settings that are remembered on the device. */
 export interface Settings {
   soundsEnabled: boolean;
+  /** false = dark (default), true = light */
+  lightMode: boolean;
   // Quick settings. For now these only change how the toggles look.
   wifi: boolean;
   bluetooth: boolean;
@@ -14,6 +16,7 @@ export interface Settings {
 
 const DEFAULTS: Settings = {
   soundsEnabled: true,
+  lightMode: false,
   wifi: true,
   bluetooth: false,
   flashlight: false,
@@ -39,6 +42,9 @@ function subscribe(listener: () => void): () => void {
   listeners.add(listener);
   return () => listeners.delete(listener);
 }
+
+/** For code outside React that needs to react to a changed setting. */
+export const subscribeToSettings = subscribe;
 
 export function getSettings(): Settings {
   return settings;

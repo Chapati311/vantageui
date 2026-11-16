@@ -6,34 +6,59 @@
   line-height: 1;
 }
 
-/* 2x1: temperature on the left, text on the right */
+/* Small uppercase letter-spaced labels */
+.label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 2x1 */
 .row {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: space-between;
+  padding: 0 14px 0 18px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .row .temperature {
-  font-size: 46cqh;
+  font-size: 42cqh;
 }
 
-/* 2x2: stacked */
+.row .art {
+  width: 46cqh;
+}
+
+/* 2x2 */
 .tall {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  padding: 18px;
+}
+
+.top {
+  display: flex;
   align-items: flex-start;
-  gap: 12px;
+  justify-content: space-between;
 }
 
-.details {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 13px;
-  font-weight: 500;
+.tall .art {
+  width: 38cqw;
 }
 
-.place {
-  color: var(--color-grey-400);
-  font-variant-numeric: tabular-nums;
+.tall .temperature {
+  font-size: 36cqmin;
 }

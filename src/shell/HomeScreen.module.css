@@ -31,7 +31,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  border: 1.5px dashed var(--color-grey-400);
+  border: 1.5px dashed var(--color-muted);
   border-radius: var(--radius-widget);
   pointer-events: none;
 }

@@ -14,7 +14,7 @@
   width: 24px;
   height: 12px;
   padding: 2px;
-  border: 1.5px solid var(--color-grey-400);
+  border: 1.5px solid var(--color-muted);
   border-radius: 4px;
 }
 
@@ -27,7 +27,7 @@
   width: 2px;
   height: 4px;
   border-radius: 0 1px 1px 0;
-  background: var(--color-grey-400);
+  background: var(--color-muted);
 }
 
 .fill {

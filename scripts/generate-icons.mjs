@@ -21,6 +21,7 @@ const LOGO_SIZE = 0.56; // how much of the icon the V fills
 const DOT_RADIUS = 0.4; // relative to one grid cell
 const FROM = [0x6e, 0xe7, 0xb7]; // accent gradient start
 const TO = [0x14, 0xb8, 0xa6]; // accent gradient end
+const BG = [0x06, 0x09, 0x0d]; // background (same as --color-bg)
 
 /** All dots as { x, y, r } in 0..1 icon coordinates. */
 function dots() {
@@ -72,9 +73,9 @@ function png(size) {
       }
       const [r, g, b] = colorAt(x, y);
       const i = rowStart + 1 + px * 3;
-      raw[i] = Math.round(r * coverage);
-      raw[i + 1] = Math.round(g * coverage);
-      raw[i + 2] = Math.round(b * coverage);
+      raw[i] = Math.round(BG[0] + (r - BG[0]) * coverage);
+      raw[i + 1] = Math.round(BG[1] + (g - BG[1]) * coverage);
+      raw[i + 2] = Math.round(BG[2] + (b - BG[2]) * coverage);
     }
   }
   const header = Buffer.alloc(13);
@@ -94,7 +95,7 @@ function svg() {
   const circles = dots()
     .map((d) => `<circle cx="${(d.x * 100).toFixed(2)}" cy="${(d.y * 100).toFixed(2)}" r="${(d.r * 100).toFixed(2)}"/>`)
     .join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#14B8A6"/></linearGradient></defs><rect width="100" height="100" fill="#000"/><g fill="url(#g)">${circles}</g></svg>\n`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#14B8A6"/></linearGradient></defs><rect width="100" height="100" fill="#06090d"/><g fill="url(#g)">${circles}</g></svg>\n`;
 }
 
 mkdirSync(OUT_DIR, { recursive: true });

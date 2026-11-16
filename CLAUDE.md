@@ -35,7 +35,7 @@ should feel like they belong together.
 - Respect safe areas with `env(safe-area-inset-*)`.
 - Disable: page scrolling, overscroll bounce, pinch zoom, double-tap zoom,
   text selection, long-press callouts, tap highlight.
-- Only scroll inside specific containers (app drawer list, notes) when needed.
+- Only scroll inside specific containers (notes, long settings lists) when needed.
 - Touch targets at least 44 x 44 points.
 - Performance matters (A13 chip): animate only `transform` and `opacity`,
   avoid large `backdrop-filter` blurs, avoid re-rendering the whole app on
@@ -111,7 +111,8 @@ Core screens (the "shell"):
 - NO app list and NO app drawer. Apps live on the home screen pages.
 - Search: swipe down in the middle of the home screen for a minimal search
   that shows matching apps and actions as big glyph tiles.
-- Quick settings: swipe down from the very top edge, round toggles + brightness slider.
+- Quick settings: swipe down from the very top edge. A frosted glass panel with
+  large round toggles and a circular brightness dial you turn with a finger.
 - App view: apps open full-screen with a zoom animation that grows out of
   their icon; swipe up from the bottom edge to shrink back into the icon.
 
@@ -126,6 +127,19 @@ Mini-apps live inside the OS and use the design system:
 Clock (timer, stopwatch, world clock), Weather, Notes, Calculator, Settings,
 Phone (keypad + favorites via `tel:`), Messages (via `sms:`), and later an
 Assistant app that connects to Vantage.
+
+### Built so far (update this list when something is added)
+
+- Done: boot animation, living orbit lock screen, home grid with pages and edit
+  mode, app view with zoom, search, quick settings, UI sounds, light mode,
+  Settings app (Sounds, Light mode).
+- Placeholders only: every app except Settings shows a "coming soon" screen.
+  Weather data, the notification count and the quick settings controls are fake.
+- Not built yet: modes (Focus, Retro), adding/removing widgets in edit mode,
+  the real mini-apps, the native bridge beyond `getBattery`.
+- Known iOS limits: the battery level is unavailable in Safari (shows "--"),
+  and swipes from the very top/bottom edge of the screen belong to iOS, so
+  our edge zones are deliberately generous (top 56px, bottom 40px).
 
 ## Code organization
 
@@ -142,6 +156,13 @@ src/
 - Apps are registered in one place (`system/appRegistry.ts`) with id, name,
   icon, component, and which modes allow them. Adding an app should only mean
   creating its folder and adding one registry entry.
+- Widgets are registered in `shell/widgets/widgetRegistry.ts` (id, component,
+  allowed sizes) and placed in `shell/home/defaultLayout.ts`. The grid rules
+  live in `shell/home/layout.ts`; the saved layout is in localStorage.
+- Small saved settings go through `system/settingsStore.ts` (`useSetting`).
+- Dark and light are the same tokens in `theme/theme.css`; light mode is
+  `data-theme="light"` on `<html>`. Use `--motion-screen` and `--motion-control`
+  for every transition.
 - Keep files small and focused. One component per file.
 - Use TypeScript types for everything shared (apps, modes, settings).
 - All colors, fonts, radii and timings come from theme CSS variables, never
@@ -176,7 +197,8 @@ Planned bridge functions (all return Promises):
 - Build ONE feature at a time. Don't change unrelated things.
 - If my request is unclear, ask me one short question before building.
 - If something needs a command (installing a package etc.), tell me what it does.
-- Remind me to commit when a feature works.
+- Commit for me when a feature works and tell me in one line what was saved.
+  Local commits only: ask before pushing to GitHub.
 - Never delete my files or reset git history without asking first.
 
 ## Commands

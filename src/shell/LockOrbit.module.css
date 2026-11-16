@@ -1,0 +1,72 @@
+/* The point everything orbits around, a bit below the middle of the screen */
+.orbit {
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Moved by the unlock swipe. Snaps back with the shared screen timing. */
+.spread {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform, opacity;
+  transition:
+    transform var(--motion-screen),
+    opacity var(--motion-screen);
+}
+
+.ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  translate: -50% -50%;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-round);
+  animation: spin linear infinite;
+}
+
+/* The small "planet" riding on each ring */
+.dot {
+  position: absolute;
+  left: 50%;
+  top: -3.5px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: var(--radius-round);
+  background: var(--color-text);
+}
+
+/* The glowing accent in the middle */
+.core {
+  position: absolute;
+  left: -7px;
+  top: -7px;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-round);
+  background: var(--color-accent);
+  box-shadow:
+    var(--glow-accent),
+    0 0 60px rgba(45, 212, 191, 0.25);
+}
+
+.paused .ring {
+  animation-play-state: paused;
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring {
+    animation: none;
+  }
+}

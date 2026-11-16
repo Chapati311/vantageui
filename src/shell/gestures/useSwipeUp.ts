@@ -6,6 +6,11 @@ const DISTANCE_THRESHOLD = 0.5;
 interface SwipeUpOptions {
   enabled: boolean;
   onSwipedUp: () => void;
+  /**
+   * Called while dragging with how far the element has moved (0 = not at all,
+   * 1 = a full screen), and with `null` when the finger lifts.
+   */
+  onProgress?: (progress: number | null) => void;
 }
 
 /**
@@ -19,10 +24,11 @@ interface SwipeUpOptions {
 export function useSwipeUp<T extends HTMLElement>({
   enabled,
   onSwipedUp,
+  onProgress,
 }: SwipeUpOptions): RefObject<T | null> {
   const ref = useRef<T>(null);
-  const callback = useRef(onSwipedUp);
-  callback.current = onSwipedUp;
+  const callbacks = useRef({ onSwipedUp, onProgress });
+  callbacks.current = { onSwipedUp, onProgress };
 
   useEffect(() => {
     const el = ref.current;
@@ -43,6 +49,7 @@ export function useSwipeUp<T extends HTMLElement>({
       if (event.pointerId !== pointerId) return;
       const offset = Math.min(0, event.clientY - startY); // only upwards
       el.style.transform = `translate3d(0, ${offset}px, 0)`;
+      callbacks.current.onProgress?.(Math.min(1, -offset / el.offsetHeight));
     };
 
     const finish = (event: PointerEvent, cancelled: boolean) => {
@@ -50,7 +57,8 @@ export function useSwipeUp<T extends HTMLElement>({
       pointerId = null;
       const dragged = startY - event.clientY;
       const pastHalfway = dragged > el.offsetHeight * DISTANCE_THRESHOLD;
-      if (!cancelled && pastHalfway) callback.current();
+      if (!cancelled && pastHalfway) callbacks.current.onSwipedUp();
+      callbacks.current.onProgress?.(null);
       // Hand control back to the CSS, which animates to the resting position.
       el.style.transition = '';
       el.style.transform = '';

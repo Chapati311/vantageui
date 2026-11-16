@@ -14,7 +14,7 @@
 
 /* The dark dots of the matrix that are not part of the V */
 .unlit {
-  fill: var(--color-grey-900);
+  fill: var(--color-surface);
 }
 
 .lit {

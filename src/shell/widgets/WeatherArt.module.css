@@ -1,0 +1,11 @@
+.art {
+  display: block;
+  fill: none;
+  stroke: var(--color-muted);
+  stroke-width: 0.8;
+}
+
+.dot {
+  fill: var(--color-muted);
+  stroke: none;
+}

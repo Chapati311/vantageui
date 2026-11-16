@@ -1,6 +1,6 @@
 import { useRef } from 'react';
+import { Dial } from '../components/Dial';
 import { RoundToggle } from '../components/RoundToggle';
-import { Slider } from '../components/Slider';
 import {
   BluetoothIcon,
   FlashlightIcon,
@@ -20,8 +20,8 @@ interface QuickSettingsProps {
 const CLOSE_SWIPE = 40;
 
 /**
- * The panel that slides down from the top. For now the toggles only change
- * their look (and are remembered); they are not connected to the phone yet.
+ * The frosted panel that slides down from the top. For now the controls only
+ * change their look (and are remembered); they are not connected to the phone yet.
  */
 export function QuickSettings({ open, onClose }: QuickSettingsProps) {
   const [wifi, setWifi] = useSetting('wifi');
@@ -50,10 +50,12 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
         <div className={styles.toggles}>
           <RoundToggle label="Wi-Fi" icon={WifiIcon} on={wifi} onChange={setWifi} />
           <RoundToggle label="Bluetooth" icon={BluetoothIcon} on={bluetooth} onChange={setBluetooth} />
-          <RoundToggle label="Flashlight" icon={FlashlightIcon} on={flashlight} onChange={setFlashlight} />
+          <RoundToggle label="Light" icon={FlashlightIcon} on={flashlight} onChange={setFlashlight} />
           <RoundToggle label="DND" icon={MoonIcon} on={doNotDisturb} onChange={setDoNotDisturb} />
         </div>
-        <Slider label="Brightness" icon={SunIcon} value={brightness} onChange={setBrightness} />
+        <div className={styles.dial}>
+          <Dial label="Brightness" icon={SunIcon} value={brightness} onChange={setBrightness} />
+        </div>
         <span className={styles.handle} />
       </div>
     </div>

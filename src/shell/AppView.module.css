@@ -36,5 +36,5 @@
   width: 120px;
   height: 5px;
   border-radius: var(--radius-round);
-  background: var(--color-grey-700);
+  background: var(--color-surface-3);
 }

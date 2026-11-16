@@ -9,6 +9,7 @@ export function DateWidget() {
 
   return (
     <Widget shape="circle">
+      <span className={styles.ring} />
       <div className={styles.weekday}>{formatWeekday(now)}</div>
       <div className={styles.day}>{now.getDate()}</div>
     </Widget>
