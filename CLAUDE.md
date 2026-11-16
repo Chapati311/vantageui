@@ -97,6 +97,71 @@ share, and what Vantage OS should feel like:
 - **Light mode exists too (see 03, 05):** soft off-white `#EDEEF0`, same
   layout, black text, same accent.
 
+## Design system (follow EXACTLY, the goal is a flawless, premium UI)
+
+Perfection comes from consistency. Never invent a size, color, radius or
+timing: use these tokens (put them in `src/theme/tokens.css` / `tokens.ts`).
+
+### Grid (375 x 667)
+- Screen margin 16px. Gap 12px. 4 columns.
+  Cell = (375 - 2*16 - 3*12) / 4 = 76.75px. Every widget and icon snaps to
+  this grid: 1x1, 2x1, 2x2, 4x1, 4x2. Nothing sits off-grid.
+- Top: 20px status bar + 12px. Bottom: dock 76.75px high, 16px from the
+  bottom edge; page dots 8px above the dock in their own 16px row.
+- Rows on a home page are computed from the space between the top and
+  the page dots. A page may NEVER overflow. Max 7 items per page.
+- Spacing scale: 4, 8, 12, 16, 24, 32. No other values.
+
+### Hierarchy
+- Every page has ONE hero (e.g. the clock). Everything else is quieter.
+- Max ONE accent-colored element per page.
+- Empty space is intentional. Fewer, better items beat a full page.
+
+### Surfaces and depth
+- Widget surface: `linear-gradient(180deg, #121920 0%, #0D1218 100%)`
+- Border: 1px `rgba(255,255,255,0.06)`
+- Top highlight: `inset 0 1px 0 rgba(255,255,255,0.05)`
+- Radii: square widgets 28px, pills 999px, circles 50%. Nothing else.
+- Accent glow (only on the accent element):
+  `0 0 24px rgba(45,212,191,0.35)`
+- Optional very subtle noise texture on the background (2-3% opacity).
+
+### Typography scale
+- Inter: 11 (labels, uppercase, +0.12em letter-spacing), 13, 15, 17, 22.
+- Doto dot numbers: 28, 40, 64, 96. All dot numbers share one style.
+- Instrument Serif: 34 for page titles only.
+- Text colors: primary `#FFFFFF`, secondary `#8A939C`, tertiary `#4F5862`.
+- Use tabular numbers so digits never jump when they change.
+
+### Icons
+- ONE icon set only (Phosphor "Light" or custom SVG), 24px, 1.5px stroke,
+  round caps and joins, white. Optically centered in their circle.
+- Icon circles are exactly one grid cell.
+
+### Motion (this is what makes it feel premium)
+- Use `motion` (Framer Motion) springs + `@use-gesture/react`. No linear or
+  plain CSS-ease animations for anything you can touch.
+- Springs: UI default `stiffness 400, damping 34`; app open/close
+  `stiffness 260, damping 28`; sheets `stiffness 300, damping 30`.
+- Gestures follow the finger 1:1. On release, use the swipe VELOCITY to
+  decide where to go (a quick flick works even if the distance is short).
+- Rubber-band at edges (resistance factor 0.55).
+- Every animation is interruptible: grabbing something mid-animation
+  catches it smoothly, no jumps.
+- Press state on everything tappable: scale 0.96 on press, spring back.
+- App open: the app grows out of the exact icon position; closing shrinks
+  it back into the icon.
+- Numbers that change (clock, battery) animate dot by dot, not jump.
+- Performance: animate only transform and opacity, use motion values
+  instead of React state during gestures, `will-change` only while
+  animating. Must hold 60 fps on the iPhone SE (A13).
+
+### Quality check (do this after EVERY UI change)
+1. Take a screenshot with Playwright at 375x667 (set it up once).
+2. Look at the screenshot yourself and check: on-grid? equal gaps? one hero?
+   one accent? nothing overlapping or clipped? text readable? same dot style?
+3. Fix what fails, screenshot again, and only then tell me it's done.
+
 ## Structure of the OS
 
 Core screens (the "shell"):
