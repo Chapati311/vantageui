@@ -37,5 +37,5 @@
   border-radius: 1.5px;
   background: var(--color-text);
   transform-origin: left center;
-  transition: transform var(--duration-normal) var(--ease-out);
+  transition: transform var(--motion-control);
 }

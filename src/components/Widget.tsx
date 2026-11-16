@@ -1,22 +1,13 @@
 import type { ReactNode } from 'react';
 import styles from './Widget.module.css';
 
-export type WidgetSize = 'small' | 'wide';
-
 interface WidgetProps {
-  /** small = one grid column (square), wide = both columns */
-  size: WidgetSize;
-  /** Tiny heading in the top-left corner */
-  label?: string;
+  /** circle = fully round (a pill when the widget is wider than tall) */
+  shape: 'circle' | 'rounded';
   children: ReactNode;
 }
 
-/** The rounded card every home screen widget sits in. */
-export function Widget({ size, label, children }: WidgetProps) {
-  return (
-    <section className={`${styles.widget} ${styles[size]}`}>
-      {label && <h2 className={styles.label}>{label}</h2>}
-      {children}
-    </section>
-  );
+/** The dark card every home screen widget sits in. It fills its grid slot. */
+export function Widget({ shape, children }: WidgetProps) {
+  return <div className={`${styles.widget} ${styles[shape]}`}>{children}</div>;
 }

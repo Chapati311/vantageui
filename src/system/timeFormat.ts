@@ -10,6 +10,8 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
   month: 'long',
 });
 
+const weekdayFormat = new Intl.DateTimeFormat('en-GB', { weekday: 'short' });
+
 /** "08:02" */
 export function formatTime(date: Date): string {
   return timeFormat.format(date);
@@ -18,4 +20,9 @@ export function formatTime(date: Date): string {
 /** "Monday 16 November" */
 export function formatDate(date: Date): string {
   return dateFormat.format(date).replace(',', '');
+}
+
+/** "Mon" */
+export function formatWeekday(date: Date): string {
+  return weekdayFormat.format(date);
 }

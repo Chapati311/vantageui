@@ -22,15 +22,19 @@
 
   /* Shapes and spacing */
   --radius-widget: 26px;
-  --radius-icon: 18px;
+  --radius-round: 9999px;
   --space-screen: 24px;
   --space-grid: 12px;
-  --size-app-icon: 56px;
 
   /* Motion */
   --duration-fast: 150ms;
   --duration-normal: 250ms;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Use these two for EVERY transition so the whole OS moves the same way:
+     screen  = things that slide/zoom across the screen (pages, panels, apps)
+     control = small feedback (presses, toggles, dots) */
+  --motion-screen: var(--duration-normal) var(--ease-out);
+  --motion-control: var(--duration-fast) var(--ease-out);
 
   /* Safe areas (status bar, home indicator). 0 on devices without them. */
   --safe-top: env(safe-area-inset-top, 0px);

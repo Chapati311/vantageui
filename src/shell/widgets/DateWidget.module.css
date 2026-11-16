@@ -1,0 +1,15 @@
+.weekday {
+  font-size: max(10px, 13cqmin);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-grey-400);
+}
+
+.day {
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-settings);
+  font-size: 38cqmin;
+  font-weight: 800;
+  line-height: 1;
+}

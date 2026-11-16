@@ -1,46 +1,32 @@
-.percent {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  font-family: var(--font-display);
-  font-variation-settings: var(--font-display-settings);
-  font-size: 56px;
-  font-weight: 800;
-  line-height: 1;
+.ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg); /* start filling at the top */
 }
 
-.unit {
-  margin-left: 6px;
-  font-family: var(--font-body);
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--color-grey-400);
-}
-
-.bottom {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.status {
-  font-size: 13px;
-  font-weight: 500;
+.track,
+.level {
+  fill: none;
+  stroke-width: 6;
 }
 
 .track {
-  height: 6px;
-  border-radius: 3px;
-  background: var(--color-grey-700);
-  overflow: hidden;
+  stroke: var(--color-grey-700);
 }
 
 /* The one accent highlight on the home screen */
-.fill {
-  width: 100%;
-  height: 100%;
-  border-radius: 3px;
-  background: var(--gradient-accent);
-  transform-origin: left center;
-  transition: transform var(--duration-normal) var(--ease-out);
+.level {
+  stroke: var(--color-accent);
+  stroke-linecap: round;
+}
+
+.percent {
+  position: relative;
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-settings);
+  font-size: 28cqmin;
+  font-weight: 800;
+  line-height: 1;
 }

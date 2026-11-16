@@ -1,23 +1,42 @@
 import type { ComponentType } from 'react';
-import { ClockIcon, MessagesIcon, NotesIcon, PhoneIcon } from './appIcons';
+import {
+  CalculatorIcon,
+  ClockIcon,
+  MapsIcon,
+  MessagesIcon,
+  MusicIcon,
+  NotesIcon,
+  PhoneIcon,
+  SettingsIcon,
+  WeatherIcon,
+} from './appIcons';
 
 export interface AppDefinition {
   id: string;
   name: string;
   icon: ComponentType;
-  // Later: the app's screen component and which modes allow it.
+  /** Extra words the search should find this app by */
+  keywords?: string[];
+  /** The app's own screen. Apps without one show a "coming soon" screen. */
+  component?: ComponentType;
 }
 
-/** Every app in the OS is listed here, in one place. */
+/**
+ * Every app in the OS is listed here, in ONE place.
+ * To add an app, add one entry: it then shows up on the home screen
+ * (in the first free spot) and in search automatically.
+ */
 export const APPS: AppDefinition[] = [
-  { id: 'phone', name: 'Phone', icon: PhoneIcon },
-  { id: 'messages', name: 'Messages', icon: MessagesIcon },
-  { id: 'notes', name: 'Notes', icon: NotesIcon },
-  { id: 'clock', name: 'Clock', icon: ClockIcon },
+  { id: 'phone', name: 'Phone', icon: PhoneIcon, keywords: ['call', 'dial'] },
+  { id: 'messages', name: 'Messages', icon: MessagesIcon, keywords: ['sms', 'text', 'chat'] },
+  { id: 'notes', name: 'Notes', icon: NotesIcon, keywords: ['write', 'memo'] },
+  { id: 'clock', name: 'Clock', icon: ClockIcon, keywords: ['timer', 'stopwatch', 'alarm'] },
+  { id: 'weather', name: 'Weather', icon: WeatherIcon, keywords: ['forecast', 'rain'] },
+  { id: 'calculator', name: 'Calculator', icon: CalculatorIcon, keywords: ['math', 'sum'] },
+  { id: 'music', name: 'Music', icon: MusicIcon, keywords: ['spotify', 'songs'] },
+  { id: 'maps', name: 'Maps', icon: MapsIcon, keywords: ['navigation', 'directions'] },
+  { id: 'settings', name: 'Settings', icon: SettingsIcon, keywords: ['preferences', 'options'] },
 ];
-
-/** The 4 apps shown in the dock, left to right. */
-export const DOCK_APP_IDS = ['phone', 'messages', 'notes', 'clock'];
 
 export function getApp(id: string): AppDefinition | undefined {
   return APPS.find((app) => app.id === id);

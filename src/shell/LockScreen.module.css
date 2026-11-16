@@ -11,7 +11,7 @@
   touch-action: none;
   will-change: transform;
   transform: translate3d(0, 0, 0);
-  transition: transform var(--duration-normal) var(--ease-out);
+  transition: transform var(--motion-screen);
 }
 
 /* Slid away above the top of the screen */

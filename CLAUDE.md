@@ -46,14 +46,15 @@ should feel like they belong together.
 Clean, minimal, confident. Inspired by Nothing OS, but ORIGINAL: never copy
 Nothing's logos, fonts, glyphs or exact layouts.
 
-- Base colors: true black `#000000`, white `#FFFFFF`, greys
-  (`#111111`, `#1C1C1E`, `#2C2C2E`, `#8E8E93`).
+- Base colors: deep blue-black `#06090D`, surfaces `#0E141A` and `#151C23`,
+  white `#FFFFFF`, muted text `#8A939C`, hairlines `rgba(255,255,255,0.12)`.
 - Accent: mint-to-teal, matching the Vantage assistant.
   - Accent solid: `#2DD4BF`
   - Accent gradient: `linear-gradient(135deg, #6EE7B7, #14B8A6)`
   - Use the accent sparingly: one highlight per screen, active toggles, the logo.
 - Fonts (Google Fonts, self-hosted so they work offline):
-  - Display (clock, big numbers, headings): **Doto** (dot-matrix style)
+  - Display (clock, big numbers): **Doto** (dot-matrix style)
+  - Editorial titles (rare): **Instrument Serif**
   - Body / UI text: **Inter**
 - Shapes: large rounded widgets (radius 24-28px), round toggles, generous spacing.
 - Text: as little as possible. Short labels, lots of empty space.
@@ -62,6 +63,39 @@ Nothing's logos, fonts, glyphs or exact layouts.
 - Sound: very subtle UI sounds (unlock, open app, toggle), with a setting to
   turn them off. A web app can't detect silent mode, so keep them quiet.
 - Logo: a single bold "V" drawn in dots, in the accent color.
+
+## Visual references (folder `inspiration/`)
+
+Look at the images in `inspiration/` before designing any screen. What they
+share, and what Vantage OS should feel like:
+
+- **Deep and dark, one glowing accent.** Near-black with a hint of blue
+  (background `#06090D`, surfaces `#0E141A` / `#151C23`) instead of flat grey.
+  The mint-teal accent glows softly, like light, not like paint.
+- **Big expressive numbers.** The clock, temperature, timers and battery are
+  hero elements: huge dot-matrix numbers (Doto). In some places numbers can
+  run vertically, rotated 90deg (see 01), e.g. the timer in the Clock app.
+- **Thin lines and rings.** 1px hairlines, thin circular rings and dials
+  (see 04). Quick settings brightness/volume are circular dials you rotate
+  with your finger, not plain sliders. Battery is a ring.
+- **Mixed widget shapes (see 02, 03).** Circles and rounded squares of
+  different sizes on one grid. One widget per page may be filled with the
+  accent (like Nothing's red circle); everything else stays monochrome.
+- **Line-art and dot illustrations inside widgets (see 02, 06).** Weather
+  details drawn as simple wireframe shapes and dot grids instead of emoji or
+  colorful icons.
+- **Editorial moments.** Occasional big serif words for titles and empty
+  states (font: **Instrument Serif**, see 01), with small uppercase
+  letter-spaced labels. Use rarely, so it feels special.
+- **Soft glass, used sparingly (see 05, 06).** A few frosted cards for
+  overlays like search and quick settings. Keep blur small: the A13 must
+  stay at 60 fps.
+- **A living lock screen (see 07).** An animated wallpaper that reacts to
+  the unlock swipe, e.g. orbiting dots or particles that spread apart as you
+  swipe up, with subtle parallax. Pause all animation when the screen is not
+  visible to save battery.
+- **Light mode exists too (see 03, 05):** soft off-white `#EDEEF0`, same
+  layout, black text, same accent.
 
 ## Structure of the OS
 

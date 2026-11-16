@@ -1,18 +1,13 @@
 import type { AppDefinition } from '../system/appRegistry';
 import styles from './AppIcon.module.css';
 
-interface AppIconProps {
-  app: AppDefinition;
-  onOpen?: (app: AppDefinition) => void;
-}
-
-/** A round-cornered app button. Used in the dock, later in the app drawer too. */
-export function AppIcon({ app, onOpen }: AppIconProps) {
-  const Icon = app.icon;
+/** A white glyph on a dark circle. No label. It fills its grid slot. */
+export function AppIcon({ app }: { app: AppDefinition }) {
+  const Glyph = app.icon;
 
   return (
-    <button type="button" className={styles.icon} aria-label={app.name} onClick={() => onOpen?.(app)}>
-      <Icon />
-    </button>
+    <div className={styles.icon} role="button" aria-label={app.name}>
+      <Glyph />
+    </div>
   );
 }

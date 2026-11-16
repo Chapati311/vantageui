@@ -1,26 +1,19 @@
 .widget {
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  padding: 18px;
-  border-radius: var(--radius-widget);
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   background: var(--color-grey-900);
 }
 
-.small {
-  aspect-ratio: 1;
+.rounded {
+  border-radius: var(--radius-widget);
 }
 
-.wide {
-  grid-column: 1 / -1;
-  min-height: 150px;
-}
-
-.label {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-grey-400);
+.circle {
+  border-radius: var(--radius-round);
 }

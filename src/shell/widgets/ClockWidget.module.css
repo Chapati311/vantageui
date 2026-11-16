@@ -1,24 +1,23 @@
-.wrap {
-  flex: 1;
+/* Sizes use "cq" units = percent of the widget's own size, so they scale. */
+.stack,
+.line {
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-settings);
+  font-weight: 800;
+  line-height: 0.95;
+}
+
+.stack {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-family: var(--font-display);
-  font-variation-settings: var(--font-display-settings);
+  font-size: 41cqh;
 }
 
-.time {
-  font-size: 76px;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.date {
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.minutes {
   color: var(--color-grey-400);
+}
+
+.line {
+  font-size: 54cqh;
 }

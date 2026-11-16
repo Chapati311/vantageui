@@ -1,19 +1,26 @@
 import { Widget } from '../../components/Widget';
-import { formatDate, formatTime } from '../../system/timeFormat';
+import { formatTime } from '../../system/timeFormat';
 import { useClock } from '../../system/useClock';
+import type { WidgetProps } from './types';
 import styles from './ClockWidget.module.css';
 
-export function ClockWidget() {
+/** Dot-matrix clock. 2x2: hours above minutes. 2x1: one line. */
+export function ClockWidget({ size }: WidgetProps) {
   const now = useClock();
+  const [hours, minutes] = formatTime(now).split(':');
 
   return (
-    <Widget size="wide">
-      <div className={styles.wrap}>
-        <time className={styles.time} dateTime={now.toISOString()}>
-          {formatTime(now)}
+    <Widget shape="rounded">
+      {size === '2x2' ? (
+        <time className={styles.stack} dateTime={now.toISOString()}>
+          <span>{hours}</span>
+          <span className={styles.minutes}>{minutes}</span>
         </time>
-        <div className={styles.date}>{formatDate(now)}</div>
-      </div>
+      ) : (
+        <time className={styles.line} dateTime={now.toISOString()}>
+          {hours}:{minutes}
+        </time>
+      )}
     </Widget>
   );
 }

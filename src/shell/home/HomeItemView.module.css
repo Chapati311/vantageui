@@ -1,0 +1,90 @@
+/* The frame is moved with transform only, so rearranging animates smoothly. */
+.frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: transform var(--motion-screen);
+}
+
+.hidden {
+  visibility: hidden;
+  transition: none;
+}
+
+.ghost {
+  z-index: 10;
+  pointer-events: none;
+  transition: none;
+}
+
+/* "container" lets the widget inside size its text relative to this box. */
+.content {
+  width: 100%;
+  height: 100%;
+  container-type: size;
+  transition:
+    transform var(--motion-control),
+    opacity var(--motion-control);
+}
+
+/* The dragged copy looks picked up */
+.lifted {
+  transform: scale(1.06);
+  opacity: 0.9;
+}
+
+/* Edit mode */
+.wiggle {
+  animation: wiggle 0.28s ease-in-out infinite alternate;
+}
+
+.wiggleAlt {
+  animation-delay: -0.14s;
+}
+
+@keyframes wiggle {
+  from {
+    transform: rotate(-1.2deg);
+  }
+  to {
+    transform: rotate(1.2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wiggle {
+    animation: none;
+  }
+}
+
+/* Resize button: a 44px touch target with a small white badge inside */
+.resize {
+  position: absolute;
+  right: -14px;
+  bottom: -14px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+
+.resizeBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-round);
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+.resizeBadge svg {
+  width: 14px;
+  height: 14px;
+}
