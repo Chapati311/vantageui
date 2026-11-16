@@ -68,11 +68,18 @@ Nothing's logos, fonts, glyphs or exact layouts.
 Core screens (the "shell"):
 - Boot animation: dotted "V" logo + "VANTAGE OS", about 2 seconds.
 - Lock screen: big Doto clock, date, battery, swipe up to unlock.
-- Home screen: widget grid (clock, weather, battery, next timer) + a dock of 4 apps.
-- App drawer: swipe up from home, alphabetical list with search.
-- Quick settings: swipe down from the top, round toggles + brightness slider.
-- App view: apps open full-screen with a zoom animation; swipe up from the
-  bottom edge to go home.
+- Home screen (Nothing-inspired, original): a 4-column grid where widgets and
+  app icons live together. Widgets in 1x1, 2x1 and 2x2 sizes, shaped as circles
+  and rounded squares (big dot-matrix clock, weather, battery ring, date).
+  App icons are monochrome white glyphs on dark circles, no labels.
+  Several pages swiped left/right with dot indicators. Long-press to enter
+  edit mode and drag/resize items; the layout is saved on the device.
+- NO app list and NO app drawer. Apps live on the home screen pages.
+- Search: swipe down in the middle of the home screen for a minimal search
+  that shows matching apps and actions as big glyph tiles.
+- Quick settings: swipe down from the very top edge, round toggles + brightness slider.
+- App view: apps open full-screen with a zoom animation that grows out of
+  their icon; swipe up from the bottom edge to shrink back into the icon.
 
 Modes (each mode = a theme + a list of allowed apps):
 - **Clean** (default): the main Vantage OS look.
@@ -90,7 +97,7 @@ Assistant app that connects to Vantage.
 
 ```
 src/
-  shell/        lock screen, home, drawer, quick settings, boot, gestures
+  shell/        lock screen, home, search, quick settings, boot, gestures
   apps/         one folder per mini-app (apps/clock, apps/weather, ...)
   modes/        mode definitions (clean, focus, retro)
   theme/        CSS variables, fonts, shared styles

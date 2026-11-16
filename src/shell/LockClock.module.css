@@ -4,7 +4,7 @@
   align-items: center;
   gap: 12px;
   font-family: var(--font-display);
-  font-variation-settings: 'ROND' 100; /* round dots instead of squares */
+  font-variation-settings: var(--font-display-settings);
   text-align: center;
 }
 

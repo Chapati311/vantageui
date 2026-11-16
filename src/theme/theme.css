@@ -17,10 +17,15 @@
   /* Fonts */
   --font-display: 'Doto Variable', ui-monospace, monospace;
   --font-body: 'Inter Variable', system-ui, sans-serif;
+  /* Use together with --font-display: round dots instead of squares */
+  --font-display-settings: 'ROND' 100;
 
   /* Shapes and spacing */
   --radius-widget: 26px;
+  --radius-icon: 18px;
   --space-screen: 24px;
+  --space-grid: 12px;
+  --size-app-icon: 56px;
 
   /* Motion */
   --duration-fast: 150ms;

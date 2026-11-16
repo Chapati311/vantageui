@@ -1,0 +1,22 @@
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-app-icon);
+  height: var(--size-app-icon);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-icon);
+  background: var(--color-grey-700);
+  color: var(--color-text);
+  font: inherit;
+  touch-action: none;
+  transition: transform var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+}
+
+/* Press feedback */
+.icon:active {
+  transform: scale(0.92);
+  opacity: 0.7;
+}
