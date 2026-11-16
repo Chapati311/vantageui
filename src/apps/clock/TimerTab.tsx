@@ -13,6 +13,7 @@ import {
 } from './clockStore';
 import { formatCountdown } from './format';
 import styles from './TimerTab.module.css';
+import { Pressable } from '../../components/Pressable';
 
 const MINUTE = 60_000;
 const PRESET_MINUTES = [1, 5, 10, 25];
@@ -59,15 +60,14 @@ export function TimerTab() {
         <div className={`${styles.setup} ${canEdit ? '' : styles.locked}`}>
           <div className={styles.presets}>
             {PRESET_MINUTES.map((minutes) => (
-              <button
+              <Pressable
                 key={minutes}
-                type="button"
                 className={`${styles.preset} ${timer.durationMs === minutes * MINUTE ? styles.selected : ''}`}
                 aria-label={`${minutes} minutes`}
                 onClick={() => setTimerDuration(minutes * MINUTE)}
               >
                 {minutes}
-              </button>
+              </Pressable>
             ))}
           </div>
           <div className={styles.stepper}>

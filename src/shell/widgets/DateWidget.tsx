@@ -1,3 +1,4 @@
+import { DotNumber } from '../../components/DotNumber';
 import { Widget } from '../../components/Widget';
 import { formatWeekday } from '../../system/timeFormat';
 import { useClock } from '../../system/useClock';
@@ -9,9 +10,10 @@ export function DateWidget() {
 
   return (
     <Widget shape="circle">
-      <span className={styles.ring} />
-      <div className={styles.weekday}>{formatWeekday(now)}</div>
-      <div className={styles.day}>{now.getDate()}</div>
+      <div className={styles.date}>
+        <span className="label">{formatWeekday(now)}</span>
+        <DotNumber value={String(now.getDate())} size={28} />
+      </div>
     </Widget>
   );
 }

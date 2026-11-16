@@ -1,31 +1,17 @@
-.temperature {
-  font-size: 40cqmin;
-}
-
-/* Small uppercase letter-spaced labels */
-.label {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: var(--color-muted);
-  font-variant-numeric: tabular-nums;
+.details {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
 }
 
 .condition {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 13px;
+  font-size: var(--text-13);
   font-weight: 500;
-}
-
-.column {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  line-height: 1;
 }
 
 /* 2x1 */
@@ -33,12 +19,8 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 14px 0 16px;
-}
-
-.row .temperature {
-  font-size: 44cqh;
+  gap: var(--space-12);
+  padding: 0 var(--space-16);
 }
 
 /* 2x2 */
@@ -48,7 +30,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 16px;
+  padding: var(--space-16);
 }
 
 .top {
@@ -58,9 +40,5 @@
 }
 
 .art {
-  width: 34cqw;
-}
-
-.tall .temperature {
-  font-size: 34cqmin;
+  width: var(--space-32);
 }

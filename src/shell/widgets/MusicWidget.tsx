@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Pressable } from '../../components/Pressable';
 import { Widget } from '../../components/Widget';
 import { PauseIcon, PlayIcon, SkipNextIcon, SkipPreviousIcon } from '../../components/glyphs';
 import styles from './MusicWidget.module.css';
@@ -45,15 +46,14 @@ export function MusicWidget() {
   return (
     <Widget shape="rounded">
       <div className={styles.music}>
-        <span className={styles.label}>Now playing</span>
+        <span className="label">Now playing</span>
 
         <div className={styles.controls}>
-          <button type="button" className={styles.skip} aria-label="Previous track" data-no-gesture onClick={() => skip(-1)}>
+          <Pressable className={styles.skip} aria-label="Previous track" data-no-gesture onClick={() => skip(-1)}>
             <SkipPreviousIcon />
-          </button>
+          </Pressable>
 
-          <button
-            type="button"
+          <Pressable
             className={styles.play}
             aria-label={playing ? 'Pause' : 'Play'}
             data-no-gesture
@@ -71,16 +71,16 @@ export function MusicWidget() {
               />
             </svg>
             {playing ? <PauseIcon /> : <PlayIcon />}
-          </button>
+          </Pressable>
 
-          <button type="button" className={styles.skip} aria-label="Next track" data-no-gesture onClick={() => skip(1)}>
+          <Pressable className={styles.skip} aria-label="Next track" data-no-gesture onClick={() => skip(1)}>
             <SkipNextIcon />
-          </button>
+          </Pressable>
         </div>
 
         <div className={styles.text}>
           <span className={styles.title}>{track.title}</span>
-          <span className={styles.label}>{track.artist}</span>
+          <span className="label">{track.artist}</span>
         </div>
       </div>
     </Widget>

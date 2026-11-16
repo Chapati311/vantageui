@@ -2,5 +2,6 @@
 @import '@fontsource-variable/doto/full.css'; /* "full" includes round dots */
 @import '@fontsource-variable/inter';
 @import '@fontsource/instrument-serif/400.css';
+@import './tokens.css';
 @import './theme.css';
 @import './global.css';

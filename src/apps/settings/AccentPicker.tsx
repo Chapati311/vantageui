@@ -1,5 +1,6 @@
 import type { AccentId } from '../../system/settingsStore';
 import styles from './AccentPicker.module.css';
+import { Pressable } from '../../components/Pressable';
 
 interface AccentPickerProps {
   accents: { id: AccentId; name: string }[];
@@ -12,9 +13,8 @@ export function AccentPicker({ accents, value, onChange }: AccentPickerProps) {
   return (
     <div className={styles.picker} role="radiogroup" aria-label="Accent color">
       {accents.map((accent) => (
-        <button
+        <Pressable
           key={accent.id}
-          type="button"
           role="radio"
           aria-checked={accent.id === value}
           aria-label={accent.name}
@@ -24,7 +24,7 @@ export function AccentPicker({ accents, value, onChange }: AccentPickerProps) {
           onClick={() => onChange(accent.id)}
         >
           <span className={styles.color} />
-        </button>
+        </Pressable>
       ))}
     </div>
   );

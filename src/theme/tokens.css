@@ -1,0 +1,86 @@
+/*
+ * THE DESIGN SYSTEM, as CSS variables. Every value here comes from the
+ * "Design system" section of CLAUDE.md. Never invent a size, color, radius
+ * or timing in a component: use one of these.
+ * (tokens.ts holds the same numbers for the places where JavaScript needs them.)
+ */
+:root {
+  /* ---- Grid (designed for 375 x 667) ---------------------------------- */
+  --grid-columns: 4;
+  --grid-margin: 16px; /* screen edge to the grid */
+  --grid-gap: 12px; /* between cells */
+  /* One cell: (375 - 2*16 - 3*12) / 4 = 76.75px on an iPhone SE */
+  --grid-cell: calc((100vw - 2 * var(--grid-margin) - 3 * var(--grid-gap)) / 4);
+
+  /* Top: the 20px status bar + 12px. On the phone the status bar is the safe area. */
+  --status-bar: 20px;
+  --top-inset: calc(max(var(--status-bar), env(safe-area-inset-top, 0px)) + var(--space-12));
+
+  /* Bottom: dock one cell high, 16px from the edge; dots in a 16px row, 8px above it */
+  --dock-height: var(--grid-cell);
+  --dock-bottom: calc(var(--space-16) + env(safe-area-inset-bottom, 0px));
+  --dots-row: var(--space-16);
+  --dots-gap: var(--space-8);
+
+  /* ---- Spacing scale: these six values and no others ------------------- */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  /* ---- Surfaces and depth ---------------------------------------------- */
+  --color-bg: #06090d;
+  --surface-widget: linear-gradient(180deg, #121920 0%, #0d1218 100%);
+  --border-widget: 1px solid rgba(255, 255, 255, 0.06);
+  --highlight-top: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  /* Radii: square widgets, pills, circles. Nothing else. */
+  --radius-widget: 28px;
+  --radius-pill: 999px;
+  --radius-circle: 50%;
+
+  /* ---- Accent ---------------------------------------------------------- */
+  --accent-rgb: 45 212 191; /* #2DD4BF as red green blue */
+  --color-on-accent: #06090d; /* text and glyphs on top of the accent */
+  /* (--color-accent and --glow-accent are built from --accent-rgb in theme.css,
+     so the accent chosen in Settings flows through.) */
+
+  /* ---- Typography ------------------------------------------------------ */
+  --font-body: 'Inter Variable', system-ui, sans-serif;
+  --font-display: 'Doto Variable', ui-monospace, monospace;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+
+  /* Inter sizes */
+  --text-11: 11px; /* labels: uppercase, letter-spaced */
+  --text-13: 13px;
+  --text-15: 15px;
+  --text-17: 17px;
+  --text-22: 22px;
+  --label-tracking: 0.12em;
+
+  /* Dot numbers: the height of one digit */
+  --dot-28: 28px;
+  --dot-40: 40px;
+  --dot-64: 64px;
+  --dot-96: 96px;
+
+  /* Instrument Serif: page titles only */
+  --serif-34: 34px;
+
+  /* Text colors */
+  --text-primary: #ffffff;
+  --text-secondary: #8a939c;
+  --text-tertiary: #4f5862;
+
+  /* ---- Icons ----------------------------------------------------------- */
+  --icon-size: 24px;
+  --icon-stroke: 1.5;
+
+  /* ---- Motion ---------------------------------------------------------- */
+  /* Anything you can touch moves with springs (see tokens.ts).
+     These two are only for things that fade on their own (blinks, dots lighting up). */
+  --fade-fast: 150ms;
+  --fade-normal: 250ms;
+}

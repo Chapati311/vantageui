@@ -3,11 +3,15 @@
  * so they are easy to reason about and test.
  */
 
-export const COLS = 4;
+import { GRID } from '../../theme/tokens';
+
+export const COLS = GRID.columns;
 /** The most rows a page can ever have. The real number depends on the screen. */
 export const MAX_ROWS = 6;
 export const MIN_ROWS = 2;
 export const MAX_PAGES = 5;
+/** Design system: fewer, better items. A page never holds more than this. */
+export const MAX_ITEMS_PER_PAGE = GRID.maxItemsPerPage;
 
 /** One thing on the home screen: a widget or an app icon. */
 export interface HomeItem {
@@ -94,6 +98,9 @@ export function placeItem(
 ): HomeItem[] | null {
   const item = layout.find((i) => i.id === id);
   if (!item || !inBounds(target, rows)) return null;
+  // Moving onto another page is refused when that page is already full.
+  const onTargetPage = layout.filter((i) => i.id !== id && i.page === target.page).length;
+  if (item.page !== target.page && onTargetPage >= MAX_ITEMS_PER_PAGE) return null;
 
   const moved: HomeItem = { ...item, ...target };
   const samePage = layout.filter((i) => i.id !== id && i.page === target.page);
@@ -121,6 +128,8 @@ export function firstFreeSlot(
   rows = MAX_ROWS,
 ): Slot | null {
   for (let page = fromPage; page < MAX_PAGES; page++) {
+    // A full page takes no more items, even if it has empty cells.
+    if (layout.filter((item) => item.page === page).length >= MAX_ITEMS_PER_PAGE) continue;
     for (let row = 0; row <= rows - size.h; row++) {
       for (let col = 0; col <= COLS - size.w; col++) {
         // Only take the width and height: `size` may be a whole item with its own position.

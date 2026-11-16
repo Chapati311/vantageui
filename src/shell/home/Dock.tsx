@@ -1,4 +1,5 @@
 import { AppIcon } from '../../components/AppIcon';
+import { Pressable } from '../../components/Pressable';
 import { DOCK_APP_IDS, getApp } from '../../system/appRegistry';
 import styles from './Dock.module.css';
 
@@ -18,9 +19,8 @@ export function Dock({ onOpenApp }: DockProps) {
         const app = getApp(id);
         if (!app) return null;
         return (
-          <button
+          <Pressable
             key={id}
-            type="button"
             className={styles.slot}
             aria-label={app.name}
             // The dock handles its own taps (the page-swipe code ignores it)
@@ -28,7 +28,7 @@ export function Dock({ onOpenApp }: DockProps) {
             onClick={(event) => onOpenApp(id, event.currentTarget.getBoundingClientRect())}
           >
             <AppIcon app={app} />
-          </button>
+          </Pressable>
         );
       })}
     </nav>

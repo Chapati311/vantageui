@@ -1,4 +1,5 @@
 import styles from './Segmented.module.css';
+import { Pressable } from './Pressable';
 
 interface SegmentedProps<T extends string> {
   /** What this control chooses, for screen readers */
@@ -13,16 +14,15 @@ export function Segmented<T extends string>({ label, options, value, onChange }:
   return (
     <div className={styles.segmented} role="tablist" aria-label={label}>
       {options.map((option) => (
-        <button
+        <Pressable
           key={option.id}
-          type="button"
           role="tab"
           aria-selected={option.id === value}
           className={`${styles.option} ${option.id === value ? styles.selected : ''}`}
           onClick={() => onChange(option.id)}
         >
           {option.label}
-        </button>
+        </Pressable>
       ))}
     </div>
   );

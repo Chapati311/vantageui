@@ -5,46 +5,38 @@
   background: var(--color-bg);
   touch-action: none;
   will-change: transform;
-  transform: translate3d(0, 0, 0);
-  transition: transform var(--motion-screen);
 }
 
-/* Slid away above the top of the screen */
+/* Slid away: touches go through to the home screen */
 .unlocked {
-  transform: translate3d(0, -100%, 0);
   pointer-events: none;
 }
 
-/* Top row: notifications on the left, battery on the right */
+/* Status row: notifications on the left, battery on the right */
 .status {
   position: absolute;
-  top: calc(var(--safe-top) + var(--space-screen));
-  left: calc(var(--safe-left) + var(--space-screen));
-  right: calc(var(--safe-right) + var(--space-screen));
+  top: var(--top-inset);
+  left: var(--grid-margin);
+  right: var(--grid-margin);
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* Clock in the upper part, leaving the middle to the orbit wallpaper */
+/* The hero of this screen: the clock, in the upper part */
 .clock {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(var(--safe-top) + 84px);
+  left: var(--grid-margin);
+  right: var(--grid-margin);
+  top: calc(var(--top-inset) + var(--space-32) + var(--space-24));
 }
 
 .hint {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: calc(var(--safe-bottom) + var(--space-screen));
+  bottom: var(--dock-bottom);
   text-align: center;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-muted);
   animation: breathe 2.4s ease-in-out infinite;
 }
 

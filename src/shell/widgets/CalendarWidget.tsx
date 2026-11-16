@@ -1,3 +1,4 @@
+import { DotNumber } from '../../components/DotNumber';
 import { Widget } from '../../components/Widget';
 import { useClock } from '../../system/useClock';
 import styles from './CalendarWidget.module.css';
@@ -8,23 +9,25 @@ import styles from './CalendarWidget.module.css';
  */
 const DEMO_EVENT = { title: 'Design review', time: '14:30' };
 
-const weekdayFormat = new Intl.DateTimeFormat('en-GB', { weekday: 'long' });
-const monthFormat = new Intl.DateTimeFormat('en-GB', { month: 'long' });
+const dateFormat = new Intl.DateTimeFormat('en-GB', { weekday: 'short', month: 'short' });
 
 /** Today's date, and the next event under a thin line. */
 export function CalendarWidget() {
   const now = useClock();
+  const parts = dateFormat.formatToParts(now);
+  const part = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
 
   return (
     <Widget shape="rounded">
       <div className={styles.calendar}>
-        <div>
-          <div className={styles.label}>{weekdayFormat.format(now)}</div>
-          <div className={styles.day}>{now.getDate()}</div>
-          <div className={styles.label}>{monthFormat.format(now)}</div>
+        <div className={styles.today}>
+          <span className="label">
+            {part('weekday')} · {part('month')}
+          </span>
+          <DotNumber value={String(now.getDate())} size={40} />
         </div>
         <div className={styles.event}>
-          <span className={styles.label}>Next · {DEMO_EVENT.time}</span>
+          <span className="label">Next · {DEMO_EVENT.time}</span>
           <span className={styles.title}>{DEMO_EVENT.title}</span>
         </div>
       </div>

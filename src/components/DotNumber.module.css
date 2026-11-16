@@ -1,0 +1,56 @@
+.number {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--text-primary);
+}
+
+.muted {
+  color: var(--text-secondary);
+}
+
+.number svg {
+  display: block;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
+/* A dot fades on or off; each dot starts a moment after the one before it */
+.on,
+.off {
+  transition: opacity var(--fade-fast) linear;
+}
+
+.on {
+  opacity: 1;
+}
+
+.off {
+  opacity: 0;
+}
+
+/* The colon dims and comes back once per second. It never switches off hard. */
+.blink {
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blink {
+    animation: none;
+  }
+
+  .on,
+  .off {
+    transition: none;
+  }
+}

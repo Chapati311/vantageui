@@ -3,6 +3,7 @@ import { ScrollArea } from '../../components/ScrollArea';
 import { ChecklistIcon, PlusIcon } from '../../components/glyphs';
 import { notePreview, noteTitle, type Note } from './notesStore';
 import styles from './NotesList.module.css';
+import { Pressable } from '../../components/Pressable';
 
 interface NotesListProps {
   notes: Note[];
@@ -36,13 +37,13 @@ export function NotesList({ notes, loaded, onOpen, onCreate }: NotesListProps) {
       ) : (
         <ScrollArea className={styles.notes}>
           {notes.map((note) => (
-            <button key={note.id} type="button" className={styles.note} onClick={() => onOpen(note.id)}>
+            <Pressable key={note.id} type="button" className={styles.note} onClick={() => onOpen(note.id)}>
               <span className={styles.noteTitle}>{noteTitle(note)}</span>
               <span className={styles.meta}>
                 <span className={styles.label}>{dateFormat.format(note.updatedAt)}</span>
                 <span className={styles.preview}>{notePreview(note)}</span>
               </span>
-            </button>
+            </Pressable>
           ))}
         </ScrollArea>
       )}

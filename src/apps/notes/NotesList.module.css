@@ -43,11 +43,6 @@
   font: inherit;
   text-align: left;
   touch-action: pan-y;
-  transition: opacity var(--motion-control);
-}
-
-.note:active {
-  opacity: 0.6;
 }
 
 .noteTitle {

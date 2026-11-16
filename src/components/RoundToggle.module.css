@@ -2,52 +2,36 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-muted);
   font: inherit;
   touch-action: none;
 }
 
-/* Off: a thin ring */
+/* Off: a dark circle, exactly one grid cell */
 .circle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 68px;
-  height: 68px;
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-round);
-  background: var(--color-surface-2);
-  color: var(--color-text);
-  transition:
-    transform var(--motion-control),
-    opacity var(--motion-control);
+  width: 100%;
+  aspect-ratio: 1;
+  border: var(--border-widget);
+  border-radius: var(--radius-circle);
+  background: var(--surface-widget);
+  box-shadow: var(--highlight-top);
+  color: var(--text-primary);
 }
 
 .circle svg {
-  width: 26px;
-  height: 26px;
+  width: var(--icon-size);
+  height: var(--icon-size);
 }
 
-/* On: filled with the accent, glowing softly */
+/* On: lit up white. (The accent is kept for the dial: one accent per screen.) */
 .on .circle {
   border-color: transparent;
-  background: var(--color-accent);
-  color: var(--color-on-accent);
-  box-shadow: var(--glow-accent);
-}
-
-.toggle:active .circle {
-  transform: scale(0.92);
-  opacity: 0.7;
-}
-
-.label {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  background: var(--text-primary);
+  color: var(--color-bg);
 }

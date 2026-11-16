@@ -1,23 +1,6 @@
-/* Sizes use "cq" units = percent of the widget's own size, so they scale. */
-.stack,
-.line {
-  font-family: var(--font-display);
-  font-variation-settings: var(--font-display-settings);
-  font-weight: 800;
-  line-height: 0.95;
-}
-
-.stack {
+.clock {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 41cqh;
-}
-
-.minutes {
-  color: var(--color-muted);
-}
-
-.line {
-  font-size: 54cqh;
+  gap: var(--space-12);
 }

@@ -18,10 +18,12 @@ const STAGGER_MS = 45;
 interface DotLogoProps {
   /** Light the dots up one by one instead of showing them all at once */
   animated?: boolean;
+  /** White instead of the accent (for pages that already have an accent element) */
+  mono?: boolean;
 }
 
 /** The logo: a bold "V" drawn in dots, in the accent colors. */
-export function DotLogo({ animated = false }: DotLogoProps) {
+export function DotLogo({ animated = false, mono = false }: DotLogoProps) {
   let litCount = 0;
 
   return (
@@ -42,7 +44,7 @@ export function DotLogo({ animated = false }: DotLogoProps) {
               cx={x + 0.5}
               cy={y + 0.5}
               r={0.36}
-              className={lit ? `${styles.lit} ${animated ? styles.appear : ''}` : styles.unlit}
+              className={lit ? `${mono ? styles.litMono : styles.lit} ${animated ? styles.appear : ''}` : styles.unlit}
               style={lit && animated ? { animationDelay: `${delay}ms` } : undefined}
             />
           );

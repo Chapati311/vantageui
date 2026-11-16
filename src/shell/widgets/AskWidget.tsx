@@ -11,7 +11,8 @@ export function AskWidget() {
   return (
     <div className={styles.bar} role="button" aria-label="Ask Vantage">
       <span className={styles.logo}>
-        <DotLogo />
+        {/* Monochrome here: the page already has its one accent element */}
+        <DotLogo mono />
       </span>
       <span className={styles.placeholder}>Ask anything</span>
       <span className={styles.mic}>

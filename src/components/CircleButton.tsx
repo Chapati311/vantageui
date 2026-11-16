@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import styles from './CircleButton.module.css';
+import { Pressable } from './Pressable';
 
 interface CircleButtonProps {
   /** What the button does, for screen readers */
@@ -21,8 +22,8 @@ export function CircleButton({ label, onClick, primary, small, disabled, childre
     .join(' ');
 
   return (
-    <button type="button" className={className} aria-label={label} disabled={disabled} onClick={onClick}>
+    <Pressable className={className} aria-label={label} disabled={disabled} onClick={onClick}>
       {children}
-    </button>
+    </Pressable>
   );
 }

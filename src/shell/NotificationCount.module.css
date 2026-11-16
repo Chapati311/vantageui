@@ -1,24 +1,25 @@
 .wrap {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
+  gap: var(--space-8);
+  font-size: var(--text-13);
   font-weight: 500;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 
 .bell {
   display: flex;
-  color: var(--color-muted);
+  color: var(--text-secondary);
 }
 
 .bell svg {
-  width: 16px;
-  height: 16px;
+  width: var(--space-16);
+  height: var(--space-16);
 }
 
 /* Something is waiting */
 .active {
-  color: var(--color-text);
+  color: var(--text-primary);
 }

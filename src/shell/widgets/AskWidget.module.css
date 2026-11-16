@@ -4,40 +4,42 @@
   height: 100%;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 0 10px 0 20px;
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-round);
+  gap: var(--space-12);
+  padding: 0 var(--space-12) 0 var(--space-24);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
   background: var(--glass-bg);
+  box-shadow: var(--highlight-top);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
 }
 
 .logo {
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  width: var(--icon-size);
+  height: var(--icon-size);
 }
 
 .placeholder {
   flex: 1;
-  font-size: 16px;
-  color: var(--color-muted);
+  font-size: var(--text-15);
+  color: var(--text-secondary);
 }
 
+/* A circle inset 12px from the bar's edges */
 .mic {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-round);
-  background: var(--color-surface-2);
+  height: calc(100% - 2 * var(--space-12));
+  aspect-ratio: 1;
+  border: var(--border-widget);
+  border-radius: var(--radius-circle);
+  background: var(--surface-widget);
 }
 
 .mic svg {
-  width: 22px;
-  height: 22px;
+  width: var(--icon-size);
+  height: var(--icon-size);
 }

@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 import { playSound } from '../system/sounds';
 import styles from './RoundToggle.module.css';
+import { Pressable } from './Pressable';
 
 interface RoundToggleProps {
   label: string;
@@ -9,7 +10,10 @@ interface RoundToggleProps {
   onChange: (on: boolean) => void;
 }
 
-/** A large round on/off button with a glyph, used in quick settings. */
+/**
+ * A large round on/off button with a glyph, used in quick settings.
+ * No visible text: the glyph says it (the label is still read out by screen readers).
+ */
 export function RoundToggle({ label, icon: Glyph, on, onChange }: RoundToggleProps) {
   const flip = () => {
     onChange(!on);
@@ -17,8 +21,7 @@ export function RoundToggle({ label, icon: Glyph, on, onChange }: RoundTogglePro
   };
 
   return (
-    <button
-      type="button"
+    <Pressable
       aria-pressed={on}
       aria-label={label}
       className={`${styles.toggle} ${on ? styles.on : ''}`}
@@ -27,7 +30,6 @@ export function RoundToggle({ label, icon: Glyph, on, onChange }: RoundTogglePro
       <span className={styles.circle}>
         <Glyph />
       </span>
-      <span className={styles.label}>{label}</span>
-    </button>
+    </Pressable>
   );
 }

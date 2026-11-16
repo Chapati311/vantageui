@@ -1,7 +1,10 @@
+import { motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState, type ComponentType, type RefObject } from 'react';
 import { APPS } from '../system/appRegistry';
 import type { ScreenRect } from './AppView';
+import { SPRING } from '../theme/tokens';
 import styles from './Search.module.css';
+import { Pressable } from '../components/Pressable';
 
 /** Something search can do that is not an app (lock, mute, ...). */
 export interface SearchAction {
@@ -80,8 +83,12 @@ export function Search({ open, inputRef, actions, onClose, onOpenApp }: SearchPr
   };
 
   return (
-    <div
+    <motion.div
       className={`${styles.search} ${open ? styles.open : ''}`}
+      initial={false}
+      // Springs down a little as it fades in
+      animate={{ opacity: open ? 1 : 0, y: open ? 0 : -16 }}
+      transition={SPRING.sheet}
       aria-hidden={!open}
       onPointerDown={(event) => {
         swipeStartY.current = event.clientY;
@@ -121,9 +128,8 @@ export function Search({ open, inputRef, actions, onClose, onOpenApp }: SearchPr
         {results.map((result) => {
           const Glyph = result.icon;
           return (
-            <button
+            <Pressable
               key={result.key}
-              type="button"
               className={styles.tile}
               data-result={result.key}
               tabIndex={open ? 0 : -1}
@@ -131,10 +137,10 @@ export function Search({ open, inputRef, actions, onClose, onOpenApp }: SearchPr
             >
               <Glyph />
               <span className={styles.name}>{result.name}</span>
-            </button>
+            </Pressable>
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -1,44 +1,31 @@
-/* Hidden: parked just above the screen */
+/* Position and fade are driven by motion (see TimerBanner.tsx) */
 .banner {
   position: absolute;
   left: 50%;
-  top: calc(var(--safe-top) + 12px);
+  top: var(--top-inset);
   display: flex;
   align-items: center;
-  gap: 10px;
-  height: 44px;
-  padding: 0 20px;
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-round);
+  gap: var(--space-8);
+  height: calc(var(--space-32) + var(--space-12));
+  padding: 0 var(--space-24);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
   background: var(--glass-bg);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
-  color: var(--color-text);
-  font: inherit;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  white-space: nowrap;
+  color: var(--text-primary);
   touch-action: none;
-  opacity: 0;
   pointer-events: none;
-  transform: translate3d(-50%, -80px, 0);
-  transition:
-    transform var(--motion-screen),
-    opacity var(--motion-screen);
 }
 
 .show {
-  opacity: 1;
   pointer-events: auto;
-  transform: translate3d(-50%, 0, 0);
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-round);
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--radius-circle);
   background: var(--color-accent);
   box-shadow: var(--glow-accent);
 }

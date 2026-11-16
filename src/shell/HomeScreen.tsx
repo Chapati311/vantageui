@@ -1,7 +1,9 @@
+import { motion, useMotionValue } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Pressable } from '../components/Pressable';
 import { getWidget } from './widgets/widgetRegistry';
 import { Dock } from './home/Dock';
-import { HomeItemView } from './home/HomeItemView';
+import { HomeItemContent, HomeItemView } from './home/HomeItemView';
 import { PageDots } from './home/PageDots';
 import {
   COLS,
@@ -14,7 +16,7 @@ import {
   type HomeItem,
 } from './home/layout';
 import { loadLayout, saveLayout } from './home/layoutStore';
-import { slotRect, trackTransform, useGridMetrics } from './home/useGridMetrics';
+import { slotRect, useGridMetrics } from './home/useGridMetrics';
 import { useHomeGestures } from './home/useHomeGestures';
 import styles from './HomeScreen.module.css';
 
@@ -29,14 +31,19 @@ interface HomeScreenProps {
 
 /**
  * The home screen: pages of a 4-column grid where widgets and app icons
- * live together, with a fixed dock underneath. Long-press to rearrange and resize.
+ * live together, with page dots and a fixed dock underneath.
+ * Every size and position comes from the design system grid (tokens.css).
+ * Long-press to rearrange and resize.
  */
 export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeScreenProps) {
   const surfaceRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const ghostRef = useRef<HTMLDivElement>(null);
   const metrics = useGridMetrics(surfaceRef, gridRef);
+
+  // Motion values: moving these moves things on screen without re-rendering React.
+  const trackX = useMotionValue(0); // the row of pages
+  const ghostX = useMotionValue(0); // the copy of an item that follows the finger
+  const ghostY = useMotionValue(0);
 
   // What is saved on the device (laid out for the tallest screen)...
   const [saved, setSaved] = useState<HomeItem[]>(loadLayout);
@@ -85,13 +92,14 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
     const currentIndex = sizes.indexOf(`${item.w}x${item.h}` as (typeof sizes)[number]);
     for (let offset = 1; offset < sizes.length; offset++) {
       const [w, h] = sizes[(currentIndex + offset) % sizes.length].split('x').map(Number);
-      const next = placeItem(layoutRef.current, id, {
+      const target = {
         page: item.page,
         col: Math.min(item.col, COLS - w),
         row: Math.min(item.row, rows - h),
         w,
         h,
-      }, rows);
+      };
+      const next = placeItem(layoutRef.current, id, target, rows);
       if (next) {
         commit(next);
         return;
@@ -115,12 +123,15 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
     }
   };
 
-  const { drag, dropTarget } = useHomeGestures(surfaceRef, trackRef, ghostRef, {
+  const { drag, dropTarget } = useHomeGestures(surfaceRef, {
     metrics,
     layout,
     page,
     pageCount,
     editing,
+    trackX,
+    ghostX,
+    ghostY,
     setPage,
     startEditing: () => setEditing(true),
     stopEditing,
@@ -131,15 +142,13 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
   });
 
   const draggedItem = drag ? layout.find((item) => item.id === drag.id) : undefined;
+  const dropRect = metrics && dropTarget ? slotRect({ ...dropTarget, page }, metrics) : null;
+  const draggedRect = metrics && draggedItem ? slotRect(draggedItem, metrics) : null;
 
   return (
     <div ref={surfaceRef} className={styles.home}>
       <div ref={gridRef} className={styles.grid}>
-        <div
-          ref={trackRef}
-          className={styles.track}
-          style={{ transform: trackTransform(page, metrics?.pitch ?? 0) }}
-        >
+        <motion.div className={styles.track} style={{ x: trackX }}>
           {metrics &&
             layout.map((item, index) => (
               <HomeItemView
@@ -152,44 +161,43 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
                 onResize={resizeItem}
               />
             ))}
-          {metrics && dropTarget && (
-            <DropOutline {...slotRect({ ...dropTarget, page }, metrics)} />
+          {dropRect && (
+            <div
+              className={styles.dropOutline}
+              style={{
+                width: dropRect.width,
+                height: dropRect.height,
+                transform: `translate3d(${dropRect.x}px, ${dropRect.y}px, 0)`,
+              }}
+            />
           )}
-        </div>
+        </motion.div>
+
+        {editing && (
+          <Pressable className={styles.done} data-no-gesture onClick={stopEditing}>
+            Done
+          </Pressable>
+        )}
       </div>
 
-      {/* Page dots sit between the pages and the dock, never on top of either */}
+      {/* Page dots have their own row, 8px above the dock */}
       <div className={styles.dots}>
         <PageDots count={pageCount} current={Math.min(page, pageCount - 1)} />
-        {editing && (
-          <button type="button" className={styles.done} data-no-gesture onClick={stopEditing}>
-            Done
-          </button>
-        )}
       </div>
 
       <Dock onOpenApp={(appId, from) => onOpenApp?.(appId, from)} />
 
-      {metrics && drag && draggedItem && (
-        <HomeItemView
-          ghost
-          frameRef={ghostRef}
-          item={draggedItem}
-          {...slotRect(draggedItem, metrics)}
-          x={drag.x}
-          y={drag.y}
-        />
+      {/* The copy of an item that follows the finger while dragging */}
+      {draggedItem && draggedRect && (
+        <motion.div
+          className={styles.ghost}
+          style={{ x: ghostX, y: ghostY, width: draggedRect.width, height: draggedRect.height }}
+        >
+          <div className={styles.lifted}>
+            <HomeItemContent item={draggedItem} />
+          </div>
+        </motion.div>
       )}
     </div>
-  );
-}
-
-/** Shows where the dragged item will land. */
-function DropOutline({ x, y, width, height }: { x: number; y: number; width: number; height: number }) {
-  return (
-    <div
-      className={styles.dropOutline}
-      style={{ width, height, transform: `translate3d(${x}px, ${y}px, 0)` }}
-    />
   );
 }

@@ -15,14 +15,6 @@
   border-radius: var(--radius-round);
   background: none;
   touch-action: pan-y;
-  transition:
-    transform var(--motion-control),
-    opacity var(--motion-control);
-}
-
-.swatch:active {
-  transform: scale(0.92);
-  opacity: 0.7;
 }
 
 .color {

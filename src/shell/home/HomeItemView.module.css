@@ -1,36 +1,25 @@
-/* The frame is moved with transform only, so rearranging animates smoothly. */
+/* Position comes from motion (transform only), so rearranging is smooth */
 .frame {
   position: absolute;
   left: 0;
   top: 0;
-  transition: transform var(--motion-screen);
 }
 
 .hidden {
   visibility: hidden;
-  transition: none;
 }
 
-.ghost {
-  z-index: 10;
-  pointer-events: none;
-  transition: none;
+/* Shrinks slightly while pressed (see Pressable.tsx) */
+.press {
+  width: 100%;
+  height: 100%;
 }
 
-/* "container" lets the widget inside size its text relative to this box. */
+/* "container" lets the widget inside size things relative to this box */
 .content {
   width: 100%;
   height: 100%;
   container-type: size;
-  transition:
-    transform var(--motion-control),
-    opacity var(--motion-control);
-}
-
-/* The dragged copy looks picked up */
-.lifted {
-  transform: scale(1.06);
-  opacity: 0.9;
 }
 
 /* Edit mode: buttons inside widgets are switched off so you can drag the widget */
@@ -38,7 +27,6 @@
   pointer-events: none;
 }
 
-/* Edit mode */
 .wiggle {
   animation: wiggle 0.28s ease-in-out infinite alternate;
 }
@@ -62,13 +50,13 @@
   }
 }
 
-/* Resize button: a 44px touch target with a small white badge inside */
+/* Resize button: a large touch target with a small white badge inside */
 .resize {
   position: absolute;
-  right: -14px;
-  bottom: -14px;
-  width: 44px;
-  height: 44px;
+  right: calc(var(--space-12) * -1);
+  bottom: calc(var(--space-12) * -1);
+  width: calc(var(--space-32) + var(--space-12));
+  height: calc(var(--space-32) + var(--space-12));
   padding: 0;
   border: 0;
   background: none;
@@ -82,14 +70,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-round);
-  background: var(--color-text);
+  width: var(--space-24);
+  height: var(--space-24);
+  border-radius: var(--radius-circle);
+  background: var(--text-primary);
   color: var(--color-bg);
 }
 
 .resizeBadge svg {
-  width: 14px;
-  height: 14px;
+  width: var(--space-16);
+  height: var(--space-16);
 }

@@ -1,4 +1,5 @@
 import { useState, type ComponentType, type PointerEvent } from 'react';
+import { DotNumber } from './DotNumber';
 import styles from './Dial.module.css';
 
 interface DialProps {
@@ -81,8 +82,8 @@ export function Dial({ label, icon: Glyph, value, onChange }: DialProps) {
       </svg>
       <div className={styles.center}>
         <Glyph />
-        <span className={styles.value}>{Math.round(shown * 100)}</span>
-        <span className={styles.label}>{label}</span>
+        <DotNumber value={String(Math.round(shown * 100))} size={40} />
+        <span className="label">{label}</span>
       </div>
     </div>
   );

@@ -1,15 +1,15 @@
+import { animate, type MotionValue } from 'motion/react';
 import { useEffect, useRef, useState, type RefObject } from 'react';
+import { MOTION, SPRING, rubberBand } from '../../theme/tokens';
 import { COLS, type HomeItem } from './layout';
-import { trackTransform, type GridMetrics } from './useGridMetrics';
+import type { GridMetrics } from './useGridMetrics';
 
 /** Hold a finger still this long to enter edit mode. */
 const LONG_PRESS_MS = 450;
 /** A finger must move this far (px) before it counts as a swipe or drag. */
 const MOVE_SLOP = 8;
-/** Swipe further than this share of the screen to change page... */
-const PAGE_DISTANCE = 0.25;
-/** ...or flick faster than this (px per ms). */
-const PAGE_FLICK = 0.4;
+/** Without a flick, swipe further than this share of the screen to change page. */
+const PAGE_DISTANCE = 0.5;
 /** While dragging an item: hold it this close (px) to a screen edge to change page. */
 const EDGE_ZONE = 28;
 const EDGE_FLIP_MS = 600;
@@ -17,14 +17,12 @@ const EDGE_FLIP_MS = 600;
 const SWIPE_DOWN_MIN = 40;
 /** A downward swipe that starts within this many px of the top is a "top edge" swipe. */
 const TOP_EDGE = 56;
-/** Time for a dropped item to glide into its slot. */
-const SETTLE_MS = 180;
+/** How long the dropped item is given to spring into its slot. */
+const SETTLE_MS = 260;
 
-/** The item being dragged, and where it was picked up (home screen pixels). */
+/** The item being dragged. */
 export interface DragState {
   id: string;
-  x: number;
-  y: number;
 }
 
 /** The cell the dragged item would land on (on the current page). */
@@ -41,6 +39,11 @@ interface Options {
   page: number;
   pageCount: number;
   editing: boolean;
+  /** Where the row of pages is: 0 = page 1, -screenWidth = page 2, ... */
+  trackX: MotionValue<number>;
+  /** Where the dragged copy of an item is, in home screen pixels */
+  ghostX: MotionValue<number>;
+  ghostY: MotionValue<number>;
   setPage: (page: number) => void;
   startEditing: () => void;
   stopEditing: () => void;
@@ -55,26 +58,35 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 
 /**
  * All touch handling for the home screen, in one place:
- *  - swipe left/right      -> change page (the pages follow the finger)
+ *  - swipe left/right      -> change page. The pages follow the finger 1:1,
+ *                             rubber-band at the ends, and a spring finishes
+ *                             the move. A quick flick is enough.
  *  - long-press            -> edit mode (and pick up the item under the finger)
  *  - drag in edit mode     -> move an item, hold at a screen edge to change page
  *  - swipe down            -> search (or quick settings, from the top edge)
  *  - tap                   -> open an app / leave edit mode
  *
- * While a finger is moving we change `transform` directly on the elements
- * instead of re-rendering React, which keeps it at 60 fps.
+ * While a finger is moving we only change "motion values" (no React
+ * re-render), which keeps it at 60 fps. Grabbing the pages while they are
+ * still springing catches them where they are.
  */
-export function useHomeGestures(
-  surfaceRef: RefObject<HTMLElement | null>,
-  trackRef: RefObject<HTMLElement | null>,
-  ghostRef: RefObject<HTMLElement | null>,
-  options: Options,
-) {
+export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, options: Options) {
   const latest = useRef(options);
   latest.current = options;
 
   const [drag, setDrag] = useState<DragState | null>(null);
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
+  /** True while a finger is moving the pages, so nothing else animates them. */
+  const paging = useRef(false);
+
+  // When the page changes for any other reason (dragging an item to the edge,
+  // a page disappearing), spring the row of pages there.
+  const { page, metrics, trackX } = options;
+  const pitch = metrics?.pitch ?? 0;
+  useEffect(() => {
+    if (paging.current) return;
+    animate(trackX, -page * pitch, SPRING.ui);
+  }, [page, pitch, trackX]);
 
   useEffect(() => {
     const surface = surfaceRef.current;
@@ -91,10 +103,13 @@ export function useHomeGestures(
     let startY = 0;
     let lastX = 0;
     let lastTime = 0;
-    let velocityX = 0;
+    let velocityX = 0; // px per ms
 
     let pressedItemId: string | null = null;
     let longPressTimer = 0;
+
+    // Paging
+    let trackStart = 0;
 
     // Dragging an item
     let dragItem: HomeItem | null = null;
@@ -121,30 +136,41 @@ export function useHomeGestures(
 
     // ---- Paging -----------------------------------------------------------
 
+    const beginPaging = () => {
+      const { trackX } = latest.current;
+      mode = 'paging';
+      paging.current = true;
+      capture();
+      trackX.stop(); // catch the pages mid-spring
+      trackStart = trackX.get();
+    };
+
     const movePaging = () => {
-      const { page, pageCount, metrics } = latest.current;
-      const track = trackRef.current;
-      if (!track || !metrics) return;
-      let dx = pointerX - startX;
-      const pullingPastEnd = (page === 0 && dx > 0) || (page === pageCount - 1 && dx < 0);
-      if (pullingPastEnd) dx *= 0.3; // rubber-band feel at the first/last page
-      track.style.transform = trackTransform(page, metrics.pitch, dx);
+      const { pageCount, metrics, trackX } = latest.current;
+      if (!metrics) return;
+      const furthest = -(pageCount - 1) * metrics.pitch;
+      trackX.set(rubberBand(trackStart + (pointerX - startX), furthest, 0));
     };
 
     const endPaging = (cancelled: boolean) => {
-      const { page, pageCount, metrics, setPage } = latest.current;
-      const track = trackRef.current;
+      const { page, pageCount, metrics, trackX, setPage } = latest.current;
       mode = 'idle';
-      if (!track || !metrics) return;
-      const dx = pointerX - startX;
+      paging.current = false;
+      if (!metrics) return;
+
+      // Where the pages are now, counted in pages (e.g. 0.4 = 40% towards page 2)
+      const position = -trackX.get() / metrics.pitch;
       let next = page;
       if (!cancelled) {
-        const far = Math.abs(dx) > metrics.pitch * PAGE_DISTANCE;
-        const fast = Math.abs(velocityX) > PAGE_FLICK && Math.sign(velocityX) === Math.sign(dx);
-        if (far || fast) next = clamp(page - Math.sign(dx), 0, pageCount - 1);
+        if (Math.abs(velocityX) > MOTION.flickVelocity) {
+          // A flick goes one page in its direction, however short it was.
+          next = velocityX < 0 ? Math.floor(position) + 1 : Math.ceil(position) - 1;
+        } else if (Math.abs(position - page) > PAGE_DISTANCE) {
+          next = Math.round(position);
+        }
       }
-      track.style.transition = ''; // back to the CSS snap animation
-      track.style.transform = trackTransform(next, metrics.pitch);
+      next = clamp(next, 0, pageCount - 1);
+      animate(trackX, -next * metrics.pitch, { ...SPRING.ui, velocity: velocityX * 1000 });
       if (next !== page) setPage(next);
     };
 
@@ -155,7 +181,11 @@ export function useHomeGestures(
       if (!metrics || !dragItem) return;
       const step = metrics.cell + metrics.gap;
       const col = clamp(Math.round((pointerX - grabX - metrics.originX) / step), 0, COLS - dragItem.w);
-      const row = clamp(Math.round((pointerY - grabY - metrics.originY) / step), 0, metrics.rows - dragItem.h);
+      const row = clamp(
+        Math.round((pointerY - grabY - metrics.originY) / step),
+        0,
+        metrics.rows - dragItem.h,
+      );
       if (!target || target.col !== col || target.row !== row) {
         target = { col, row, w: dragItem.w, h: dragItem.h };
         setDropTarget(target);
@@ -172,7 +202,8 @@ export function useHomeGestures(
     };
 
     const beginDrag = (itemId: string) => {
-      const item = latest.current.layout.find((i) => i.id === itemId);
+      const { layout, ghostX, ghostY } = latest.current;
+      const item = layout.find((i) => i.id === itemId);
       const element = surface.querySelector<HTMLElement>(`[data-item-id="${itemId}"]`);
       if (!item || !element) {
         mode = 'ignored';
@@ -186,13 +217,16 @@ export function useHomeGestures(
       target = null;
       mode = 'dragging';
       capture();
-      setDrag({ id: itemId, x: pointerX - grabX, y: pointerY - grabY });
+      ghostX.set(pointerX - grabX);
+      ghostY.set(pointerY - grabY);
+      setDrag({ id: itemId });
       updateTarget();
     };
 
     const moveDrag = () => {
-      const ghost = ghostRef.current;
-      if (ghost) ghost.style.transform = `translate3d(${pointerX - grabX}px, ${pointerY - grabY}px, 0)`;
+      const { ghostX, ghostY } = latest.current;
+      ghostX.set(pointerX - grabX);
+      ghostY.set(pointerY - grabY);
       updateTarget();
 
       const direction =
@@ -207,19 +241,20 @@ export function useHomeGestures(
     const endDrag = (cancelled: boolean) => {
       window.clearTimeout(edgeTimer);
       edgeDirection = 0;
-      const { page, metrics, onMoveItem } = latest.current;
+      const { page, metrics, ghostX, ghostY, onMoveItem } = latest.current;
       const item = dragItem!;
       const placed =
         !cancelled && target ? onMoveItem(item.id, { page, col: target.col, row: target.row }) : item;
 
-      // Let the dragged copy glide into its final slot, then remove it.
-      const ghost = ghostRef.current;
-      if (ghost && metrics) {
+      // The dragged copy springs into its final slot, then is removed.
+      if (metrics) {
         const step = metrics.cell + metrics.gap;
-        const x = metrics.originX + placed.col * step + (placed.page - page) * metrics.pitch;
-        const y = metrics.originY + placed.row * step;
-        ghost.style.transition = 'transform var(--duration-fast) var(--ease-out)';
-        ghost.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        animate(
+          ghostX,
+          metrics.originX + placed.col * step + (placed.page - page) * metrics.pitch,
+          SPRING.ui,
+        );
+        animate(ghostY, metrics.originY + placed.row * step, SPRING.ui);
       }
       dragItem = null;
       target = null;
@@ -272,9 +307,7 @@ export function useHomeGestures(
         if (latest.current.editing && pressedItemId) {
           beginDrag(pressedItemId);
         } else if (Math.abs(dx) > Math.abs(dy)) {
-          mode = 'paging';
-          capture();
-          if (trackRef.current) trackRef.current.style.transition = 'none';
+          beginPaging();
         } else {
           mode = latest.current.editing ? 'ignored' : 'vertical';
         }
@@ -289,6 +322,8 @@ export function useHomeGestures(
       pointerId = -1;
       window.clearTimeout(longPressTimer);
       readPointer(event);
+      // A finger that rested before lifting is not a flick.
+      if (event.timeStamp - lastTime > 80) velocityX = 0;
 
       if (mode === 'paging') endPaging(cancelled);
       else if (mode === 'dragging') endDrag(cancelled);
@@ -333,7 +368,7 @@ export function useHomeGestures(
       window.clearTimeout(edgeTimer);
       window.clearTimeout(settleTimer);
     };
-  }, [surfaceRef, trackRef, ghostRef]);
+  }, [surfaceRef]);
 
   return { drag, dropTarget };
 }

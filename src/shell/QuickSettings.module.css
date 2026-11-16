@@ -8,19 +8,14 @@
   pointer-events: auto;
 }
 
+/* Fades in with the panel (driven by motion) */
 .backdrop {
   position: absolute;
   inset: 0;
   background: var(--color-bg);
-  opacity: 0;
-  transition: opacity var(--motion-screen);
 }
 
-.open .backdrop {
-  opacity: 0.6;
-}
-
-/* A frosted glass card. Closed: parked above the top of the screen. */
+/* A frosted glass sheet. Its position is driven by motion. */
 .panel {
   position: absolute;
   top: 0;
@@ -28,28 +23,22 @@
   right: 0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: calc(var(--safe-top) + var(--space-screen))
-    calc(var(--safe-right) + var(--space-screen)) 12px
-    calc(var(--safe-left) + var(--space-screen));
-  border-bottom: 1px solid var(--color-hairline);
+  gap: var(--space-24);
+  padding: var(--top-inset) var(--grid-margin) var(--space-12);
+  border-bottom: var(--border-widget);
   border-radius: 0 0 var(--radius-widget) var(--radius-widget);
   background: var(--glass-bg);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   touch-action: none;
   will-change: transform;
-  transform: translate3d(0, -100%, 0);
-  transition: transform var(--motion-screen);
 }
 
-.open .panel {
-  transform: translate3d(0, 0, 0);
-}
-
+/* Four toggles on the four grid columns */
 .toggles {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), 1fr);
+  gap: var(--grid-gap);
 }
 
 .dial {
@@ -59,8 +48,8 @@
 
 .handle {
   align-self: center;
-  width: 44px;
-  height: 5px;
-  border-radius: var(--radius-round);
-  background: var(--color-surface-3);
+  width: calc(var(--space-32) + var(--space-12));
+  height: var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--text-tertiary);
 }

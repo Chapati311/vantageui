@@ -1,3 +1,4 @@
+/* The surface every widget shares: gradient, hairline border, top highlight */
 .widget {
   position: relative;
   width: 100%;
@@ -7,8 +8,9 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 1px solid var(--color-hairline);
-  background: var(--color-surface);
+  border: var(--border-widget);
+  background: var(--surface-widget);
+  box-shadow: var(--highlight-top);
 }
 
 .rounded {
@@ -16,5 +18,5 @@
 }
 
 .circle {
-  border-radius: var(--radius-round);
+  border-radius: var(--radius-circle);
 }

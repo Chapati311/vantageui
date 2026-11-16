@@ -1,11 +1,13 @@
-import { useRef } from 'react';
-import { BatteryIndicator } from './BatteryIndicator';
+import { useDrag } from '@use-gesture/react';
+import { animate, motion, useMotionValue, useTransform } from 'motion/react';
+import { useEffect, useRef } from 'react';
 import { useSetting } from '../system/settingsStore';
+import { MOTION, SPRING, rubberBand } from '../theme/tokens';
+import { BatteryIndicator } from './BatteryIndicator';
 import { LockClock } from './LockClock';
 import { LockDots } from './LockDots';
 import { LockOrbit } from './LockOrbit';
 import { NotificationCount } from './NotificationCount';
-import { useSwipeUp } from './gestures/useSwipeUp';
 import styles from './LockScreen.module.css';
 
 /** Placeholder until there is a real notification system. */
@@ -16,40 +18,67 @@ interface LockScreenProps {
   onUnlock: () => void;
 }
 
-/** Sits on top of the home screen and slides away when swiped up. */
+/**
+ * Sits on top of the home screen. Drag it up to unlock: it follows the
+ * finger 1:1, and on release a spring carries it open or back. A quick
+ * flick is enough, however short.
+ */
 export function LockScreen({ locked, onUnlock }: LockScreenProps) {
-  const orbit = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [wallpaper] = useSetting('wallpaper');
 
-  // The wallpaper reacts to the swipe: the rings spread apart, fade, and lag
-  // behind the rest of the screen (parallax).
-  const reactToSwipe = (progress: number | null) => {
-    const el = orbit.current;
-    if (!el) return;
-    if (progress === null) {
-      el.style.transition = '';
-      el.style.transform = '';
-      el.style.opacity = '';
-    } else {
-      el.style.transition = 'none';
-      el.style.transform = `translate3d(0, ${progress * 90}px, 0) scale(${1 + progress * 1.6})`;
-      el.style.opacity = String(1 - progress * 0.85);
-    }
+  // 0 = covering the screen, 1 = slid away above it. A "motion value":
+  // changing it moves the screen without re-rendering React.
+  const progress = useMotionValue(locked ? 0 : 1);
+  const y = useTransform(progress, (value) => `${-value * 100}%`);
+  const target = useRef(locked ? 0 : 1);
+
+  const settle = (open: boolean, velocity: number) => {
+    target.current = open ? 1 : 0;
+    animate(progress, target.current, { ...SPRING.sheet, velocity });
+    if (open) onUnlock();
   };
 
-  const ref = useSwipeUp<HTMLDivElement>({
-    enabled: locked,
-    onSwipedUp: onUnlock,
-    onProgress: reactToSwipe,
-  });
+  // Locked or unlocked from somewhere else (e.g. the "Lock" action in search)
+  useEffect(() => {
+    const wanted = locked ? 0 : 1;
+    if (target.current === wanted) return;
+    target.current = wanted;
+    animate(progress, wanted, SPRING.sheet);
+  }, [locked, progress]);
+
+  const bind = useDrag(
+    ({ first, last, movement: [, moved], velocity: [, speed], direction: [, direction], memo }) => {
+      const height = ref.current?.offsetHeight ?? 1;
+      // Grabbing it mid-animation catches it where it is.
+      if (first) {
+        progress.stop();
+        memo = progress.get();
+      }
+      // Past either end it moves slower than the finger (rubber band).
+      const value = rubberBand((memo as number) - moved / height, 0, 1);
+      if (!last) {
+        progress.set(value);
+        return memo;
+      }
+      // A flick decides by its direction; a slow release by where it is.
+      const flick = speed > MOTION.flickVelocity;
+      const open = flick ? direction < 0 : value > 0.5;
+      settle(open, ((direction < 0 ? speed : -speed) * 1000) / height);
+      return memo;
+    },
+    { axis: 'y', filterTaps: true, enabled: locked },
+  );
 
   return (
-    <div
+    <motion.div
       ref={ref}
+      {...(bind() as object)}
       className={`${styles.lock} ${locked ? '' : styles.unlocked}`}
+      style={{ y }}
       aria-hidden={!locked}
     >
-      {wallpaper === 'orbit' && <LockOrbit paused={!locked} spreadRef={orbit} />}
+      {wallpaper === 'orbit' && <LockOrbit paused={!locked} progress={progress} />}
       {wallpaper === 'dots' && <LockDots />}
       <div className={styles.status}>
         <NotificationCount count={PLACEHOLDER_NOTIFICATIONS} />
@@ -58,7 +87,7 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
       <div className={styles.clock}>
         <LockClock />
       </div>
-      <div className={styles.hint}>swipe up to unlock</div>
-    </div>
+      <div className={`label ${styles.hint}`}>Swipe up to unlock</div>
+    </motion.div>
   );
 }

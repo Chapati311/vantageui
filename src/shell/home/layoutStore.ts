@@ -5,7 +5,7 @@ import { DEFAULT_LAYOUT } from './defaultLayout';
 import { COLS, MAX_PAGES, MAX_ROWS, countPages, firstFreeSlot, type HomeItem } from './layout';
 
 /** Change the version if the layout format ever changes (old saved layouts are then ignored). */
-const STORAGE_KEY = 'vantage.homeLayout.v3';
+const STORAGE_KEY = 'vantage.homeLayout.v4';
 
 const isWholeNumber = (value: unknown): value is number => Number.isInteger(value);
 

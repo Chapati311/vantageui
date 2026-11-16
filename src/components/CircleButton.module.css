@@ -14,9 +14,6 @@
   font-size: 13px;
   font-weight: 600;
   touch-action: none;
-  transition:
-    transform var(--motion-control),
-    opacity var(--motion-control);
 }
 
 .button svg {
@@ -39,11 +36,6 @@
   background: var(--color-accent);
   color: var(--color-on-accent);
   box-shadow: var(--glow-accent);
-}
-
-.button:active {
-  transform: scale(0.92);
-  opacity: 0.7;
 }
 
 .button:disabled {

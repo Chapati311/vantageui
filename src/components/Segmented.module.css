@@ -22,13 +22,6 @@
   text-transform: uppercase;
   white-space: nowrap;
   touch-action: none;
-  transition:
-    transform var(--motion-control),
-    opacity var(--motion-control);
-}
-
-.option:active {
-  opacity: 0.6;
 }
 
 .selected {

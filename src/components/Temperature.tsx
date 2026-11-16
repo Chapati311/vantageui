@@ -1,15 +1,20 @@
+import type { DotSize } from '../theme/tokens';
+import { DotNumber } from './DotNumber';
 import styles from './Temperature.module.css';
 
-/**
- * A temperature in the display font. The degree sign is drawn as a small
- * thin ring, because the dot-matrix font's own "°" looks like a blob.
- * It takes its size from the font-size of whatever it sits in.
- */
-export function Temperature({ value }: { value: number | null }) {
+interface TemperatureProps {
+  value: number | null;
+  /** Height of the digits: one of the design system dot sizes */
+  size: DotSize;
+}
+
+/** A temperature in dot numbers, with the degree sign drawn as a small thin ring. */
+export function Temperature({ value, size }: TemperatureProps) {
   return (
     <span className={styles.temperature} aria-label={value === null ? 'No data' : `${value} degrees`}>
-      {value ?? '--'}
-      {value !== null && <span className={styles.ring} />}
+      <DotNumber value={value === null ? '--' : String(value)} size={size} />
+      {/* The ring is a fixed share of the digit height, so it scales with it */}
+      {value !== null && <span className={styles.ring} style={{ width: size / 4, height: size / 4 }} />}
     </span>
   );
 }

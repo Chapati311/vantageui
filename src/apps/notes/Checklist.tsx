@@ -3,6 +3,7 @@ import { ScrollArea } from '../../components/ScrollArea';
 import { CheckIcon } from '../../components/glyphs';
 import { newId, updateNote, type ChecklistItem, type Note } from './notesStore';
 import styles from './Checklist.module.css';
+import { Pressable } from '../../components/Pressable';
 
 /** The to-do mode of a note: tick items off, edit them, add new ones. */
 export function Checklist({ note }: { note: Note }) {
@@ -25,8 +26,7 @@ export function Checklist({ note }: { note: Note }) {
     <ScrollArea className={styles.checklist}>
       {note.items.map((item) => (
         <div key={item.id} className={`${styles.item} ${item.done ? styles.done : ''}`}>
-          <button
-            type="button"
+          <Pressable
             role="checkbox"
             aria-checked={item.done}
             aria-label={item.text || 'Item'}
@@ -34,7 +34,7 @@ export function Checklist({ note }: { note: Note }) {
             onClick={() => change(item.id, { done: !item.done })}
           >
             <span className={styles.box}>{item.done && <CheckIcon />}</span>
-          </button>
+          </Pressable>
           <input
             className={styles.input}
             aria-label="Item text"

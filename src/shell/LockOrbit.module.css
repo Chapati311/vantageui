@@ -8,24 +8,25 @@
   pointer-events: none;
 }
 
-/* Moved by the unlock swipe. Snaps back with the shared screen timing. */
+/* Moved by the unlock swipe (see LockOrbit.tsx) */
 .spread {
   position: absolute;
   left: 0;
   top: 0;
   will-change: transform, opacity;
-  transition:
-    transform var(--motion-screen),
-    opacity var(--motion-screen);
 }
 
+/* A ring is as wide as "--steps" grid steps (one cell + one gap each) */
 .ring {
+  --size: calc(var(--steps) * (var(--grid-cell) + var(--grid-gap)));
   position: absolute;
-  left: 0;
-  top: 0;
-  translate: -50% -50%;
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-round);
+  left: calc(var(--size) / -2);
+  top: calc(var(--size) / -2);
+  width: var(--size);
+  height: var(--size);
+  border: var(--border-widget);
+  border-color: var(--color-hairline);
+  border-radius: var(--radius-circle);
   animation: spin linear infinite;
 }
 
@@ -33,26 +34,24 @@
 .dot {
   position: absolute;
   left: 50%;
-  top: -3.5px;
-  width: 6px;
-  height: 6px;
-  margin-left: -3px;
-  border-radius: var(--radius-round);
-  background: var(--color-text);
+  top: 0;
+  width: var(--space-8);
+  height: var(--space-8);
+  margin: calc(var(--space-4) * -1) 0 0 calc(var(--space-4) * -1);
+  border-radius: var(--radius-circle);
+  background: var(--text-primary);
 }
 
-/* The glowing accent in the middle */
+/* The glowing accent in the middle: the one accent on this screen */
 .core {
   position: absolute;
-  left: -7px;
-  top: -7px;
-  width: 14px;
-  height: 14px;
-  border-radius: var(--radius-round);
+  left: calc(var(--space-8) * -1);
+  top: calc(var(--space-8) * -1);
+  width: var(--space-16);
+  height: var(--space-16);
+  border-radius: var(--radius-circle);
   background: var(--color-accent);
-  box-shadow:
-    var(--glow-accent),
-    0 0 60px rgb(var(--accent-rgb) / 0.25);
+  box-shadow: var(--glow-accent);
 }
 
 .paused .ring {

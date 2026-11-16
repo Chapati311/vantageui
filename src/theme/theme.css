@@ -1,49 +1,40 @@
-/* All colors, fonts, radii and timings live here so modes can restyle everything. */
+/*
+ * Colors that change with the theme (dark / light) and the chosen accent, plus
+ * the older variable names the apps still use. Those older names now point
+ * at the design system in tokens.css, so there is one source of truth.
+ */
 :root {
-  /* Colors: deep blue-black, not flat grey */
-  --color-bg: #06090d;
-  --color-surface: #0e141a; /* widgets, cards */
-  --color-surface-2: #151c23; /* app icons, raised things */
-  --color-surface-3: #1f2933; /* tracks, switched-off controls */
-  --color-text: #ffffff;
-  --color-muted: #8a939c;
+  /* Surfaces used by app screens */
+  --color-surface: #0e141a;
+  --color-surface-2: #151c23;
+  --color-surface-3: #1f2933;
   --color-hairline: rgba(255, 255, 255, 0.12); /* 1px lines and rings */
 
-  /* Accent: mint to teal by default. It should glow like light, not sit like paint.
-     The three numbers are red green blue; the other accent tokens are built from them below. */
-  --accent-rgb: 45 212 191;
+  /* Accent gradient ends (the solid accent is --accent-rgb in tokens.css) */
   --color-accent-from: #6ee7b7;
   --color-accent-to: #14b8a6;
-  --color-on-accent: #06090d; /* text and glyphs on top of the accent */
 
   /* Soft glass for overlays. Keep the blur small: the A13 must stay at 60 fps. */
   --glass-bg: rgba(14, 20, 26, 0.72);
   --glass-blur: blur(14px);
 
-  /* Fonts */
-  --font-display: 'Doto Variable', ui-monospace, monospace;
-  --font-serif: 'Instrument Serif', Georgia, serif; /* rare editorial titles */
-  --font-body: 'Inter Variable', system-ui, sans-serif;
   /* Use together with --font-display: round dots instead of squares */
   --font-display-settings: 'ROND' 100;
 
-  /* Shapes and spacing */
-  --radius-widget: 26px;
-  --radius-round: 9999px;
-  --space-screen: 24px;
-  --space-grid: 12px;
+  /* Older names -> design system tokens */
+  --color-text: var(--text-primary);
+  --color-muted: var(--text-secondary);
+  --radius-round: var(--radius-pill);
+  --space-screen: var(--grid-margin);
+  --space-grid: var(--grid-gap);
+  --duration-fast: var(--fade-fast);
+  --duration-normal: var(--fade-normal);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-screen: var(--fade-normal) var(--ease-out);
+  --motion-control: var(--fade-fast) var(--ease-out);
+
   /* Height of the strip at the bottom of an app you swipe up from */
   --size-home-zone: 40px;
-
-  /* Motion */
-  --duration-fast: 150ms;
-  --duration-normal: 250ms;
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  /* Use these two for EVERY transition so the whole OS moves the same way:
-     screen  = things that slide/zoom across the screen (pages, panels, apps)
-     control = small feedback (presses, toggles, dots) */
-  --motion-screen: var(--duration-normal) var(--ease-out);
-  --motion-control: var(--duration-fast) var(--ease-out);
 
   /* Safe areas (status bar, home indicator). 0 on devices without them. */
   --safe-top: env(safe-area-inset-top, 0px);
@@ -58,9 +49,13 @@
   --color-surface: #f8f9fa;
   --color-surface-2: #e1e4e8;
   --color-surface-3: #d2d6db;
-  --color-text: #0b0e11;
-  --color-muted: #6b7480;
+  --text-primary: #0b0e11;
+  --text-secondary: #6b7480;
+  --text-tertiary: #a3aab2;
   --color-hairline: rgba(0, 0, 0, 0.12);
+  --surface-widget: linear-gradient(180deg, #fbfbfc 0%, #f3f4f6 100%);
+  --border-widget: 1px solid rgba(0, 0, 0, 0.06);
+  --highlight-top: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 
 
   --glass-bg: rgba(248, 249, 250, 0.72);
@@ -104,6 +99,6 @@
 [data-accent] {
   --color-accent: rgb(var(--accent-rgb));
   --gradient-accent: linear-gradient(135deg, var(--color-accent-from), var(--color-accent-to));
-  --glow-accent: 0 0 18px rgb(var(--accent-rgb) / 0.45);
+  --glow-accent: 0 0 24px rgb(var(--accent-rgb) / 0.35);
   --glow-accent-filter: drop-shadow(0 0 5px rgb(var(--accent-rgb) / 0.7));
 }

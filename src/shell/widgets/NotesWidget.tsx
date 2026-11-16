@@ -10,7 +10,7 @@ export function NotesWidget() {
   return (
     <Widget shape="rounded">
       <div className={styles.notes}>
-        <span className={styles.label}>Notes</span>
+        <span className="label">Notes</span>
         <span className={styles.title}>{latest ? noteTitle(latest) : 'No notes yet'}</span>
         <span className={styles.preview}>{latest ? notePreview(latest) : 'Tap to write one'}</span>
       </div>
