@@ -71,7 +71,7 @@ export function SettingsApp() {
 function Section({ label, note, children }: { label: string; note?: string; children: ReactNode }) {
   return (
     <section className={styles.section}>
-      <h2 className={styles.label}>{label}</h2>
+      <h2 className="label">{label}</h2>
       {children}
       {note && <p className={styles.note}>{note}</p>}
     </section>

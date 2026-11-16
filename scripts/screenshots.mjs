@@ -44,6 +44,22 @@ const swipe = async (x1, y1, x2, y2, { steps = 12, hold = 0 } = {}) => {
   await wait(700); // let the spring settle
 };
 
+const dock = page.getByRole('navigation', { name: 'Dock' });
+
+/** Opens an app by typing its name into search and pressing Enter. */
+const openFromSearch = async (name) => {
+  await swipe(187, 250, 187, 400);
+  await page.keyboard.type(name);
+  await wait(300);
+  await page.keyboard.press('Enter');
+  await wait(1100);
+};
+
+const closeApp = async () => {
+  await page.keyboard.press('Escape');
+  await wait(900);
+};
+
 // Start from a clean slate so the pictures always show the default layout.
 await page.goto(URL);
 await page.evaluate(() => {
@@ -109,9 +125,49 @@ await page.keyboard.press('Escape');
 await wait(600);
 
 // An app, opened from the dock
-await page.getByRole('navigation', { name: 'Dock' }).getByRole('button', { name: 'Clock' }).click();
+await dock.getByRole('button', { name: 'Clock' }).click();
 await wait(900);
-await shot('10-app-clock');
+await shot('10-clock-timer');
+await page.getByRole('tab', { name: 'Stopwatch' }).click();
+await page.getByRole('button', { name: 'Start' }).click();
+await wait(1300);
+await page.getByRole('button', { name: 'Lap' }).click();
+await wait(500);
+await page.getByRole('button', { name: 'Stop' }).click();
+await wait(300);
+await shot('11-clock-stopwatch');
+await page.getByRole('tab', { name: 'World' }).click();
+await wait(300);
+await shot('12-clock-world');
+await closeApp();
+
+await openFromSearch('weather');
+await shot('13-weather');
+await closeApp();
+
+await dock.getByRole('button', { name: 'Notes' }).click();
+await wait(900);
+await shot('14-notes-empty');
+await page.getByRole('button', { name: 'New checklist' }).click();
+for (const item of ['Milk', 'Bread', 'Coffee']) {
+  await page.getByLabel('Add item').fill(item);
+  await page.getByLabel('Add item').press('Enter');
+}
+await page.getByRole('checkbox', { name: 'Milk' }).click();
+await wait(300);
+await shot('15-notes-checklist');
+await page.getByRole('button', { name: 'Back to all notes' }).click();
+await wait(300);
+await shot('16-notes-list');
+await closeApp();
+
+await openFromSearch('settings');
+await shot('17-settings');
+await closeApp();
+
+await dock.getByRole('button', { name: 'Phone' }).click();
+await wait(900);
+await shot('18-placeholder-app');
 
 await browser.close();
 console.log('Done.');

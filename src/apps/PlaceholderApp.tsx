@@ -11,7 +11,7 @@ export function PlaceholderApp({ app }: { app: AppDefinition }) {
         <Glyph />
       </div>
       <h1 className={styles.name}>{app.name}</h1>
-      <p className={styles.note}>Coming soon</p>
+      <p className="label">Coming soon</p>
     </div>
   );
 }

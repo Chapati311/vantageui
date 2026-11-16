@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CircleButton } from '../../components/CircleButton';
+import { DotNumber } from '../../components/DotNumber';
 import { MinusIcon, PauseIcon, PlayIcon, PlusIcon, ResetIcon } from '../../components/glyphs';
 import {
   MAX_TIMER_MS,
@@ -47,13 +48,16 @@ export function TimerTab() {
         <div className={styles.track}>
           <div className={styles.progress} style={{ transform: `scaleY(${progress})` }} />
         </div>
+        {/* The hero: the same dot numbers as everywhere, turned 90 degrees */}
         <time className={styles.time} aria-label={`${formatCountdown(remaining)} left`}>
-          {formatCountdown(remaining)}
+          <span className={styles.turned}>
+            <DotNumber value={formatCountdown(remaining)} size={96} />
+          </span>
         </time>
       </div>
 
       <div className={styles.side}>
-        <div className={`${styles.status} ${timer.status === 'done' ? styles.done : ''}`}>
+        <div className={`label ${timer.status === 'done' ? styles.done : ''}`}>
           {STATUS_LABEL[timer.status]}
         </div>
 
@@ -66,7 +70,7 @@ export function TimerTab() {
                 aria-label={`${minutes} minutes`}
                 onClick={() => setTimerDuration(minutes * MINUTE)}
               >
-                {minutes}
+                <DotNumber value={String(minutes)} size={28} muted={timer.durationMs !== minutes * MINUTE} />
               </Pressable>
             ))}
           </div>
@@ -79,7 +83,7 @@ export function TimerTab() {
             >
               <MinusIcon />
             </CircleButton>
-            <span className={styles.unit}>min</span>
+            <span className={`label ${styles.unit}`}>min</span>
             <CircleButton
               small
               label="One minute more"

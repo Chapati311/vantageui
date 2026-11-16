@@ -20,7 +20,7 @@ export function DailyList({ days }: { days: WeatherDay[] }) {
           <div className={styles.art}>
             <WeatherArt kind={day.kind} />
           </div>
-          <span className={styles.rain}>{day.rainChance}%</span>
+          <span className={`label ${styles.rain}`}>{day.rainChance}%</span>
           <span className={styles.low}>{day.low}°</span>
           <div className={styles.track}>
             <div

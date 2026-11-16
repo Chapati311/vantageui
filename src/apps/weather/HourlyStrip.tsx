@@ -9,12 +9,12 @@ export function HourlyStrip({ hours }: { hours: WeatherHour[] }) {
     <ScrollArea horizontal className={styles.strip}>
       {hours.map((hour, index) => (
         <div key={index} className={styles.hour}>
-          <span className={styles.time}>{index === 0 ? 'Now' : String(hour.hour).padStart(2, '0')}</span>
+          <span className="label">{index === 0 ? 'Now' : String(hour.hour).padStart(2, '0')}</span>
           <div className={styles.art}>
             <WeatherArt kind={hour.kind} />
           </div>
           <span className={styles.temperature}>{hour.temperature}°</span>
-          <span className={styles.rain}>{hour.rainChance}%</span>
+          <span className="label">{hour.rainChance}%</span>
         </div>
       ))}
     </ScrollArea>

@@ -2,37 +2,27 @@
   flex: 1;
 }
 
+/* Each city is one grid cell tall */
 .city {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 72px;
+  height: var(--grid-cell);
   border-bottom: 1px solid var(--color-hairline);
 }
 
 .text {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: var(--space-8);
 }
 
 .name {
-  font-size: 17px;
+  font-size: var(--text-17);
   font-weight: 500;
-}
-
-.note {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-muted);
+  line-height: 1;
 }
 
 .time {
-  font-family: var(--font-display);
-  font-variation-settings: var(--font-display-settings);
-  font-size: 38px;
-  font-weight: 800;
-  line-height: 1;
+  display: flex;
 }

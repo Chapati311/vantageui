@@ -1,5 +1,7 @@
 import { CircleButton } from '../../components/CircleButton';
+import { DotNumber } from '../../components/DotNumber';
 import { ScrollArea } from '../../components/ScrollArea';
+import { Temperature } from '../../components/Temperature';
 import { ResetIcon } from '../../components/glyphs';
 import { WeatherArt } from '../../shell/widgets/WeatherArt';
 import { formatTime } from '../../system/timeFormat';
@@ -17,11 +19,11 @@ export function WeatherApp() {
     return (
       <div className={styles.empty}>
         <h1 className={styles.place}>{status === 'error' ? 'No connection' : 'One moment'}</h1>
-        <p className={styles.label}>
+        <p className="label">
           {status === 'error' ? 'The weather could not be loaded' : 'Loading the weather'}
         </p>
         {status === 'error' && (
-          <CircleButton label="Try again" onClick={() => refreshWeather(true)}>
+          <CircleButton small label="Try again" onClick={() => refreshWeather(true)}>
             <ResetIcon />
           </CircleButton>
         )}
@@ -38,18 +40,19 @@ export function WeatherApp() {
   return (
     <ScrollArea className={styles.app}>
       <header className={styles.header}>
-        <div>
+        <div className={styles.heading}>
           <h1 className={styles.place}>{WEATHER_PLACE.name}</h1>
-          <p className={styles.label}>{updated}</p>
+          <p className="label">{updated}</p>
         </div>
         <CircleButton small label="Refresh" onClick={() => refreshWeather(true)}>
           <ResetIcon />
         </CircleButton>
       </header>
 
+      {/* The hero: a huge temperature with the drawing beside it */}
       <section className={styles.now}>
-        <div>
-          <div className={styles.temperature}>{now.temperature}°</div>
+        <div className={styles.heading}>
+          <Temperature value={now.temperature} size={96} />
           <p className={styles.condition}>{now.condition}</p>
         </div>
         <div className={styles.art}>
@@ -58,28 +61,31 @@ export function WeatherApp() {
       </section>
 
       <section className={styles.stats}>
-        <Stat label="Feels like" value={`${now.feelsLike}°`} />
-        <Stat label="Wind" value={String(now.wind)} unit="km/h" />
-        <Stat label="Humidity" value={String(now.humidity)} unit="%" />
+        <Stat label="Feels like">
+          <Temperature value={now.feelsLike} size={28} />
+        </Stat>
+        <Stat label="Wind km/h">
+          <DotNumber value={String(now.wind)} size={28} />
+        </Stat>
+        <Stat label="Humidity %">
+          <DotNumber value={String(now.humidity)} size={28} />
+        </Stat>
       </section>
 
-      <h2 className={styles.heading}>Next 24 hours</h2>
+      <h2 className={`label ${styles.section}`}>Next 24 hours</h2>
       <HourlyStrip hours={data.hourly} />
 
-      <h2 className={styles.heading}>7 days</h2>
+      <h2 className={`label ${styles.section}`}>7 days</h2>
       <DailyList days={data.daily} />
     </ScrollArea>
   );
 }
 
-function Stat({ label, value, unit }: { label: string; value: string; unit?: string }) {
+function Stat({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className={styles.stat}>
-      <span className={styles.label}>{label}</span>
-      <span className={styles.statValue}>
-        {value}
-        {unit && <span className={styles.unit}>{unit}</span>}
-      </span>
+      <span className="label">{label}</span>
+      {children}
     </div>
   );
 }

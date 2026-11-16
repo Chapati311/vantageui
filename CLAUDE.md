@@ -235,9 +235,19 @@ src/
   allowed sizes) and placed in `shell/home/defaultLayout.ts`. The grid rules
   live in `shell/home/layout.ts`; the saved layout is in localStorage.
 - Small saved settings go through `system/settingsStore.ts` (`useSetting`).
-- Dark and light are the same tokens in `theme/theme.css`; light mode is
-  `data-theme="light"` on `<html>`. Use `--motion-screen` and `--motion-control`
-  for every transition.
+- The design system lives in `theme/tokens.css` (CSS variables) and
+  `theme/tokens.ts` (the same numbers plus springs, for JavaScript). Keep the
+  two in sync. `theme/theme.css` only holds the light mode and accent colour
+  overrides (`data-theme` / `data-accent` on `<html>`) and older variable names
+  that point at the tokens.
+- Dot numbers: always `components/DotNumber` (sizes 28 / 40 / 64 / 96), never
+  the Doto font. Temperatures: `components/Temperature`.
+- Labels: the global class `label` (11px, uppercase, letter-spaced).
+- Buttons: `components/Pressable` instead of `<button>` (spring press state).
+- Motion: springs from `SPRING` in `tokens.ts` with `motion`; drags with
+  `@use-gesture/react` (lock screen, app view, quick settings). The home
+  grid's long-press and item dragging use our own pointer code in
+  `shell/home/useHomeGestures.ts`, driven by motion values and springs.
 - Keep files small and focused. One component per file.
 - Use TypeScript types for everything shared (apps, modes, settings).
 - All colors, fonts, radii and timings come from theme CSS variables, never
@@ -282,3 +292,6 @@ Planned bridge functions (all return Promises):
 - `npm run dev` - start the dev server (preview in Chrome, iPhone SE mode)
 - `npm run dev -- --host` - dev server reachable from the iPhone on the same Wi-Fi
 - `npm run build` - production build (Vercel runs this automatically)
+- `npm run screenshots` - the quality check: with `npm run dev` running, saves
+  every screen at 375x667 into `screenshots/` (Playwright). Then
+  `node scripts/contact-sheet.mjs` puts them side by side on three sheets.

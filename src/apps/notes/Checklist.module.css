@@ -5,17 +5,17 @@
 .item {
   display: flex;
   align-items: center;
-  min-height: 48px;
+  height: calc(var(--space-32) + var(--space-16));
   border-bottom: 1px solid var(--color-hairline);
 }
 
-/* 44px touch target around a small round box */
+/* A tall touch target around a small round box */
 .check {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  width: 40px;
-  height: 44px;
+  width: calc(var(--space-24) + var(--space-12));
+  height: 100%;
   padding: 0;
   border: 0;
   background: none;
@@ -26,50 +26,50 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: 1.5px solid var(--color-muted);
-  border-radius: var(--radius-round);
-  color: var(--color-on-accent);
+  width: var(--space-24);
+  height: var(--space-24);
+  border: calc(var(--icon-stroke) * 1px) solid var(--text-secondary);
+  border-radius: var(--radius-circle);
+  color: var(--color-bg);
 }
 
 .box svg {
-  width: 14px;
-  height: 14px;
-  stroke-width: 2.6;
+  width: var(--space-16);
+  height: var(--space-16);
 }
 
 .dashed {
   border-style: dashed;
-  border-color: var(--color-hairline);
+  border-color: var(--text-tertiary);
 }
 
+/* Ticked: filled white (the accent on this screen is the caret) */
 .done .box {
   border-color: transparent;
-  background: var(--color-accent);
+  background: var(--text-primary);
 }
 
 /* 17px: iOS zooms the page in on text fields smaller than 16px */
 .input {
   flex: 1;
   min-width: 0;
-  height: 44px;
+  height: 100%;
   padding: 0;
   border: 0;
   border-radius: 0;
   outline: none;
   background: none;
-  color: var(--color-text);
+  color: var(--text-primary);
   caret-color: var(--color-accent);
   font: inherit;
-  font-size: 17px;
+  font-size: var(--text-17);
 }
 
 .input::placeholder {
-  color: var(--color-muted);
+  color: var(--text-tertiary);
 }
 
 .done .input {
-  color: var(--color-muted);
+  color: var(--text-secondary);
   text-decoration: line-through;
 }

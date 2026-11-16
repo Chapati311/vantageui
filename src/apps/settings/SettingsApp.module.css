@@ -2,11 +2,11 @@
   height: 100%;
 }
 
-/* An editorial moment: big serif title */
+/* Page title: Instrument Serif 34 */
 .title {
-  margin: 8px 0 0;
+  margin: 0;
   font-family: var(--font-serif);
-  font-size: 52px;
+  font-size: var(--serif-34);
   font-weight: 400;
   line-height: 1;
 }
@@ -14,35 +14,27 @@
 .section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-grid);
-  margin-top: 28px;
-}
-
-.label {
-  margin: 0;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-muted);
+  gap: var(--space-12);
+  margin-top: var(--space-32);
 }
 
 .note {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--text-13);
   line-height: 1.4;
-  color: var(--color-muted);
+  color: var(--text-secondary);
 }
 
 .row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 60px;
-  padding: 0 12px 0 20px;
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-widget);
-  background: var(--color-surface);
-  font-size: 16px;
+  height: calc(var(--space-32) + var(--space-24));
+  padding: 0 var(--space-12) 0 var(--space-24);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
+  background: var(--surface-widget);
+  box-shadow: var(--highlight-top);
+  font-size: var(--text-15);
   font-weight: 500;
 }

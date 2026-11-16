@@ -75,7 +75,7 @@ export function Shell() {
       },
       {
         id: 'quick-settings',
-        name: 'Quick settings',
+        name: 'Controls',
         icon: WifiIcon,
         keywords: ['wifi', 'bluetooth', 'flashlight', 'brightness', 'toggles'],
         run: () => setQuickSettingsOpen(true),

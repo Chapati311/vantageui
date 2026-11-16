@@ -32,7 +32,7 @@ export function NotesList({ notes, loaded, onOpen, onCreate }: NotesListProps) {
       {loaded && notes.length === 0 ? (
         <div className={styles.empty}>
           <p className={styles.emptyTitle}>Nothing yet</p>
-          <p className={styles.label}>Tap + to write your first note</p>
+          <p className="label">Tap + to write your first note</p>
         </div>
       ) : (
         <ScrollArea className={styles.notes}>
@@ -40,7 +40,7 @@ export function NotesList({ notes, loaded, onOpen, onCreate }: NotesListProps) {
             <Pressable key={note.id} type="button" className={styles.note} onClick={() => onOpen(note.id)}>
               <span className={styles.noteTitle}>{noteTitle(note)}</span>
               <span className={styles.meta}>
-                <span className={styles.label}>{dateFormat.format(note.updatedAt)}</span>
+                <span className="label">{dateFormat.format(note.updatedAt)}</span>
                 <span className={styles.preview}>{notePreview(note)}</span>
               </span>
             </Pressable>

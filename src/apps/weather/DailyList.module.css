@@ -1,42 +1,36 @@
 .day {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 52px;
+  gap: var(--space-12);
+  height: calc(var(--space-32) + var(--space-16));
   border-top: 1px solid var(--color-hairline);
   font-variant-numeric: tabular-nums;
 }
 
 .name {
-  width: 48px;
-  font-size: 15px;
+  width: calc(var(--space-32) + var(--space-16));
+  font-size: var(--text-15);
   font-weight: 500;
 }
 
 .art {
-  width: 28px;
+  width: var(--space-24);
 }
 
 .rain {
-  width: 34px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  color: var(--color-muted);
+  width: var(--space-32);
 }
 
 .low,
 .high {
-  width: 34px;
+  width: var(--space-32);
   text-align: right;
-  font-family: var(--font-display);
-  font-variation-settings: var(--font-display-settings);
-  font-size: 18px;
-  font-weight: 800;
+  font-size: var(--text-15);
+  font-weight: 500;
 }
 
 .low {
-  color: var(--color-muted);
+  color: var(--text-secondary);
 }
 
 /* A hairline with a brighter piece from the day's low to its high */
@@ -51,6 +45,6 @@
   position: absolute;
   top: -1px;
   height: 3px;
-  border-radius: var(--radius-round);
-  background: var(--color-text);
+  border-radius: var(--radius-pill);
+  background: var(--text-primary);
 }

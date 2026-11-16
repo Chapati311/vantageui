@@ -21,6 +21,11 @@
   transition: opacity var(--fade-fast) linear;
 }
 
+.instant .on,
+.instant .off {
+  transition: none;
+}
+
 .on {
   opacity: 1;
 }

@@ -1,3 +1,4 @@
+import { DotNumber } from '../../components/DotNumber';
 import { ScrollArea } from '../../components/ScrollArea';
 import { useClock } from '../../system/useClock';
 import { WORLD_CITIES, cityTime } from './worldTime';
@@ -15,9 +16,11 @@ export function WorldTab() {
           <div key={city.timeZone} className={styles.city}>
             <div className={styles.text}>
               <span className={styles.name}>{city.name}</span>
-              <span className={styles.note}>{note}</span>
+              <span className="label">{note}</span>
             </div>
-            <time className={styles.time}>{time}</time>
+            <time className={styles.time}>
+              <DotNumber value={time} size={28} />
+            </time>
           </div>
         );
       })}

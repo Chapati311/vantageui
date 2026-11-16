@@ -25,6 +25,8 @@ const GLYPHS: Record<string, string[]> = {
   '-': ['00000', '00000', '00000', '01110', '00000', '00000', '00000'],
   // The colon is only 1 dot wide: two single round dots
   ':': ['0', '0', '1', '0', '1', '0', '0'],
+  // The decimal point: one dot on the bottom row
+  '.': ['0', '0', '0', '0', '0', '0', '1'],
   ' ': ['000', '000', '000', '000', '000', '000', '000'],
 };
 
@@ -48,14 +50,16 @@ interface DotNumberProps {
    * sit closer together, so "100" fits. Digits are then not all the same width.
    */
   narrowOne?: boolean;
+  /** Switch dots at once, with no fade. For numbers that change many times a second. */
+  instant?: boolean;
 }
 
-export function DotNumber({ value, size, muted, blinkColon, narrowOne }: DotNumberProps) {
+export function DotNumber({ value, size, muted, blinkColon, narrowOne, instant }: DotNumberProps) {
   const pitch = size / ROWS; // distance between dot centres, in px
 
   return (
     <span
-      className={`${styles.number} ${muted ? styles.muted : ''}`}
+      className={`${styles.number} ${muted ? styles.muted : ''} ${instant ? styles.instant : ''}`}
       style={{ height: size, gap: narrowOne ? pitch / 2 : pitch }}
       role="img"
       aria-label={value}
