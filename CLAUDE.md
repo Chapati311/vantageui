@@ -131,7 +131,7 @@ Assistant app that connects to Vantage.
 ### Built so far (update this list when something is added)
 
 - Shell: boot animation, lock screen (wallpaper: orbit / dots / plain), home
-  grid with pages and edit mode, fixed dock (4 apps from ) with
+  grid with pages and edit mode, fixed dock (4 apps from `DOCK_APP_IDS`) with
   page dots above it, app view with zoom, search, quick settings, UI sounds,
   light mode, accent colors.
 - Real apps: Clock (timer, stopwatch, world clock; timers keep running in a
@@ -145,7 +145,7 @@ Assistant app that connects to Vantage.
   The mode switcher is saved but Focus and Retro change nothing yet.
 - Placeholders: Phone, Messages, Calculator, Music and Maps show "coming soon".
 - Not built yet: modes (Focus, Retro), adding/removing widgets in edit mode,
-  the Assistant, the native bridge beyond .
+  the Assistant, the native bridge beyond `getBattery`.
 - Known iOS limits: the battery level is unavailable in Safari (shows "--"),
   timers can't chime while the phone is asleep, and swipes from the very
   top/bottom edge of the screen belong to iOS, so our edge zones are
