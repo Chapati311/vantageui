@@ -1,20 +1,18 @@
 import { Widget } from '../../components/Widget';
+import { WEATHER_PLACE, useWeather } from '../../system/weather';
 import { WeatherArt } from './WeatherArt';
 import type { WidgetProps } from './types';
 import styles from './WeatherWidget.module.css';
 
-/** FAKE data for now. Later this comes from the Open-Meteo API. */
-const FAKE_WEATHER = {
-  place: 'Zurich',
-  temperature: 12,
-  condition: 'Cloudy',
-  high: 14,
-  low: 7,
-};
-
+/** Real weather, from the same shared data as the Weather app. */
 export function WeatherWidget({ size }: WidgetProps) {
-  const weather = FAKE_WEATHER;
-  const temperature = <div className={styles.temperature}>{weather.temperature}°</div>;
+  const { data } = useWeather();
+  const today = data?.daily[0];
+
+  const temperature = (
+    <div className={styles.temperature}>{data ? `${data.now.temperature}°` : '--'}</div>
+  );
+  const art = <div className={styles.art}>{data && <WeatherArt kind={data.now.kind} />}</div>;
 
   // 1x1: just the number
   if (size === '1x1') return <Widget shape="rounded">{temperature}</Widget>;
@@ -25,12 +23,10 @@ export function WeatherWidget({ size }: WidgetProps) {
       <Widget shape="rounded">
         <div className={styles.row}>
           <div className={styles.column}>
-            <span className={styles.label}>{weather.place}</span>
+            <span className={styles.label}>{WEATHER_PLACE.name}</span>
             {temperature}
           </div>
-          <div className={styles.art}>
-            <WeatherArt />
-          </div>
+          {art}
         </div>
       </Widget>
     );
@@ -41,14 +37,12 @@ export function WeatherWidget({ size }: WidgetProps) {
     <Widget shape="rounded">
       <div className={styles.tall}>
         <div className={styles.top}>
-          <span className={styles.label}>{weather.place}</span>
-          <div className={styles.art}>
-            <WeatherArt />
-          </div>
+          <span className={styles.label}>{WEATHER_PLACE.name}</span>
+          {art}
         </div>
         {temperature}
         <span className={styles.label}>
-          {weather.condition} · {weather.high}° / {weather.low}°
+          {data && today ? `${data.now.condition} · ${today.high}° / ${today.low}°` : 'No data yet'}
         </span>
       </div>
     </Widget>

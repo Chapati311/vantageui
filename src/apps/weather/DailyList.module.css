@@ -1,0 +1,56 @@
+.day {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  border-top: 1px solid var(--color-hairline);
+  font-variant-numeric: tabular-nums;
+}
+
+.name {
+  width: 48px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.art {
+  width: 28px;
+}
+
+.rain {
+  width: 34px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--color-muted);
+}
+
+.low,
+.high {
+  width: 34px;
+  text-align: right;
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-settings);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.low {
+  color: var(--color-muted);
+}
+
+/* A hairline with a brighter piece from the day's low to its high */
+.track {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: var(--color-hairline);
+}
+
+.range {
+  position: absolute;
+  top: -1px;
+  height: 3px;
+  border-radius: var(--radius-round);
+  background: var(--color-text);
+}
