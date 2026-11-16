@@ -1,0 +1,31 @@
+/* All colors, fonts, radii and timings live here so modes can restyle everything. */
+:root {
+  /* Colors */
+  --color-bg: #000000;
+  --color-text: #ffffff;
+  --color-grey-900: #111111;
+  --color-grey-800: #1c1c1e;
+  --color-grey-700: #2c2c2e;
+  --color-grey-400: #8e8e93;
+  --color-accent: #2dd4bf;
+  --gradient-accent: linear-gradient(135deg, #6ee7b7, #14b8a6);
+
+  /* Fonts */
+  --font-display: 'Doto Variable', ui-monospace, monospace;
+  --font-body: 'Inter Variable', system-ui, sans-serif;
+
+  /* Shapes and spacing */
+  --radius-widget: 26px;
+  --space-screen: 24px;
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Safe areas (status bar, home indicator). 0 on devices without them. */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}

@@ -1,0 +1,34 @@
+/* Makes the page behave like an app, not a website. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent; /* no grey flash on tap */
+}
+
+html,
+body,
+#root {
+  position: fixed; /* nothing to scroll = no scrolling and no bounce */
+  inset: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+html {
+  background: var(--color-bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+
+  overscroll-behavior: none; /* no rubber-band bounce */
+  touch-action: none; /* no pinch zoom, no double-tap zoom, no panning */
+  user-select: none; /* no text selection */
+  -webkit-user-select: none;
+  -webkit-touch-callout: none; /* no long-press menu */
+}

@@ -1,0 +1,5 @@
+/* Fonts are installed as packages, so they are bundled with the app (offline). */
+@import '@fontsource-variable/doto/full.css'; /* "full" includes round dots */
+@import '@fontsource-variable/inter';
+@import './theme.css';
+@import './global.css';

@@ -1,0 +1,24 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-variation-settings: 'ROND' 100; /* round dots instead of squares */
+  text-align: center;
+}
+
+.time {
+  font-size: 104px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.date {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-grey-400);
+}

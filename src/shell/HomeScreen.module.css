@@ -1,0 +1,9 @@
+.home {
+  position: absolute;
+  inset: 0;
+  padding: calc(var(--safe-top) + var(--space-screen))
+    calc(var(--safe-right) + var(--space-screen))
+    calc(var(--safe-bottom) + var(--space-screen))
+    calc(var(--safe-left) + var(--space-screen));
+  background: var(--color-bg);
+}
