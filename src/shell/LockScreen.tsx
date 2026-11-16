@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 import { BatteryIndicator } from './BatteryIndicator';
+import { useSetting } from '../system/settingsStore';
 import { LockClock } from './LockClock';
+import { LockDots } from './LockDots';
 import { LockOrbit } from './LockOrbit';
 import { NotificationCount } from './NotificationCount';
 import { useSwipeUp } from './gestures/useSwipeUp';
@@ -17,6 +19,7 @@ interface LockScreenProps {
 /** Sits on top of the home screen and slides away when swiped up. */
 export function LockScreen({ locked, onUnlock }: LockScreenProps) {
   const orbit = useRef<HTMLDivElement>(null);
+  const [wallpaper] = useSetting('wallpaper');
 
   // The wallpaper reacts to the swipe: the rings spread apart, fade, and lag
   // behind the rest of the screen (parallax).
@@ -46,7 +49,8 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
       className={`${styles.lock} ${locked ? '' : styles.unlocked}`}
       aria-hidden={!locked}
     >
-      <LockOrbit paused={!locked} spreadRef={orbit} />
+      {wallpaper === 'orbit' && <LockOrbit paused={!locked} spreadRef={orbit} />}
+      {wallpaper === 'dots' && <LockDots />}
       <div className={styles.status}>
         <NotificationCount count={PLACEHOLDER_NOTIFICATIONS} />
         <BatteryIndicator />

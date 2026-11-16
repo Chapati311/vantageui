@@ -9,14 +9,12 @@
   --color-muted: #8a939c;
   --color-hairline: rgba(255, 255, 255, 0.12); /* 1px lines and rings */
 
-  /* Accent: mint to teal. It should glow like light, not sit like paint. */
-  --color-accent: #2dd4bf;
+  /* Accent: mint to teal by default. It should glow like light, not sit like paint.
+     The three numbers are red green blue; the other accent tokens are built from them below. */
+  --accent-rgb: 45 212 191;
   --color-accent-from: #6ee7b7;
   --color-accent-to: #14b8a6;
   --color-on-accent: #06090d; /* text and glyphs on top of the accent */
-  --gradient-accent: linear-gradient(135deg, var(--color-accent-from), var(--color-accent-to));
-  --glow-accent: 0 0 18px rgba(45, 212, 191, 0.45);
-  --glow-accent-filter: drop-shadow(0 0 5px rgba(45, 212, 191, 0.7));
 
   /* Soft glass for overlays. Keep the blur small: the A13 must stay at 60 fps. */
   --glass-bg: rgba(14, 20, 26, 0.72);
@@ -64,9 +62,48 @@
   --color-muted: #6b7480;
   --color-hairline: rgba(0, 0, 0, 0.12);
 
-  --color-accent: #14b8a6;
-  --glow-accent: 0 0 18px rgba(20, 184, 166, 0.35);
-  --glow-accent-filter: drop-shadow(0 0 4px rgba(20, 184, 166, 0.5));
 
   --glass-bg: rgba(248, 249, 250, 0.72);
+}
+
+/* Other accent colors, chosen in Settings (data-accent on <html>).
+   Also works on a single element, which is how the Settings swatches get their color. */
+[data-accent='mint'] {
+  --accent-rgb: 45 212 191;
+  --color-accent-from: #6ee7b7;
+  --color-accent-to: #14b8a6;
+}
+
+[data-accent='amber'] {
+  --accent-rgb: 251 191 36;
+  --color-accent-from: #fde047;
+  --color-accent-to: #f59e0b;
+}
+
+[data-accent='coral'] {
+  --accent-rgb: 251 113 133;
+  --color-accent-from: #fda4af;
+  --color-accent-to: #f43f5e;
+}
+
+[data-accent='violet'] {
+  --accent-rgb: 167 139 250;
+  --color-accent-from: #c4b5fd;
+  --color-accent-to: #8b5cf6;
+}
+
+[data-accent='sky'] {
+  --accent-rgb: 56 189 248;
+  --color-accent-from: #7dd3fc;
+  --color-accent-to: #0ea5e9;
+}
+
+/* Everything that is built from the accent. Listed for :root and for any
+   element with its own data-accent, so it is worked out again there. */
+:root,
+[data-accent] {
+  --color-accent: rgb(var(--accent-rgb));
+  --gradient-accent: linear-gradient(135deg, var(--color-accent-from), var(--color-accent-to));
+  --glow-accent: 0 0 18px rgb(var(--accent-rgb) / 0.45);
+  --glow-accent-filter: drop-shadow(0 0 5px rgb(var(--accent-rgb) / 0.7));
 }

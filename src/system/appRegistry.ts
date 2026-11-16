@@ -61,7 +61,7 @@ export const APPS: AppDefinition[] = [
     id: 'settings',
     name: 'Settings',
     icon: SettingsIcon,
-    keywords: ['preferences', 'options', 'sound'],
+    keywords: ['preferences', 'options', 'sound', 'wallpaper', 'accent', 'color', 'mode', 'theme'],
     component: SettingsApp,
   },
 ];

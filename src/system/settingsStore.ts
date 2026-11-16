@@ -1,10 +1,19 @@
 import { useSyncExternalStore } from 'react';
 
+export type Wallpaper = 'orbit' | 'dots' | 'plain';
+export type AccentId = 'mint' | 'amber' | 'coral' | 'violet' | 'sky';
+export type ModeId = 'clean' | 'focus' | 'retro';
+
 /** Small settings that are remembered on the device. */
 export interface Settings {
   soundsEnabled: boolean;
   /** false = dark (default), true = light */
   lightMode: boolean;
+  /** The lock screen background */
+  wallpaper: Wallpaper;
+  accent: AccentId;
+  /** Saved now, used later when modes are built */
+  mode: ModeId;
   // Quick settings. For now these only change how the toggles look.
   wifi: boolean;
   bluetooth: boolean;
@@ -17,6 +26,9 @@ export interface Settings {
 const DEFAULTS: Settings = {
   soundsEnabled: true,
   lightMode: false,
+  wallpaper: 'orbit',
+  accent: 'mint',
+  mode: 'clean',
   wifi: true,
   bluetooth: false,
   flashlight: false,

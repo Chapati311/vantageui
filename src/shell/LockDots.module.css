@@ -1,0 +1,11 @@
+.dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--color-muted) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: center;
+  opacity: 0.45;
+  -webkit-mask-image: radial-gradient(ellipse 75% 45% at center, transparent 40%, #000 100%);
+  mask-image: radial-gradient(ellipse 75% 45% at center, transparent 40%, #000 100%);
+  pointer-events: none;
+}
