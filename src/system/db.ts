@@ -4,10 +4,10 @@
  */
 
 const DB_NAME = 'vantage';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 /** Every "table" in the database. Add a name here AND raise DB_VERSION to add one. */
-const STORES = ['notes', 'files'] as const;
+const STORES = ['notes', 'files', 'recordings', 'reminders', 'events', 'contacts', 'tracks', 'lockin'] as const;
 export type StoreName = (typeof STORES)[number];
 
 let opening: Promise<IDBDatabase> | null = null;

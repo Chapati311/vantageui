@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import { ArcadeApp } from '../apps/arcade/ArcadeApp';
 import { ClockApp } from '../apps/clock/ClockApp';
 import { CustomiseApp } from '../apps/customise/CustomiseApp';
 import { NotesApp } from '../apps/notes/NotesApp';
@@ -6,6 +7,7 @@ import { SettingsApp } from '../apps/settings/SettingsApp';
 import { KitApp } from '../apps/kit/KitApp';
 import { WeatherApp } from '../apps/weather/WeatherApp';
 import {
+  ArcadeIcon,
   CalculatorIcon,
   ClockIcon,
   CustomiseIcon,
@@ -76,6 +78,13 @@ export const APPS: AppDefinition[] = [
     icon: CustomiseIcon,
     keywords: ['theme', 'wallpaper', 'look', 'style', 'accent', 'color', 'design', 'setup', 'surprise'],
     component: CustomiseApp,
+  },
+  {
+    id: 'arcade',
+    name: 'Arcade',
+    icon: ArcadeIcon,
+    keywords: ['games', 'snake', 'pong', 'tetris', 'blocks', '2048', 'minesweeper', 'pet', 'play'],
+    component: ArcadeApp,
   },
   {
     id: 'kit',

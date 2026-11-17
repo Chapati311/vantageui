@@ -5,11 +5,14 @@ import { Shell } from './shell/Shell';
 import { listActions, runAction } from './system/actions';
 import { preventZoom } from './system/preventZoom';
 import { initSounds } from './system/sounds';
+import { handleSpotifyRedirect } from './system/spotify';
 import { initTheme } from './system/theme';
 
 preventZoom();
 initSounds();
 initTheme();
+// Coming back from the Spotify sign-in page: finish connecting
+void handleSpotifyRedirect();
 
 // While developing: the actions can be run from the browser console or by the
 // screenshot scripts, e.g. vantage.runAction('theme.apply', { id: 'ocean' })

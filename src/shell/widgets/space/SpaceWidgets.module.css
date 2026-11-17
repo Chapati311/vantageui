@@ -1,0 +1,169 @@
+.fill {
+  width: 100%;
+  height: 100%;
+}
+
+.orbitRing {
+  fill: none;
+  stroke: var(--color-hairline);
+  stroke-width: 0.4;
+}
+
+.planet {
+  fill: var(--text-secondary);
+}
+
+.earth {
+  fill: var(--text-primary);
+}
+
+/* The one accent */
+.sun {
+  fill: var(--color-accent);
+  filter: var(--glow-accent-filter);
+}
+
+/* ---- Orbit */
+.orbit {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.orbitRingCss {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--size) * 100%);
+  height: calc(var(--size) * 100%);
+  translate: -50% -50%;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-circle);
+  animation: spin linear infinite;
+}
+
+.orbitDot {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--space-8);
+  height: var(--space-8);
+  margin: calc(var(--space-4) * -1) 0 0 calc(var(--space-4) * -1);
+  border-radius: var(--radius-circle);
+  background: var(--text-primary);
+}
+
+.orbitCore {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--space-12);
+  height: var(--space-12);
+  translate: -50% -50%;
+  border-radius: var(--radius-circle);
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ---- Wallpaper windows */
+.scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ---- Lava lamp: soft round gradients that move up and down */
+.lava {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  left: calc(10% + var(--i) * 18%);
+  bottom: -30%;
+  width: 55%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-circle);
+  background: radial-gradient(closest-side, rgb(var(--accent-rgb) / 0.55), rgb(var(--accent-rgb) / 0) 100%);
+  animation: rise calc(9s + var(--i) * 3s) ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -2.5s);
+}
+
+@keyframes rise {
+  to {
+    transform: translateY(-120%) scale(0.8);
+  }
+}
+
+/* ---- Rain on glass */
+.rain {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, transparent, rgb(var(--accent-rgb) / 0.05));
+}
+
+.drop {
+  position: absolute;
+  top: -10%;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  background: radial-gradient(circle at 35% 35%, var(--text-primary), transparent 70%);
+  opacity: 0.35;
+  animation: slide linear infinite;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(40cqh);
+  }
+  45% {
+    transform: translateY(42cqh);
+  }
+  100% {
+    transform: translateY(120cqh);
+  }
+}
+
+/* ---- Breathing circle */
+.breath {
+  position: absolute;
+  inset: 22%;
+  border: 1px solid var(--text-secondary);
+  border-radius: var(--radius-circle);
+  background: rgb(var(--accent-rgb) / 0.12);
+  animation: breathe 8s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(0.55);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
+
+.breathLabel {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbitRingCss,
+  .blob,
+  .drop,
+  .breath {
+    animation: none;
+  }
+}

@@ -1,0 +1,217 @@
+/* ---- Rain chance dots */
+.rain {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-16);
+}
+
+.rainColumns {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rainColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.rainDot,
+.rainDotOff {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-circle);
+  background: var(--text-primary);
+}
+
+.rainDotOff {
+  opacity: var(--ghost, 0.07);
+}
+
+.rainHour {
+  margin-top: var(--space-4);
+  font-size: 9px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- UV and air */
+.air {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: var(--space-12);
+}
+
+.airItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.airWord {
+  font-size: var(--text-11);
+  color: var(--text-secondary);
+}
+
+.airLine {
+  width: 1px;
+  height: 60%;
+  background: var(--color-hairline);
+}
+
+/* ---- Compass */
+.compass {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.dial {
+  position: absolute;
+  inset: 6%;
+  width: 88%;
+  height: 88%;
+  transition: transform 0.2s linear;
+}
+
+.dialRing {
+  fill: none;
+  stroke: var(--color-hairline);
+  stroke-width: 0.6;
+}
+
+.dialTick {
+  stroke: var(--text-tertiary);
+  stroke-width: 0.6;
+}
+
+.dialTickMajor {
+  stroke: var(--text-primary);
+  stroke-width: 1;
+}
+
+.north {
+  fill: var(--color-accent);
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--font-body);
+}
+
+.compassCenter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.heading {
+  font-size: var(--text-17);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.compassNote {
+  max-width: 60%;
+  text-align: center;
+}
+
+/* ---- Quote */
+.quote {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-16);
+}
+
+.quote blockquote {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--text-17);
+  line-height: 1.2;
+}
+
+.quoteLarge blockquote {
+  font-size: var(--text-22);
+}
+
+/* ---- Favorites */
+.favorites {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  place-items: center;
+  padding: var(--space-8);
+}
+
+.favoritesRow {
+  display: flex;
+  justify-content: space-around;
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--space-32) + var(--space-4));
+  height: calc(var(--space-32) + var(--space-4));
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-circle);
+  background: var(--color-surface-3);
+  font-size: var(--text-13);
+  font-weight: 600;
+}
+
+.personName {
+  font-size: var(--text-11);
+  color: var(--text-secondary);
+}
+
+.favoritesRow .personName {
+  display: none;
+}
+
+.emptyFavorites {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-16);
+  text-align: center;
+}
+
+.emptyNote {
+  font-size: var(--text-13);
+  line-height: 1.3;
+  color: var(--text-secondary);
+}

@@ -105,3 +105,14 @@ export function CustomiseIcon() {
     </Icon>
   );
 }
+
+export function ArcadeIcon() {
+  return (
+    <Icon>
+      <rect x="3.500" y="7" width="17" height="10" rx="5" />
+      <path d="M7.500 12h3M9 10.500v3" />
+      <circle cx="15" cy="11" r="0.900" />
+      <circle cx="17" cy="13" r="0.900" />
+    </Icon>
+  );
+}

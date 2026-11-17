@@ -37,13 +37,15 @@ interface HomeItemViewProps {
   /** Used to make neighbours wiggle out of step */
   index: number;
   onResize: (id: string) => void;
+  /** Edit mode: take a widget off the home screen */
+  onRemove: (id: string) => void;
 }
 
 /**
  * One home screen item at its place on the grid. When its place changes
  * (something was rearranged) it springs there.
  */
-export function HomeItemView({ item, x, y, width, height, editing, hidden, index, onResize }: HomeItemViewProps) {
+export function HomeItemView({ item, x, y, width, height, editing, hidden, index, onResize, onRemove }: HomeItemViewProps) {
   const widget = item.kind === 'widget' ? getWidget(item.ref) : undefined;
   if (!widget && !getApp(item.ref)) return null;
 
@@ -75,6 +77,20 @@ export function HomeItemView({ item, x, y, width, height, editing, hidden, index
           <HomeItemContent item={item} />
         </div>
       </motion.div>
+      {editing && widget && (
+        <Pressable
+          className={styles.remove}
+          data-no-gesture
+          aria-label={`Remove ${widget.name}`}
+          onClick={() => onRemove(item.id)}
+        >
+          <span className={styles.removeBadge}>
+            <Icon>
+              <path d="M7 12h10" />
+            </Icon>
+          </span>
+        </Pressable>
+      )}
       {canResize && (
         <Pressable
           className={styles.resize}

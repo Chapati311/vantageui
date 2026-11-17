@@ -67,10 +67,16 @@
 }
 
 /* Edit mode: sits in the free space under the last row, clear of dots and dock */
-.done {
+.editBar {
   position: absolute;
   right: 0;
   bottom: var(--space-8);
+  display: flex;
+  gap: var(--space-8);
+}
+
+.done {
+  position: relative;
   height: var(--space-32);
   padding: 0 var(--space-16);
   border: 0;

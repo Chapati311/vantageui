@@ -1,0 +1,183 @@
+.player {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-16);
+}
+
+.playerWide {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.note {
+  font-size: var(--text-13);
+  line-height: 1.3;
+  color: var(--text-secondary);
+}
+
+.cover {
+  width: calc(var(--space-32) * 1.5);
+  height: calc(var(--space-32) * 1.5);
+  border-radius: var(--space-8);
+  object-fit: cover;
+}
+
+.playerWide .cover {
+  width: calc(var(--grid-cell) * 1.6);
+  height: calc(var(--grid-cell) * 1.6);
+}
+
+.meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-15);
+  font-weight: 600;
+}
+
+.artist {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-13);
+  color: var(--text-secondary);
+}
+
+.progress {
+  display: block;
+  height: 2px;
+  margin: var(--space-4) 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-3);
+  overflow: hidden;
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  background: var(--text-primary);
+  transform-origin: left center;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--space-32) + var(--space-8));
+  height: calc(var(--space-32) + var(--space-8));
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-circle);
+  background: none;
+  color: var(--text-secondary);
+}
+
+.control svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.play {
+  border: 1px solid var(--color-hairline);
+  color: var(--text-primary);
+}
+
+/* ---- Visualizer: takes its dot color from the text color */
+.visualizer {
+  width: 86%;
+  height: 70%;
+  color: var(--text-primary);
+}
+
+/* ---- Vinyl */
+.vinylButton {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.vinyl {
+  position: relative;
+  width: 74%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-circle);
+  background: var(--color-surface-3);
+  box-shadow: inset 0 0 0 1px var(--color-hairline);
+}
+
+.spinning {
+  animation: spin 3.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.groove,
+.groove2 {
+  position: absolute;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-circle);
+}
+
+.groove {
+  inset: 12%;
+}
+
+.groove2 {
+  inset: 24%;
+}
+
+/* The paper label in the middle, in the accent, with a small hole */
+.label {
+  position: absolute;
+  inset: 36%;
+  border-radius: var(--radius-circle);
+  background: radial-gradient(circle, var(--color-bg) 0 9%, var(--color-accent) 10%);
+}
+
+.vinylTitle {
+  position: absolute;
+  bottom: 6%;
+  left: 12%;
+  right: 12%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  font-size: var(--text-11);
+  color: var(--text-secondary);
+  pointer-events: none;
+}

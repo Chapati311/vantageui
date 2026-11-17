@@ -10,6 +10,9 @@ import {
   stopStopwatch,
   type ClockTab,
 } from '../apps/clock/clockStore';
+import { openGame, type GameId } from '../apps/arcade/arcadeStore';
+import { addWidget, removeHomeItem } from '../shell/home/layoutStore';
+import type { WidgetSize } from '../shell/widgets/types';
 import { convertNote, createNote, deleteNote, getNote, type Note } from '../apps/notes/notesStore';
 import type { WallpaperConfig } from '../theme/wallpapers';
 import {
@@ -108,6 +111,22 @@ const ACTIONS = {
     'Close search, the control center, the notification center and the app switcher.',
     () => shell?.closeOverlays(),
   ),
+
+  // ---- Home screen
+  'home.addWidget': define<{ widgetId: string; size: WidgetSize; page?: number }>(
+    'Put a widget on the home screen (first free spot, from the given page on).',
+    ({ widgetId, size, page }) => void addWidget(widgetId, size, page ?? 0),
+  ),
+  'home.removeWidget': define<{ itemId: string }>('Take a widget off the home screen.', ({ itemId }) =>
+    removeHomeItem(itemId),
+  ),
+
+  // ---- Arcade
+  'arcade.open': define<{ game?: GameId }>('Open the Arcade, optionally straight into one game.', ({ game }) => {
+    openGame(game ?? null);
+    shell?.openApp('arcade');
+    playSound('openApp');
+  }),
 
   // ---- Customise
   'customise.surprise': define<Record<string, never>>(

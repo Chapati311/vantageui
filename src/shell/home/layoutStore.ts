@@ -60,3 +60,39 @@ export function saveLayout(layout: HomeItem[]): void {
     // Storage can be full or blocked (private mode). The layout still works until reload.
   }
 }
+
+// ---- Changes from outside the home screen (the widget gallery, actions)
+
+const listeners = new Set<() => void>();
+
+/** Called when the layout was changed by addWidget / removeHomeItem. */
+export function subscribeToLayout(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+/**
+ * Puts a widget on the home screen, on the first free spot from `fromPage`
+ * on. Returns false when there is no room anywhere.
+ */
+export function addWidget(widgetId: string, size: WidgetSize, fromPage = 0): boolean {
+  const widget = getWidget(widgetId);
+  if (!widget || !widget.sizes.includes(size)) return false;
+  const [w, h] = size.split('x').map(Number);
+  const layout = loadLayout();
+  const slot = firstFreeSlot(layout, { w, h }, fromPage) ?? firstFreeSlot(layout, { w, h }, 0);
+  if (!slot) return false;
+  const id = `widget:${widgetId}:${Date.now().toString(36)}`;
+  saveLayout([...layout, { ...slot, id, kind: 'widget', ref: widgetId }]);
+  listeners.forEach((listener) => listener());
+  return true;
+}
+
+/** Takes a widget off the home screen (apps always keep their place). */
+export function removeHomeItem(id: string): void {
+  const layout = loadLayout();
+  const item = layout.find((entry) => entry.id === id);
+  if (!item || item.kind !== 'widget') return;
+  saveLayout(layout.filter((entry) => entry.id !== id));
+  listeners.forEach((listener) => listener());
+}

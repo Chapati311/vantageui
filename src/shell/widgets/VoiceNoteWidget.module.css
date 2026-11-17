@@ -6,8 +6,29 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-circle);
+  padding: 0;
+  border: 0;
   background: var(--color-accent);
   box-shadow: var(--glow-accent);
+  color: var(--color-on-accent);
+  font: inherit;
+}
+
+/* While recording: a slow pulse */
+.recording {
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(0.92);
+  }
+}
+
+.time {
+  font-size: var(--text-15);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .wave {

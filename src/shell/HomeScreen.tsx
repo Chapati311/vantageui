@@ -5,6 +5,8 @@ import { getWidget } from './widgets/widgetRegistry';
 import { Dock } from './home/Dock';
 import { HomeItemContent, HomeItemView } from './home/HomeItemView';
 import { PageDots } from './home/PageDots';
+import { WidgetGallery } from './home/WidgetGallery';
+import { runAction } from '../system/actions';
 import { LivePill, useHasLiveActivity } from './LivePill';
 import {
   COLS,
@@ -16,7 +18,7 @@ import {
   placeItem,
   type HomeItem,
 } from './home/layout';
-import { loadLayout, saveLayout } from './home/layoutStore';
+import { loadLayout, saveLayout, subscribeToLayout } from './home/layoutStore';
 import { slotRect, useGridMetrics } from './home/useGridMetrics';
 import { useHomeGestures } from './home/useHomeGestures';
 import styles from './HomeScreen.module.css';
@@ -58,6 +60,10 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
   layoutRef.current = layout;
   const [editing, setEditing] = useState(false);
   const [page, setPage] = useState(0);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+
+  // Widgets added or removed from elsewhere (the gallery, actions): reload
+  useEffect(() => subscribeToLayout(() => setSaved(loadLayout())), []);
 
   // In edit mode there is one extra empty page to drag things onto.
   const pageCount = Math.min(MAX_PAGES, countPages(layout) + (editing ? 1 : 0));
@@ -162,6 +168,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
                 hidden={drag?.id === item.id}
                 index={index}
                 onResize={resizeItem}
+                onRemove={(id) => void runAction('home.removeWidget', { itemId: id })}
               />
             ))}
           {dropRect && (
@@ -177,9 +184,14 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
         </motion.div>
 
         {editing && (
-          <Pressable className={styles.done} data-no-gesture onClick={stopEditing}>
-            Done
-          </Pressable>
+          <div className={styles.editBar} data-no-gesture>
+            <Pressable className={styles.done} data-no-gesture onClick={() => setGalleryOpen(true)}>
+              Add widget
+            </Pressable>
+            <Pressable className={styles.done} data-no-gesture onClick={stopEditing}>
+              Done
+            </Pressable>
+          </div>
         )}
       </div>
 
@@ -202,6 +214,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
           </div>
         </motion.div>
       )}
+      <WidgetGallery open={galleryOpen} page={page} onClose={() => setGalleryOpen(false)} />
     </div>
   );
 }

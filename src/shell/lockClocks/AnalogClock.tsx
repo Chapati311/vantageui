@@ -1,7 +1,7 @@
 import styles from './LockClocks.module.css';
 
 /** A thin analog clock: hairline ring, 12 small ticks, two thin hands, an accent center. */
-export function AnalogClock({ date, size }: { date: Date; size: number }) {
+export function AnalogClock({ date, size }: { date: Date; size: number | string }) {
   const minutes = date.getMinutes();
   const hours = (date.getHours() % 12) + minutes / 60;
   return (

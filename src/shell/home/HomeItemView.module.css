@@ -81,3 +81,36 @@
   width: var(--space-16);
   height: var(--space-16);
 }
+
+/* Remove button: top-left, same size as the resize button */
+.remove {
+  position: absolute;
+  left: calc(var(--space-12) * -1);
+  top: calc(var(--space-12) * -1);
+  width: calc(var(--space-32) + var(--space-12));
+  height: calc(var(--space-32) + var(--space-12));
+  padding: 0;
+  border: 0;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+
+.removeBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-24);
+  height: var(--space-24);
+  border: var(--border-widget);
+  border-radius: var(--radius-circle);
+  background: var(--color-surface-3);
+  color: var(--text-primary);
+}
+
+.removeBadge svg {
+  width: var(--space-16);
+  height: var(--space-16);
+}

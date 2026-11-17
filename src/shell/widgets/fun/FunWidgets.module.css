@@ -1,0 +1,88 @@
+.button {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  perspective: 300px;
+}
+
+/* ---- Die: a rounded square with a 3x3 grid of pips */
+.die {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12%;
+  width: 46%;
+  aspect-ratio: 1;
+  padding: 10%;
+  border: 1px solid var(--text-secondary);
+  border-radius: 22%;
+}
+
+.pip,
+.pipOff {
+  border-radius: var(--radius-circle);
+  background: var(--text-primary);
+}
+
+.pipOff {
+  opacity: var(--ghost, 0.07);
+}
+
+/* ---- Coin */
+.coin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52%;
+  aspect-ratio: 1;
+  border: 2px solid var(--text-primary);
+  border-radius: var(--radius-circle);
+}
+
+.coinFace {
+  font-family: var(--font-serif);
+  font-size: var(--serif-34);
+  line-height: 1;
+}
+
+.coinLabel {
+  position: absolute;
+  bottom: 12%;
+}
+
+/* ---- Tally */
+.tally {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.tallyMinus,
+.tallyCount {
+  height: 100%;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.tallyMinus {
+  width: calc(var(--space-32) + var(--space-16));
+  font-size: var(--text-22);
+  color: var(--text-secondary);
+}
+
+.tallyCount {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: var(--space-16);
+}
