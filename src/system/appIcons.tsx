@@ -94,3 +94,14 @@ export function KitIcon() {
     </Icon>
   );
 }
+
+export function CustomiseIcon() {
+  return (
+    <Icon>
+      <path d="M12 4a8 8 0 1 0 0 16c1.200 0 1.800-.800 1.800-1.700 0-1-.900-1.400-.900-2.300 0-.900.700-1.500 1.700-1.500H17a3 3 0 0 0 3-3C20 7.300 16.400 4 12 4z" />
+      <circle cx="8" cy="11" r="1" />
+      <circle cx="11" cy="7.800" r="1" />
+      <circle cx="15.200" cy="8.500" r="1" />
+    </Icon>
+  );
+}

@@ -26,6 +26,7 @@ import {
 } from './settingsStore';
 import { clearNotifications, dismissNotification, pushNotification } from './notifications';
 import { hasPasscode, removePasscode, setPasscode } from './passcode';
+import { applySetup, deleteSetup, getSavedSetups, readSetupFile, saveSetup, surpriseMe } from './setups';
 import { playSound } from './sounds';
 import { refreshWeather } from './weather';
 import { removeWallpaperPhoto, setWallpaperPhoto } from './wallpaperPhoto';
@@ -106,6 +107,23 @@ const ACTIONS = {
   'shell.closeOverlays': define<Record<string, never>>(
     'Close search, the control center, the notification center and the app switcher.',
     () => shell?.closeOverlays(),
+  ),
+
+  // ---- Customise
+  'customise.surprise': define<Record<string, never>>(
+    'Surprise me: pick a random theme, wallpaper and sometimes accent.',
+    () => surpriseMe(),
+  ),
+  'setups.save': define<{ name: string }>('Save the whole look (settings and home layout) as a named setup.', ({ name }) =>
+    saveSetup(name),
+  ),
+  'setups.apply': define<{ id: string }>('Switch to a saved setup.', ({ id }) => {
+    const setup = getSavedSetups().find((item) => item.id === id);
+    if (setup) applySetup(setup);
+  }),
+  'setups.delete': define<{ id: string }>('Delete a saved setup.', ({ id }) => deleteSetup(id)),
+  'setups.import': define<{ file: Blob }>('Load a setup from an exported file.', async ({ file }) =>
+    applySetup(await readSetupFile(file)),
   ),
 
   // ---- Notifications

@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import { ClockApp } from '../apps/clock/ClockApp';
+import { CustomiseApp } from '../apps/customise/CustomiseApp';
 import { NotesApp } from '../apps/notes/NotesApp';
 import { SettingsApp } from '../apps/settings/SettingsApp';
 import { KitApp } from '../apps/kit/KitApp';
@@ -7,6 +8,7 @@ import { WeatherApp } from '../apps/weather/WeatherApp';
 import {
   CalculatorIcon,
   ClockIcon,
+  CustomiseIcon,
   KitIcon,
   MapsIcon,
   MessagesIcon,
@@ -67,6 +69,13 @@ export const APPS: AppDefinition[] = [
     icon: SettingsIcon,
     keywords: ['preferences', 'options', 'sound', 'wallpaper', 'accent', 'color', 'mode', 'theme'],
     component: SettingsApp,
+  },
+  {
+    id: 'customise',
+    name: 'Customise',
+    icon: CustomiseIcon,
+    keywords: ['theme', 'wallpaper', 'look', 'style', 'accent', 'color', 'design', 'setup', 'surprise'],
+    component: CustomiseApp,
   },
   {
     id: 'kit',
