@@ -10,7 +10,7 @@ export function LockClock() {
   return (
     <div className={styles.wrap}>
       <time dateTime={now.toISOString()}>
-        <DotNumber value={formatTime(now)} size={96} blinkColon />
+        <DotNumber value={formatTime(now)} size={96} clock blinkColon />
       </time>
       <div className="label">{formatDate(now)}</div>
     </div>

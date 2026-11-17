@@ -10,8 +10,11 @@ import { LockOrbit } from './LockOrbit';
 import { NotificationCount } from './NotificationCount';
 import styles from './LockScreen.module.css';
 
-/** Placeholder until there is a real notification system. */
-const PLACEHOLDER_NOTIFICATIONS = 3;
+/**
+ * Waiting notifications. There is no notification system yet (Phase 3), and
+ * other apps' notifications need the native bridge, so there are none.
+ */
+const NOTIFICATIONS = 0;
 
 interface LockScreenProps {
   locked: boolean;
@@ -81,7 +84,7 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
       {wallpaper === 'orbit' && <LockOrbit paused={!locked} progress={progress} />}
       {wallpaper === 'dots' && <LockDots />}
       <div className={styles.status}>
-        <NotificationCount count={PLACEHOLDER_NOTIFICATIONS} />
+        <NotificationCount count={NOTIFICATIONS} />
         <BatteryIndicator />
       </div>
       <div className={styles.clock}>

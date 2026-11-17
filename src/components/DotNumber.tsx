@@ -3,9 +3,10 @@ import styles from './DotNumber.module.css';
 
 /**
  * THE one style for dot-matrix numbers in the OS. Each character is drawn
- * on a grid of round dots, 7 dots tall. Because we draw the dots ourselves
- * (instead of using a font), a changing number can light its dots up and
- * down one by one instead of jumping.
+ * on a grid of round dots, 7 dots tall, like an LED panel: lit dots in full
+ * color, unlit dots faintly visible ("ghost" dots, about 7%). Because we draw
+ * the dots ourselves (instead of using a font), a changing number lights its
+ * dots up and down one by one instead of jumping.
  */
 
 const ROWS = 7;
@@ -33,16 +34,28 @@ const GLYPHS: Record<string, string[]> = {
 /** A "1" without its empty side columns, for tight places (see `narrowOne`). */
 const NARROW_ONE = ['010', '110', '010', '010', '010', '010', '111'];
 
+/** The unlit column between two characters, so the ghost grid has no gaps. */
+const SPACER = ['0', '0', '0', '0', '0', '0', '0'];
+
 /** Milliseconds between one dot changing and the next, so digits change dot by dot. */
 const DOT_STAGGER_MS = 6;
 
+type Tone = 'primary' | 'secondary' | 'accent';
+
 interface DotNumberProps {
-  /** Digits, and optionally ":" "-" or spaces. E.g. "21:05" */
+  /** Digits, and optionally ":" "-" "." or spaces. E.g. "21:05" */
   value: string;
   /** Height of the digits in px: one of the design system sizes */
   size: DotSize;
   /** Draw in the secondary (grey) text color */
   muted?: boolean;
+  /**
+   * A clock: hours in the text color, minutes in the secondary color, and
+   * the colon in the accent (or secondary, with `quietColon`).
+   */
+  clock?: boolean;
+  /** For lists of clocks: the colon stays grey, so the page keeps one accent */
+  quietColon?: boolean;
   /** The colon softly blinks once per second */
   blinkColon?: boolean;
   /**
@@ -54,45 +67,93 @@ interface DotNumberProps {
   instant?: boolean;
 }
 
-export function DotNumber({ value, size, muted, blinkColon, narrowOne, instant }: DotNumberProps) {
+/** One character (or spacer) as a small grid of dots. */
+function DotCell({
+  rows,
+  pitch,
+  size,
+  tone,
+  blink,
+}: {
+  rows: string[];
+  pitch: number;
+  size: number;
+  tone: Tone;
+  blink: boolean;
+}) {
+  const columns = rows[0].length;
+  return (
+    <svg
+      className={`${styles[tone]} ${blink ? styles.blink : ''}`}
+      width={columns * pitch}
+      height={size}
+      viewBox={`0 0 ${columns} ${ROWS}`}
+      aria-hidden="true"
+    >
+      {rows.flatMap((row, y) =>
+        [...row].map((cell, x) => (
+          <circle
+            key={`${x}-${y}`}
+            className={cell === '1' ? styles.on : styles.off}
+            style={{ transitionDelay: `${(y * columns + x) * DOT_STAGGER_MS}ms` }}
+            cx={x + 0.5}
+            cy={y + 0.5}
+            r={0.42}
+          />
+        )),
+      )}
+    </svg>
+  );
+}
+
+export function DotNumber({
+  value,
+  size,
+  muted,
+  clock,
+  quietColon,
+  blinkColon,
+  narrowOne,
+  instant,
+}: DotNumberProps) {
   const pitch = size / ROWS; // distance between dot centres, in px
+  const characters = [...value];
+  const colonAt = characters.indexOf(':');
+
+  const toneOf = (index: number): Tone => {
+    if (muted) return 'secondary';
+    if (!clock || colonAt < 0) return 'primary';
+    if (index < colonAt) return 'primary';
+    if (index === colonAt) return quietColon ? 'secondary' : 'accent';
+    return 'secondary';
+  };
 
   return (
     <span
-      className={`${styles.number} ${muted ? styles.muted : ''} ${instant ? styles.instant : ''}`}
-      style={{ height: size, gap: narrowOne ? pitch / 2 : pitch }}
+      className={`${styles.number} ${instant ? styles.instant : ''}`}
+      // narrowOne packs the digits tighter, without the ghost spacer columns
+      style={{ height: size, gap: narrowOne ? pitch / 2 : 0 }}
       role="img"
       aria-label={value}
     >
-      {[...value].map((character, index) => {
+      {characters.flatMap((character, index) => {
         const rows =
           character === '1' && narrowOne ? NARROW_ONE : (GLYPHS[character] ?? GLYPHS[' ']);
-        const columns = rows[0].length;
-        return (
-          <svg
-            // The position is the key: when the value changes, the SAME dots stay
-            // on the page and only switch on or off (which CSS then fades).
-            key={index}
-            className={character === ':' && blinkColon ? styles.blink : undefined}
-            width={columns * pitch}
-            height={size}
-            viewBox={`0 0 ${columns} ${ROWS}`}
-            aria-hidden="true"
-          >
-            {rows.flatMap((row, y) =>
-              [...row].map((cell, x) => (
-                <circle
-                  key={`${x}-${y}`}
-                  className={cell === '1' ? styles.on : styles.off}
-                  style={{ transitionDelay: `${(y * columns + x) * DOT_STAGGER_MS}ms` }}
-                  cx={x + 0.5}
-                  cy={y + 0.5}
-                  r={0.42}
-                />
-              )),
-            )}
-          </svg>
+        const tone = toneOf(index);
+        // The position is the key: when the value changes, the SAME dots stay
+        // on the page and only switch on or off (which CSS then fades).
+        const cell = (
+          <DotCell
+            key={`c${index}`}
+            rows={rows}
+            pitch={pitch}
+            size={size}
+            tone={tone}
+            blink={character === ':' && !!blinkColon}
+          />
         );
+        if (narrowOne || index === characters.length - 1) return [cell];
+        return [cell, <DotCell key={`s${index}`} rows={SPACER} pitch={pitch} size={size} tone={tone} blink={false} />];
       })}
     </span>
   );

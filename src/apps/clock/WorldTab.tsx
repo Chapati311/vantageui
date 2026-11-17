@@ -19,7 +19,8 @@ export function WorldTab() {
               <span className="label">{note}</span>
             </div>
             <time className={styles.time}>
-              <DotNumber value={time} size={28} />
+              {/* quietColon: a list of seven clocks, so the colons stay grey (one accent per page) */}
+              <DotNumber value={time} size={28} clock quietColon />
             </time>
           </div>
         );

@@ -13,6 +13,11 @@
   justify-content: space-between;
 }
 
+/* Switched off until the native bridge can control the phone's music */
+.controls > span {
+  opacity: 0.3;
+}
+
 .skip,
 .play {
   position: relative;
@@ -83,4 +88,11 @@
   font-size: var(--text-15);
   font-weight: 500;
   line-height: 1;
+}
+
+/* Can wrap onto two lines in a narrow widget */
+.note {
+  font-size: var(--text-13);
+  line-height: 1.3;
+  color: var(--text-secondary);
 }

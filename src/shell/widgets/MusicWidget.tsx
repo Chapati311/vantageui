@@ -1,86 +1,38 @@
-import { useEffect, useState } from 'react';
-import { Pressable } from '../../components/Pressable';
 import { Widget } from '../../components/Widget';
-import { PauseIcon, PlayIcon, SkipNextIcon, SkipPreviousIcon } from '../../components/glyphs';
+import { PlayIcon, SkipNextIcon, SkipPreviousIcon } from '../../components/glyphs';
 import styles from './MusicWidget.module.css';
 
 /**
- * DEMO data. A web app can't see or control the phone's music, so this
- * widget plays through a made-up list until the native bridge exists.
+ * "Now playing". A web app can't see or control what the phone is playing,
+ * so until the native bridge exists (after the jailbreak) this shows a clean
+ * "Available after unlock" state instead of made-up songs. Spotify and Apple
+ * Music versions come in Phase 4.
  */
-const DEMO_TRACKS = [
-  { title: 'Night Signal', artist: 'Demo track 1', seconds: 184 },
-  { title: 'Soft Static', artist: 'Demo track 2', seconds: 212 },
-  { title: 'Glass Hours', artist: 'Demo track 3', seconds: 157 },
-];
-
-const RADIUS = 46;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
-/** "Now playing": a thin progress ring around play/pause, with skip buttons. */
 export function MusicWidget() {
-  const [index, setIndex] = useState(0);
-  const [playing, setPlaying] = useState(false);
-  const [position, setPosition] = useState(0); // seconds into the track
-  const track = DEMO_TRACKS[index];
-
-  const skip = (step: number) => {
-    setIndex((current) => (current + step + DEMO_TRACKS.length) % DEMO_TRACKS.length);
-    setPosition(0);
-  };
-
-  // While "playing", move forward one second at a time.
-  useEffect(() => {
-    if (!playing) return;
-    const timer = window.setInterval(() => setPosition((seconds) => seconds + 1), 1000);
-    return () => window.clearInterval(timer);
-  }, [playing]);
-
-  // At the end of a track, go to the next one.
-  useEffect(() => {
-    if (position >= track.seconds) skip(1);
-  }, [position, track.seconds]);
-
-  const progress = Math.min(1, position / track.seconds);
-
   return (
     <Widget shape="rounded">
       <div className={styles.music}>
         <span className="label">Now playing</span>
 
-        <div className={styles.controls}>
-          <Pressable className={styles.skip} aria-label="Previous track" data-no-gesture onClick={() => skip(-1)}>
+        {/* The controls are drawn, but switched off */}
+        <div className={styles.controls} aria-hidden="true">
+          <span className={styles.skip}>
             <SkipPreviousIcon />
-          </Pressable>
-
-          <Pressable
-            className={styles.play}
-            aria-label={playing ? 'Pause' : 'Play'}
-            data-no-gesture
-            onClick={() => setPlaying(!playing)}
-          >
-            <svg className={styles.ring} viewBox="0 0 100 100" aria-hidden="true">
-              <circle className={styles.track} cx="50" cy="50" r={RADIUS} />
-              <circle
-                className={styles.progress}
-                cx="50"
-                cy="50"
-                r={RADIUS}
-                strokeDasharray={CIRCUMFERENCE}
-                strokeDashoffset={CIRCUMFERENCE * (1 - progress)}
-              />
+          </span>
+          <span className={styles.play}>
+            <svg className={styles.ring} viewBox="0 0 100 100">
+              <circle className={styles.track} cx="50" cy="50" r="46" />
             </svg>
-            {playing ? <PauseIcon /> : <PlayIcon />}
-          </Pressable>
-
-          <Pressable className={styles.skip} aria-label="Next track" data-no-gesture onClick={() => skip(1)}>
+            <PlayIcon />
+          </span>
+          <span className={styles.skip}>
             <SkipNextIcon />
-          </Pressable>
+          </span>
         </div>
 
         <div className={styles.text}>
-          <span className={styles.title}>{track.title}</span>
-          <span className="label">{track.artist}</span>
+          <span className={styles.title}>System music</span>
+          <span className={styles.note}>Available after unlock</span>
         </div>
       </div>
     </Widget>

@@ -20,7 +20,7 @@ export function ClockWidget({ size }: WidgetProps) {
             <DotNumber value={minutes} size={64} muted />
           </>
         ) : (
-          <DotNumber value={time} size={40} />
+          <DotNumber value={time} size={40} clock />
         )}
       </time>
     </Widget>
