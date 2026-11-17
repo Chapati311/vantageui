@@ -15,3 +15,8 @@
 .active {
   background: var(--text-primary);
 }
+
+.numbers {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}

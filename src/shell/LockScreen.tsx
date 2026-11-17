@@ -25,6 +25,7 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
   // Vantage's own notifications (other apps' need the native bridge)
   const notificationCount = useNotifications().length;
   const [clockPosition] = useSetting('lockClockPosition');
+  const [lockNotifications] = useSetting('lockNotifications');
   const ref = useRef<HTMLDivElement>(null);
 
   // 0 = covering the screen, 1 = slid away above it. A "motion value":
@@ -81,7 +82,7 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
       {/* Paused while unlocked: nobody can see it, so it saves battery */}
       <Wallpaper place="lock" paused={!locked} progress={progress} />
       <div className={styles.status}>
-        <NotificationCount count={notificationCount} />
+        {lockNotifications === 'count' ? <NotificationCount count={notificationCount} /> : <span />}
         <BatteryIndicator />
       </div>
       <div className={`${styles.clock} ${clockPosition === 'center' ? styles.centered : ''}`}>

@@ -1,11 +1,12 @@
 import { useState, type ComponentType } from 'react';
-import { BoltIcon, GridIcon, LockIcon, MoonIcon, SoundIcon, SunIcon } from '../../components/glyphs';
+import { BellIcon, BoltIcon, FlagIcon, GridIcon, LockIcon, MoonIcon, SoundIcon, SunIcon, TextIcon, WifiIcon } from '../../components/glyphs';
 import { AppShell, Button } from '../../components/kit';
 import { Pressable } from '../../components/Pressable';
 import { runAction } from '../../system/actions';
-import { CustomiseIcon } from '../../system/appIcons';
+import { CustomiseIcon, MusicIcon } from '../../system/appIcons';
 import { useSettings } from '../../system/settingsStore';
 import { useSetups } from '../../system/setups';
+import { useLabWidgets } from '../../shell/widgets/lab/labStore';
 import { useTheme } from '../../system/theme';
 import { getPreset } from '../../theme/presets';
 import { wallpaperName } from '../../theme/wallpapers';
@@ -19,9 +20,21 @@ import { WallpaperPage } from '../settings/WallpaperPage';
 import { WidgetsPage } from '../settings/WidgetsPage';
 import { LivePreview } from './LivePreview';
 import { LockScreenPage } from './LockScreenPage';
+import { MusicPage } from './MusicPage';
 import { SetupsPage } from './SetupsPage';
+import {
+  BootPage,
+  ControlCenterPage,
+  FontsPage,
+  HomeScreenPage,
+  IconsPage,
+  LivePillPage,
+  MotionPage,
+  NotificationsPage,
+} from './SystemSections';
+import { WidgetLabPage } from './WidgetLabPage';
 import { StatusBarPage } from './StatusBarPage';
-import { LayersIcon, PaletteIcon, PictureIcon, SparkIcon } from './icons';
+import { CircleIcon, LayersIcon, PaletteIcon, PictureIcon, SparkIcon } from './icons';
 import styles from './CustomiseApp.module.css';
 
 type SectionId =
@@ -30,11 +43,21 @@ type SectionId =
   | 'appearance'
   | 'wallpapers'
   | 'lock'
-  | 'statusbar'
+  | 'home'
+  | 'icons'
+  | 'fonts'
   | 'widgets'
-  | 'modes'
+  | 'widgetlab'
+  | 'statusbar'
+  | 'controls'
+  | 'notifications'
+  | 'pill'
   | 'motion'
   | 'sounds'
+  | 'music'
+  | 'boot'
+  | 'modes'
+  | 'access'
   | 'setups';
 
 interface SectionDef {
@@ -50,14 +73,24 @@ const LOOK: SectionDef[] = [
   { id: 'appearance', name: 'Light and dark', icon: SunIcon, page: AppearancePage },
   { id: 'wallpapers', name: 'Wallpapers', icon: PictureIcon, page: WallpaperPage },
   { id: 'lock', name: 'Lock screen', icon: LockIcon, page: LockScreenPage },
-  { id: 'widgets', name: 'Widgets', icon: GridIcon, page: WidgetsPage },
+  { id: 'home', name: 'Home screen', icon: GridIcon, page: HomeScreenPage },
+  { id: 'icons', name: 'Icons', icon: CircleIcon, page: IconsPage },
+  { id: 'fonts', name: 'Fonts', icon: TextIcon, page: FontsPage },
+  { id: 'widgets', name: 'Widget style', icon: LayersIcon, page: WidgetsPage },
+  { id: 'widgetlab', name: 'Widget Lab', icon: SparkIcon, page: WidgetLabPage },
 ];
 
 const SYSTEM: SectionDef[] = [
   { id: 'statusbar', name: 'Status bar', icon: BoltIcon, page: StatusBarPage },
-  { id: 'modes', name: 'Modes', icon: MoonIcon, page: ModePage },
-  { id: 'motion', name: 'Motion and text', icon: SparkIcon, page: AccessibilityPage },
+  { id: 'controls', name: 'Control center', icon: WifiIcon, page: ControlCenterPage },
+  { id: 'notifications', name: 'Notifications', icon: BellIcon, page: NotificationsPage },
+  { id: 'pill', name: 'Live pill', icon: FlagIcon, page: LivePillPage },
+  { id: 'motion', name: 'Motion and feel', icon: SparkIcon, page: MotionPage },
   { id: 'sounds', name: 'Sounds', icon: SoundIcon, page: SoundPage },
+  { id: 'music', name: 'Music', icon: MusicIcon, page: MusicPage },
+  { id: 'boot', name: 'Boot and unlock', icon: LockIcon, page: BootPage },
+  { id: 'modes', name: 'Modes', icon: MoonIcon, page: ModePage },
+  { id: 'access', name: 'Accessibility', icon: TextIcon, page: AccessibilityPage },
   { id: 'setups', name: 'Setups', icon: LayersIcon, page: SetupsPage },
 ];
 
@@ -86,6 +119,7 @@ export function CustomiseApp() {
   const settings = useSettings();
   const theme = useTheme();
   const setups = useSetups();
+  const labCount = useLabWidgets().length;
 
   const all = [...LOOK, ...SYSTEM];
   const section = all.find((item) => item.id === open);
@@ -107,9 +141,19 @@ export function CustomiseApp() {
     wallpapers: theme.retro ? 'Theme' : wallpaperName(settings.wallpaper),
     lock: LOCK_NAMES[settings.lockClockStyle],
     statusbar: BATTERY_NAMES[settings.batteryStyle],
+    home: { dots: 'Page dots', numbers: 'Page numbers', hidden: 'No indicator' }[settings.pageDots],
+    icons: `${settings.iconShape[0].toUpperCase()}${settings.iconShape.slice(1)}, ${settings.iconStyle}`,
+    fonts: { inter: 'Inter', system: 'System', serif: 'Serif', mono: 'Mono' }[settings.uiFont],
+    widgetlab: labCount ? `${labCount} made` : 'Build your own',
+    controls: settings.controlStyle === 'dial' ? 'Round dial' : 'Slider',
+    notifications: settings.lockNotifications === 'count' ? 'Count on lock' : 'Hidden on lock',
+    pill: [settings.pillTimer && 'Timer', settings.pillStopwatch && 'Stopwatch', settings.pillRecording && 'Recording'].filter(Boolean).join(', ') || 'Off',
+    music: 'Spotify, Apple Music',
+    boot: settings.bootAnimation ? 'Animation on' : 'Animation off',
+    access: settings.highContrast ? 'High contrast' : `${Math.round(settings.textScale * 100)}% text`,
     widgets: theme.retro ? 'Retro' : STYLE_NAMES[settings.widgetStyle],
     modes: MODE_NAMES[settings.mode],
-    motion: settings.reduceMotion ? 'Reduced' : `${settings.animationSpeed}x speed`,
+    motion: settings.reduceMotion ? 'Reduced' : `${settings.animationSpeed}x, ${Math.round(settings.springBounce * 100)}% bounce`,
     sounds: settings.soundsEnabled ? `${Math.round(settings.soundVolume * 100)}%` : 'Off',
     setups: setups.length ? `${setups.length} saved` : 'Save and share',
   };

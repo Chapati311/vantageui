@@ -219,7 +219,8 @@
 }
 
 .input {
-  flex: 1;
+  /* Grows sideways in a row of buttons, but never shrinks below its own height in a column */
+  flex: 1 0 auto;
   min-width: 0;
   height: calc(var(--space-32) + var(--space-16));
   padding: 0 var(--space-24);

@@ -55,33 +55,33 @@ they are finished. Details for every item are in SPECS.md.
       Lock screen (8 clock styles, size, position), Status bar (4 battery
       styles), Widgets, Modes, Motion and text, Sounds, Setups (save, switch,
       export/import file) [PWA]
-- [ ] Sections: Themes (gallery of all 21 as mini phones, edit any color,
+- [x] Sections: Themes (gallery of all 21 as mini phones, edit any color,
       own themes, schedule), Widgets, Wallpapers (blur/dim/parallax, separate
       home and lock, daily shuffle, by time of day or weather), Home screen,
       Lock screen (8 clock styles), Icons, Fonts, Colors, Status bar, Control
       center, Notifications, Live pill, Motion and feel, Sounds, Boot and
       unlock, Modes, App styles, Accessibility, Setups (export/import, QR) [PWA]
-- [ ] Widget system: sizes 1x1, 2x1, 2x2, 4x2; styles solid, glass, outline,
+- [x] Widget system: sizes 1x1, 2x1, 2x2, 4x2; styles solid, glass, outline,
       tinted; smart stacks; widget gallery [PWA]
-- [ ] Time widgets: dot clock, vertical clock, thin analog, flip, binary, word
+- [x] Time widgets: dot clock, vertical clock, thin analog, flip, binary, word
       clock, world clocks, sunrise/sunset arc, moon phase [PWA]
-- [ ] Space and beauty widgets: live solar system, orbit, starfield, aurora
+- [x] Space and beauty widgets: live solar system, orbit, starfield, aurora
       drift, lava lamp, rain on glass, ocean wave line, breathing circle,
       Lock In plant [PWA]
-- [ ] Music widgets: Spotify now playing (Web API), Apple Music (MusicKit JS),
+- [x] Music widgets: Spotify now playing (Web API), Apple Music (MusicKit JS),
       dot-matrix visualizer, spinning vinyl [PWA]
 - [ ] System now playing for any app [BRIDGE]
-- [ ] Retro game widgets (playable): Snake, Pong, Blocks, Breakout,
+- [x] Retro game widgets (playable): Snake, Pong, Blocks, Breakout,
       Flappy-style, 2048, Minesweeper, Vanta Pet [PWA]
 - [ ] Productivity widgets: Lock In ring + streak, next lesson, homework due,
       grade average, dot calendar, reminders, notes, countdown [PWA]
-- [ ] Info and tools widgets: line-art weather, rain chance dots, UV and air
+- [x] Info and tools widgets: line-art weather, rain chance dots, UV and air
       quality, compass, quote of the day, photo frame, favorite contacts,
       flashlight, voice note, Ask Vantage bar [PWA]
-- [ ] Fun widgets: dice, coin flip, tally counter [PWA]
-- [ ] Device widgets: AirPods, exact battery, connected devices, storage
+- [x] Fun widgets: dice, coin flip, tally counter [PWA]
+- [x] Device widgets: AirPods, exact battery, connected devices, storage
       ("Available after unlock" until then) [BRIDGE]
-- [ ] Widget Lab: build widgets from blocks bound to data, save, export/import [PWA]
+- [x] Widget Lab: build widgets from blocks bound to data, save, export/import [PWA]
 
 ## Phase 5: Vantage apps
 All built only from the component kit, each with one signature detail and

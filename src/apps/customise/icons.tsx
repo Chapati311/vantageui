@@ -37,3 +37,12 @@ export function LayersIcon() {
     </Icon>
   );
 }
+
+export function CircleIcon() {
+  return (
+    <Icon>
+      <circle cx="12" cy="12" r="7.500" />
+      <circle cx="12" cy="12" r="2.500" />
+    </Icon>
+  );
+}

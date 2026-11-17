@@ -4,7 +4,7 @@ import type { ComponentType } from 'react';
 export type WidgetSize = '1x1' | '2x1' | '2x2' | '4x1' | '4x2';
 
 /** The groups in the widget gallery. */
-export type WidgetCategory = 'time' | 'space' | 'music' | 'games' | 'productivity' | 'info' | 'fun' | 'devices';
+export type WidgetCategory = 'time' | 'space' | 'music' | 'games' | 'productivity' | 'info' | 'fun' | 'devices' | 'lab';
 
 /** Every widget component gets the size it is currently shown at. */
 export interface WidgetProps {

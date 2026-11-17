@@ -1,0 +1,102 @@
+.lab {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-12);
+  overflow: hidden;
+}
+
+.row {
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.text {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-15);
+  font-weight: 600;
+}
+
+.big {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-22);
+  font-weight: 700;
+}
+
+.ring {
+  width: calc(var(--space-32) + var(--space-16));
+  height: calc(var(--space-32) + var(--space-16));
+}
+
+.ringTrack {
+  fill: none;
+  stroke: var(--color-hairline);
+  stroke-width: 3;
+}
+
+.ringFill {
+  fill: none;
+  stroke: var(--text-primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.bar {
+  display: block;
+  width: calc(var(--grid-cell) * 1.2);
+  height: var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-3);
+  overflow: hidden;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  background: var(--text-primary);
+  transform-origin: left center;
+}
+
+.dots {
+  display: grid;
+  grid-template-columns: repeat(10, 6px);
+  gap: 4px;
+}
+
+.dotOn,
+.dotOff {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-circle);
+  background: var(--text-primary);
+}
+
+.dotOff {
+  opacity: var(--ghost, 0.07);
+}
+
+.image {
+  max-width: 100%;
+  max-height: calc(var(--grid-cell) * 0.9);
+  border-radius: var(--space-8);
+  object-fit: cover;
+}

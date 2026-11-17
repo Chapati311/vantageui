@@ -2,17 +2,24 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { stopwatchElapsed, timerRemaining, useClockState } from '../apps/clock/clockStore';
 import { formatCountdown } from '../apps/clock/format';
-import { FlagIcon, PauseIcon } from '../components/glyphs';
+import { FlagIcon, MicIcon, PauseIcon } from '../components/glyphs';
 import { ClockIcon } from '../system/appIcons';
 import { runAction } from '../system/actions';
+import { stopRecording, useRecorder } from '../system/recordings';
+import { useSettings } from '../system/settingsStore';
 import { MOTION, SPRING } from '../theme/tokens';
 import styles from './LivePill.module.css';
 
 /** What is running right now, if anything. */
 function useLiveActivity() {
   const { timer, stopwatch } = useClockState();
+  const { recordingSince } = useRecorder();
+  const settings = useSettings();
   const [now, setNow] = useState(Date.now);
-  const active = timer.status === 'running' || timer.status === 'paused' || stopwatch.running;
+  const timerOn = settings.pillTimer && (timer.status === 'running' || timer.status === 'paused');
+  const stopwatchOn = settings.pillStopwatch && stopwatch.running;
+  const recordingOn = settings.pillRecording && recordingSince !== null;
+  const active = timerOn || stopwatchOn || recordingOn;
 
   // Tick once a second, only while something is running
   useEffect(() => {
@@ -21,7 +28,12 @@ function useLiveActivity() {
     return () => window.clearInterval(id);
   }, [active]);
 
-  if (timer.status === 'running' || timer.status === 'paused') {
+  if (recordingOn) {
+    const seconds = Math.floor((now - recordingSince) / 1000);
+    const text = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+    return { kind: 'recording' as const, paused: false, text, progress: (seconds % 60) / 60 };
+  }
+  if (timerOn) {
     return {
       kind: 'timer' as const,
       paused: timer.status === 'paused',
@@ -29,7 +41,7 @@ function useLiveActivity() {
       progress: 1 - timerRemaining(timer, now) / timer.durationMs,
     };
   }
-  if (stopwatch.running) {
+  if (stopwatchOn) {
     const seconds = Math.floor(stopwatchElapsed(stopwatch, now) / 1000);
     const text = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
     return { kind: 'stopwatch' as const, paused: false, text, progress: (seconds % 60) / 60 };
@@ -58,15 +70,23 @@ export function LivePill({ compact, unlockFirst }: { compact?: boolean; unlockFi
           exit={{ opacity: 0, scale: 0.6 }}
           whileTap={{ scale: MOTION.pressScale }}
           transition={SPRING.ui}
-          aria-label={`${activity.kind === 'timer' ? 'Timer' : 'Stopwatch'} ${activity.text}. Open Clock`}
+          aria-label={
+            activity.kind === 'recording'
+              ? `Recording ${activity.text}. Tap to stop`
+              : `${activity.kind === 'timer' ? 'Timer' : 'Stopwatch'} ${activity.text}. Open Clock`
+          }
           onClick={() => {
+            if (activity.kind === 'recording') {
+              stopRecording();
+              return;
+            }
             if (unlockFirst) void runAction('shell.unlock', {});
             void runAction('clock.showTab', { tab: activity.kind });
             void runAction('app.open', { appId: 'clock' });
           }}
         >
           <span className={styles.ring} style={{ ['--progress' as string]: activity.progress }}>
-            {activity.kind === 'timer' ? activity.paused ? <PauseIcon /> : <ClockIcon /> : <FlagIcon />}
+            {activity.kind === 'recording' ? <MicIcon /> : activity.kind === 'timer' ? activity.paused ? <PauseIcon /> : <ClockIcon /> : <FlagIcon />}
           </span>
           <span className={`${styles.time} ${activity.paused ? styles.paused : ''}`}>{activity.text}</span>
         </motion.button>

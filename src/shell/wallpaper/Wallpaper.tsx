@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useTransform, type MotionValue } from 'motion/react';
 import type { CSSProperties } from 'react';
+import { useSetting } from '../../system/settingsStore';
 import { useTheme } from '../../system/theme';
 import { useWallpaperPhoto } from '../../system/wallpaperPhoto';
 import { gradientCss, gradientStops, type WallpaperConfig } from '../../theme/wallpapers';
@@ -30,6 +31,7 @@ interface WallpaperProps {
 export function Wallpaper({ place, config, paused = false, progress }: WallpaperProps) {
   const theme = useTheme();
   const photo = useWallpaperPhoto();
+  const [parallax] = useSetting('parallax');
   const fallback = useMotionValue(0);
   const swipe = progress ?? fallback;
 
@@ -95,7 +97,7 @@ export function Wallpaper({ place, config, paused = false, progress }: Wallpaper
     >
       <motion.div
         className={`${styles.layer} ${blurred ? styles.blurred : ''}`}
-        style={place === 'lock' && !ownSwipe ? { y, scale, opacity } : undefined}
+        style={place === 'lock' && !ownSwipe ? (parallax ? { y, scale, opacity } : { opacity }) : undefined}
       >
         {layer}
       </motion.div>

@@ -1,0 +1,92 @@
+/* The widget at 70% of its real size */
+.previewArea {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(2 * var(--grid-cell) * 0.85 + var(--grid-gap));
+  margin-top: var(--space-16);
+}
+
+.preview {
+  flex-shrink: 0;
+  width: calc(var(--w) * var(--grid-cell) + (var(--w) - 1) * var(--grid-gap));
+  height: calc(var(--h) * var(--grid-cell) + (var(--h) - 1) * var(--grid-gap));
+  container-type: size;
+  transform: scale(0.8);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-12);
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  background: var(--surface-widget);
+}
+
+.blockHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.blockHead .select {
+  flex: 1;
+}
+
+.select {
+  height: calc(var(--space-32) + var(--space-12));
+  padding: 0 var(--space-16);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-3);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--text-15);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--space-32) + var(--space-12));
+  height: calc(var(--space-32) + var(--space-12));
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-circle);
+  background: none;
+  color: var(--text-secondary);
+}
+
+.iconButton:disabled {
+  opacity: 0.3;
+}
+
+.iconButton svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.up {
+  display: flex;
+  transform: rotate(90deg);
+}
+
+.down {
+  display: flex;
+  transform: rotate(-90deg);
+}
+
+.pick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--space-32) + var(--space-16));
+  border: 1px dashed var(--color-hairline);
+  border-radius: var(--radius-pill);
+  color: var(--text-secondary);
+  font-size: var(--text-15);
+}

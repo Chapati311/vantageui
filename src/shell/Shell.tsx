@@ -3,7 +3,7 @@ import { BellIcon, GridIcon, LockIcon, SoundIcon, WifiIcon } from '../components
 import { registerShell, runAction } from '../system/actions';
 import { getApp, type AppDefinition } from '../system/appRegistry';
 import { hasPasscode } from '../system/passcode';
-import { useSetting } from '../system/settingsStore';
+import { getSettings, useSetting } from '../system/settingsStore';
 import { useTheme } from '../system/theme';
 import { AppSwitcher } from './AppSwitcher';
 import { AppView, type ScreenRect } from './AppView';
@@ -38,7 +38,7 @@ function findIconRect(appId: string): ScreenRect | null {
  * old-phone versions.
  */
 export function Shell() {
-  const [booting, setBooting] = useState(true);
+  const [booting, setBooting] = useState(() => getSettings().bootAnimation);
   const [locked, setLocked] = useState(true);
   const [openApp, setOpenApp] = useState<OpenApp | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);

@@ -4,6 +4,7 @@ import { DotNumber } from '../components/DotNumber';
 import { BackIcon } from '../components/glyphs';
 import { Pressable } from '../components/Pressable';
 import { PASSCODE_LENGTH, checkPasscode } from '../system/passcode';
+import { useSetting } from '../system/settingsStore';
 import { playSound } from '../system/sounds';
 import { SPRING } from '../theme/tokens';
 import styles from './PasscodeScreen.module.css';
@@ -38,6 +39,7 @@ function Pad({ onSuccess, onCancel }: Omit<PasscodeScreenProps, 'open'>) {
   const [waitUntil, setWaitUntil] = useState(0);
   const [now, setNow] = useState(Date.now);
   const [dots, animateDots] = useAnimate();
+  const [keypadStyle] = useSetting('keypadStyle');
   const waiting = waitUntil > now;
 
   // Count down while waiting after too many wrong tries
@@ -122,7 +124,7 @@ function Pad({ onSuccess, onCancel }: Omit<PasscodeScreenProps, 'open'>) {
             </Pressable>
           ) : (
             <Pressable key={key} className={styles.key} aria-label={key} onClick={() => press(key)}>
-              <DotNumber value={key} size={28} instant />
+              {keypadStyle === 'dots' ? <DotNumber value={key} size={28} instant /> : <span className={styles.plainKey}>{key}</span>}
             </Pressable>
           ),
         )}

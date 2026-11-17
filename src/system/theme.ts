@@ -148,6 +148,14 @@ const gray = (c: RGB): RGB => {
   return [y, y, y];
 };
 
+/** The UI fonts you can pick in Customise > Fonts. */
+const UI_FONTS = {
+  inter: "'Inter Variable', system-ui, sans-serif",
+  system: "-apple-system, system-ui, 'Helvetica Neue', sans-serif",
+  serif: "'Instrument Serif', Georgia, serif",
+  mono: "ui-monospace, 'SF Mono', Menlo, monospace",
+} as const;
+
 export function computeTheme(s: Settings, now = new Date()) {
   const preset = activePreset(s, now);
   const retro = preset.retro?.style ?? null;
@@ -326,10 +334,10 @@ export function computeTheme(s: Settings, now = new Date()) {
     '--radius-circle': retro ? '0px' : '50%',
 
     // Fonts: retro uses pixel fonts (VT323 for text, Press Start 2P for labels and titles)
-    '--font-body': retro ? "'VT323', ui-monospace, monospace" : "'Inter Variable', system-ui, sans-serif",
+    '--font-body': retro ? "'VT323', ui-monospace, monospace" : UI_FONTS[s.uiFont],
     '--font-display': retro ? "'Press Start 2P', ui-monospace, monospace" : "'Doto Variable', ui-monospace, monospace",
     '--font-serif': retro ? "'Press Start 2P', ui-monospace, monospace" : "'Instrument Serif', Georgia, serif",
-    '--font-label': retro ? "'Press Start 2P', ui-monospace, monospace" : "'Inter Variable', system-ui, sans-serif",
+    '--font-label': retro ? "'Press Start 2P', ui-monospace, monospace" : UI_FONTS[s.uiFont === 'serif' ? 'inter' : s.uiFont],
 
     '--text-11': retro ? '8px' : text(11),
     '--text-13': text(13),
@@ -412,6 +420,8 @@ function apply() {
     root.toggleAttribute('data-bold', s.boldText);
     root.toggleAttribute('data-contrast', s.highContrast);
     root.toggleAttribute('data-reduce-motion', s.reduceMotion);
+    root.dataset.iconShape = s.iconShape;
+    root.dataset.iconStyle = s.iconStyle;
     setRetroMotion(next.retro !== null);
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next.bg);
   };

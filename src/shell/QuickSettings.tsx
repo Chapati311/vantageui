@@ -2,6 +2,7 @@ import { useDrag } from '@use-gesture/react';
 import { animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { Dial } from '../components/kit/Dial';
+import { Slider } from '../components/kit/Slider';
 import { RoundToggle } from '../components/RoundToggle';
 import {
   BluetoothIcon,
@@ -31,6 +32,7 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
   const [flashlight] = useSetting('flashlight');
   const [doNotDisturb] = useSetting('doNotDisturb');
   const [brightness] = useSetting('brightness');
+  const [controlStyle] = useSetting('controlStyle');
   const toggle = (control: 'wifi' | 'bluetooth' | 'flashlight' | 'doNotDisturb') => (on: boolean) =>
     void runAction('controls.toggle', { control, on });
   const panel = useRef<HTMLDivElement>(null);
@@ -80,7 +82,21 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
           <RoundToggle label="DND" icon={MoonIcon} on={doNotDisturb} onChange={toggle('doNotDisturb')} />
         </div>
         <div className={styles.dial}>
-          <Dial label="Brightness" icon={SunIcon} value={brightness} onChange={(level) => void runAction('controls.setBrightness', { level })} />
+          {controlStyle === 'dial' ? (
+            <Dial label="Brightness" icon={SunIcon} value={brightness} onChange={(level) => void runAction('controls.setBrightness', { level })} />
+          ) : (
+            <div className={styles.slider}>
+              <Slider
+                label="Brightness"
+                value={Math.round(brightness * 100)}
+                min={0}
+                max={100}
+                step={1}
+                format={(value) => `${value}`}
+                onChange={(value) => void runAction('controls.setBrightness', { level: value / 100 })}
+              />
+            </div>
+          )}
         </div>
         <span className={styles.handle} />
       </motion.div>

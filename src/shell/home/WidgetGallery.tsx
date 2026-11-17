@@ -1,11 +1,12 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useState, type CSSProperties } from 'react';
-import { Button } from '../../components/kit';
+import { Button, EmptyState } from '../../components/kit';
 import { Pressable } from '../../components/Pressable';
 import { runAction } from '../../system/actions';
 import { SPRING } from '../../theme/tokens';
 import type { WidgetCategory, WidgetDefinition, WidgetSize } from '../widgets/types';
-import { WIDGETS } from '../widgets/widgetRegistry';
+import { useLabWidgets } from '../widgets/lab/labStore';
+import { allWidgets } from '../widgets/widgetRegistry';
 import styles from './WidgetGallery.module.css';
 
 const CATEGORIES: { id: WidgetCategory; name: string }[] = [
@@ -17,6 +18,7 @@ const CATEGORIES: { id: WidgetCategory; name: string }[] = [
   { id: 'info', name: 'Info' },
   { id: 'fun', name: 'Fun' },
   { id: 'devices', name: 'Devices' },
+  { id: 'lab', name: 'My widgets' },
 ];
 
 const SIZE_NAMES: Record<WidgetSize, string> = {
@@ -41,7 +43,8 @@ interface WidgetGalleryProps {
 export function WidgetGallery({ open, page, onClose }: WidgetGalleryProps) {
   const [category, setCategory] = useState<WidgetCategory>('time');
   const [added, setAdded] = useState<string | null>(null);
-  const list = WIDGETS.filter((widget) => widget.category === category);
+  useLabWidgets(); // re-render when you make a widget in the Lab
+  const list = allWidgets().filter((widget) => widget.category === category);
 
   const add = (widget: WidgetDefinition, size: WidgetSize) => {
     void runAction('home.addWidget', { widgetId: widget.id, size, page });
@@ -81,6 +84,7 @@ export function WidgetGallery({ open, page, onClose }: WidgetGalleryProps) {
             ))}
           </div>
           <div className={styles.list}>
+            {list.length === 0 && <EmptyState title="None yet" message="Build your own in Customise > Widget Lab." />}
             {list.map((widget) => (
               <GalleryCard key={widget.id} widget={widget} onAdd={add} />
             ))}

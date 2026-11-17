@@ -50,12 +50,13 @@ export function setRetroMotion(on: boolean): void {
 const steppedEase = (t: number) => Math.ceil(t * 4) / 4;
 
 const spring = (stiffness: number, damping: number) => {
-  const speed = getSettings().animationSpeed;
+  const { animationSpeed: speed, springBounce } = getSettings();
   if (retroMotion) {
     // Retro themes: stepped animation, never smooth springs
     return { type: 'tween' as const, duration: 0.24 / speed, ease: steppedEase };
   }
-  return { type: 'spring' as const, stiffness: stiffness * speed * speed, damping: damping * speed };
+  // More bounce = less damping (never below 45% of the design value)
+  return { type: 'spring' as const, stiffness: stiffness * speed * speed, damping: damping * speed * (1 - springBounce * 0.55) };
 };
 
 export const SPRING = {

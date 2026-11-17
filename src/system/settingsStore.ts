@@ -15,6 +15,9 @@ export type WidgetStyle = 'solid' | 'glass' | 'outline' | 'tinted';
 export const LOCK_CLOCK_STYLES = ['dot', 'pixel', 'serif', 'vertical', 'analog', 'flip', 'binary', 'word'] as const;
 export type LockClockStyle = (typeof LOCK_CLOCK_STYLES)[number];
 export type BatteryStyle = 'percent' | 'ring' | 'bar' | 'pixel';
+export type UiFont = 'inter' | 'system' | 'serif' | 'mono';
+export type IconShape = 'circle' | 'squircle' | 'square';
+export type IconStyle = 'outline' | 'filled' | 'tinted';
 
 /** A look the user saved under their own name. */
 export interface CustomPreset {
@@ -67,6 +70,31 @@ export interface Settings {
   lockClockPosition: 'top' | 'center';
   /** How the battery is shown in the status rows */
   batteryStyle: BatteryStyle;
+
+  // ---- Home screen, icons, fonts
+  /** How the page indicator above the dock looks */
+  pageDots: 'dots' | 'numbers' | 'hidden';
+  iconShape: IconShape;
+  iconStyle: IconStyle;
+  uiFont: UiFont;
+
+  // ---- System pieces
+  /** Play the dotted V boot animation when the app starts */
+  bootAnimation: boolean;
+  /** Passcode keys: dot-matrix digits or plain numbers */
+  keypadStyle: 'dots' | 'plain';
+  /** Lock screen notifications: show the count, or nothing */
+  lockNotifications: 'count' | 'hidden';
+  /** What the live pill may show */
+  pillTimer: boolean;
+  pillStopwatch: boolean;
+  pillRecording: boolean;
+  /** Brightness in the control center: round dial or straight slider */
+  controlStyle: 'dial' | 'slider';
+  /** 0 = no bounce, 1 = bouncy springs */
+  springBounce: number;
+  /** Lock screen wallpaper lags behind the swipe a little */
+  parallax: boolean;
 
   // ---- Widgets
   widgetStyle: WidgetStyle;
@@ -121,6 +149,19 @@ export const DEFAULT_SETTINGS: Settings = {
   lockClockSize: 'large',
   lockClockPosition: 'top',
   batteryStyle: 'percent',
+  pageDots: 'dots',
+  iconShape: 'circle',
+  iconStyle: 'outline',
+  uiFont: 'inter',
+  bootAnimation: true,
+  keypadStyle: 'dots',
+  lockNotifications: 'count',
+  pillTimer: true,
+  pillStopwatch: true,
+  pillRecording: true,
+  controlStyle: 'dial',
+  springBounce: 0,
+  parallax: true,
   widgetStyle: 'solid',
   widgetOpacity: 1,
   cornerRadius: 28,
@@ -221,6 +262,19 @@ export function sanitizeSettings(input: unknown): Settings {
     lockClockSize: oneOf(raw.lockClockSize, ['small', 'large'] as const, d.lockClockSize),
     lockClockPosition: oneOf(raw.lockClockPosition, ['top', 'center'] as const, d.lockClockPosition),
     batteryStyle: oneOf(raw.batteryStyle, ['percent', 'ring', 'bar', 'pixel'] as const, d.batteryStyle),
+    pageDots: oneOf(raw.pageDots, ['dots', 'numbers', 'hidden'] as const, d.pageDots),
+    iconShape: oneOf(raw.iconShape, ['circle', 'squircle', 'square'] as const, d.iconShape),
+    iconStyle: oneOf(raw.iconStyle, ['outline', 'filled', 'tinted'] as const, d.iconStyle),
+    uiFont: oneOf(raw.uiFont, ['inter', 'system', 'serif', 'mono'] as const, d.uiFont),
+    bootAnimation: bool(raw.bootAnimation, d.bootAnimation),
+    keypadStyle: oneOf(raw.keypadStyle, ['dots', 'plain'] as const, d.keypadStyle),
+    lockNotifications: oneOf(raw.lockNotifications, ['count', 'hidden'] as const, d.lockNotifications),
+    pillTimer: bool(raw.pillTimer, d.pillTimer),
+    pillStopwatch: bool(raw.pillStopwatch, d.pillStopwatch),
+    pillRecording: bool(raw.pillRecording, d.pillRecording),
+    controlStyle: oneOf(raw.controlStyle, ['dial', 'slider'] as const, d.controlStyle),
+    springBounce: between(raw.springBounce, 0, 1, d.springBounce),
+    parallax: bool(raw.parallax, d.parallax),
     widgetStyle: oneOf(raw.widgetStyle, ['solid', 'glass', 'outline', 'tinted'] as const, d.widgetStyle),
     widgetOpacity: between(raw.widgetOpacity, 0.4, 1, d.widgetOpacity),
     cornerRadius: between(raw.cornerRadius, 12, 36, d.cornerRadius),

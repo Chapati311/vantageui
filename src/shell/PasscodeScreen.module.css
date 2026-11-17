@@ -90,3 +90,8 @@
   opacity: 0.35;
   pointer-events: none;
 }
+
+.plainKey {
+  font-size: var(--text-22);
+  font-weight: 500;
+}
