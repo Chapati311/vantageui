@@ -101,6 +101,9 @@ share, and what Vantage OS should feel like:
 
 Perfection comes from consistency. Never invent a size, color, radius or
 timing: use these tokens (put them in `src/theme/tokens.css` / `tokens.ts`).
+The colors below are only the DEFAULT theme ("Midnight"). Every color,
+font, radius and effect must come from the theme engine (see
+"Customization"), so the user can change all of it.
 
 ### Grid (375 x 667)
 - Screen margin 16px. Gap 12px. 4 columns.
@@ -161,6 +164,37 @@ timing: use these tokens (put them in `src/theme/tokens.css` / `tokens.ts`).
 2. Look at the screenshot yourself and check: on-grid? equal gaps? one hero?
    one accent? nothing overlapping or clipped? text readable? same dot style?
 3. Fix what fails, screenshot again, and only then tell me it's done.
+
+## Customization (as much as possible, like the best flagship phones)
+
+Vantage OS is NOT "a black UI". Black is only the default theme. Build a
+theme engine early, because everything depends on it.
+
+- **Theme presets** the user can pick and edit:
+  Midnight (current dark), Ocean (deep teal gradient), Aurora (dark with
+  soft colored glows), Paper (light, off-white), Mono (pure black/white),
+  Sunset (warm). Users can save their own presets.
+- **Wallpapers:** solid, gradient, live (orbit, particles, waves, aurora),
+  or the user's own photo. Option to blur/dim the wallpaper on the home screen.
+- **Colors from the wallpaper** (like Material You): extract a palette from
+  the wallpaper and generate accent + surface colors automatically.
+- **Accent color picker** with any color, plus suggested ones.
+- **Light / dark / automatic** (by time or sunset in Zurich).
+- **Widget style:** solid, glass (frosted), outline-only, or tinted.
+  Corner roundness slider. Widget opacity slider.
+- **Icons:** shape (circle, squircle, square), style (outline, filled,
+  tinted by accent), size, labels on/off.
+- **Fonts:** choose clock font (dot-matrix, serif, bold sans, thin) and UI font.
+- **Lock screen editor:** clock style, color, size and position, date
+  style, lock screen widgets, live wallpaper choice.
+- **Home grid:** 4x5 or 5x6 density, dock on/off, page dots on/off.
+- **Motion:** animation speed, reduce motion, page transition style.
+- **Sounds:** UI sound packs and volume.
+- **Accessibility:** text size, bold text, high contrast.
+- Save all of it locally, with export/import of the whole setup as a file.
+
+The theme engine sets CSS variables on the root element; components only
+ever read variables. Switching theme animates smoothly (crossfade, 300ms).
 
 ## Structure of the OS
 
