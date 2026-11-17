@@ -1,11 +1,22 @@
 import { BoltIcon } from '../components/glyphs';
+import { useSetting, type BatteryStyle } from '../system/settingsStore';
 import { useBattery } from '../system/useBattery';
 import styles from './BatteryIndicator.module.css';
 
-/** Small battery icon + percentage. Shows "--" when the level is unknown. */
-export function BatteryIndicator() {
+/** How many blocks the "pixel" style has. */
+const BLOCKS = 5;
+
+/**
+ * The battery in the status row, in the style chosen in Customise > Status
+ * bar: percent (number + outline), ring, bar (outline only) or pixel blocks.
+ * Shows "--" (or an empty outline) when the level is unknown.
+ */
+export function BatteryIndicator({ style }: { style?: BatteryStyle }) {
   const battery = useBattery();
-  const percent = battery ? Math.round(battery.level * 100) : null;
+  const [saved] = useSetting('batteryStyle');
+  const look = style ?? saved;
+  const level = battery?.level ?? 0;
+  const percent = battery ? Math.round(level * 100) : null;
   const label =
     percent === null
       ? 'Battery unknown'
@@ -18,10 +29,22 @@ export function BatteryIndicator() {
           <BoltIcon />
         </span>
       )}
-      <span className={styles.label}>{percent === null ? '--' : `${percent}%`}</span>
-      <span className={styles.icon}>
-        <span className={styles.fill} style={{ transform: `scaleX(${battery?.level ?? 0})` }} />
-      </span>
+      {(look === 'percent' || look === 'ring') && (
+        <span className={styles.label}>{percent === null ? '--' : `${percent}%`}</span>
+      )}
+      {look === 'ring' ? (
+        <span className={styles.ring} style={{ ['--level' as string]: level }} />
+      ) : look === 'pixel' ? (
+        <span className={styles.blocks}>
+          {Array.from({ length: BLOCKS }, (_, index) => (
+            <span key={index} className={index < Math.round(level * BLOCKS) ? styles.blockOn : styles.block} />
+          ))}
+        </span>
+      ) : (
+        <span className={styles.icon}>
+          <span className={styles.fill} style={{ transform: `scaleX(${level})` }} />
+        </span>
+      )}
     </div>
   );
 }

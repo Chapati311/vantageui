@@ -12,6 +12,9 @@ import { isWallpaperConfig, type WallpaperConfig } from '../theme/wallpapers';
 export type ModeId = 'clean' | 'focus' | 'retro' | 'winddown';
 export type Appearance = 'dark' | 'light' | 'auto';
 export type WidgetStyle = 'solid' | 'glass' | 'outline' | 'tinted';
+export const LOCK_CLOCK_STYLES = ['dot', 'pixel', 'serif', 'vertical', 'analog', 'flip', 'binary', 'word'] as const;
+export type LockClockStyle = (typeof LOCK_CLOCK_STYLES)[number];
+export type BatteryStyle = 'percent' | 'ring' | 'bar' | 'pixel';
 
 /** A look the user saved under their own name. */
 export interface CustomPreset {
@@ -56,6 +59,14 @@ export interface Settings {
   /** On the home screen: darken (0-0.8) and blur (0-24 px) the wallpaper */
   homeDim: number;
   homeBlur: number;
+
+  // ---- Lock screen
+  lockClockStyle: LockClockStyle;
+  lockClockSize: 'small' | 'large';
+  /** Where the clock sits: near the top, or in the middle */
+  lockClockPosition: 'top' | 'center';
+  /** How the battery is shown in the status rows */
+  batteryStyle: BatteryStyle;
 
   // ---- Widgets
   widgetStyle: WidgetStyle;
@@ -106,6 +117,10 @@ export const DEFAULT_SETTINGS: Settings = {
   wallpaper: { kind: 'theme' },
   homeDim: 0.35,
   homeBlur: 0,
+  lockClockStyle: 'dot',
+  lockClockSize: 'large',
+  lockClockPosition: 'top',
+  batteryStyle: 'percent',
   widgetStyle: 'solid',
   widgetOpacity: 1,
   cornerRadius: 28,
@@ -202,6 +217,10 @@ export function sanitizeSettings(input: unknown): Settings {
     wallpaper,
     homeDim: between(raw.homeDim, 0, 0.8, d.homeDim),
     homeBlur: between(raw.homeBlur, 0, 24, d.homeBlur),
+    lockClockStyle: oneOf(raw.lockClockStyle, LOCK_CLOCK_STYLES, d.lockClockStyle),
+    lockClockSize: oneOf(raw.lockClockSize, ['small', 'large'] as const, d.lockClockSize),
+    lockClockPosition: oneOf(raw.lockClockPosition, ['top', 'center'] as const, d.lockClockPosition),
+    batteryStyle: oneOf(raw.batteryStyle, ['percent', 'ring', 'bar', 'pixel'] as const, d.batteryStyle),
     widgetStyle: oneOf(raw.widgetStyle, ['solid', 'glass', 'outline', 'tinted'] as const, d.widgetStyle),
     widgetOpacity: between(raw.widgetOpacity, 0.4, 1, d.widgetOpacity),
     cornerRadius: between(raw.cornerRadius, 12, 36, d.cornerRadius),

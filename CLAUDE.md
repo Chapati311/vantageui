@@ -252,6 +252,8 @@ Assistant app that connects to Vantage.
   (swipe up and hold in an app), passcode screen (`system/passcode.ts`,
   Settings > Passcode). Edge swipes: top-left = notifications, top-right =
   controls, bottom = home, bottom sideways = previous app.
+- Customise app (`apps/customise`): live mini phone, Surprise me, setups
+  (`system/setups.ts`), lock clock styles (`shell/lockClocks`), battery styles.
 - Real apps: Clock (timer, stopwatch, world clock), Weather (Open-Meteo),
   Notes (IndexedDB, text or checklist), Settings (themes, appearance, accent,
   wallpaper, widgets, mode, text and motion, sound).

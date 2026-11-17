@@ -1,5 +1,5 @@
 import { useState, type ComponentType } from 'react';
-import { GridIcon, MoonIcon, SoundIcon, SunIcon } from '../../components/glyphs';
+import { BoltIcon, GridIcon, LockIcon, MoonIcon, SoundIcon, SunIcon } from '../../components/glyphs';
 import { AppShell, Button } from '../../components/kit';
 import { Pressable } from '../../components/Pressable';
 import { runAction } from '../../system/actions';
@@ -18,11 +18,24 @@ import { ThemesPage } from '../settings/ThemesPage';
 import { WallpaperPage } from '../settings/WallpaperPage';
 import { WidgetsPage } from '../settings/WidgetsPage';
 import { LivePreview } from './LivePreview';
+import { LockScreenPage } from './LockScreenPage';
 import { SetupsPage } from './SetupsPage';
+import { StatusBarPage } from './StatusBarPage';
 import { LayersIcon, PaletteIcon, PictureIcon, SparkIcon } from './icons';
 import styles from './CustomiseApp.module.css';
 
-type SectionId = 'themes' | 'colors' | 'appearance' | 'wallpapers' | 'widgets' | 'modes' | 'motion' | 'sounds' | 'setups';
+type SectionId =
+  | 'themes'
+  | 'colors'
+  | 'appearance'
+  | 'wallpapers'
+  | 'lock'
+  | 'statusbar'
+  | 'widgets'
+  | 'modes'
+  | 'motion'
+  | 'sounds'
+  | 'setups';
 
 interface SectionDef {
   id: SectionId;
@@ -36,10 +49,12 @@ const LOOK: SectionDef[] = [
   { id: 'colors', name: 'Colors', icon: CustomiseIcon, page: AccentPage },
   { id: 'appearance', name: 'Light and dark', icon: SunIcon, page: AppearancePage },
   { id: 'wallpapers', name: 'Wallpapers', icon: PictureIcon, page: WallpaperPage },
+  { id: 'lock', name: 'Lock screen', icon: LockIcon, page: LockScreenPage },
   { id: 'widgets', name: 'Widgets', icon: GridIcon, page: WidgetsPage },
 ];
 
 const SYSTEM: SectionDef[] = [
+  { id: 'statusbar', name: 'Status bar', icon: BoltIcon, page: StatusBarPage },
   { id: 'modes', name: 'Modes', icon: MoonIcon, page: ModePage },
   { id: 'motion', name: 'Motion and text', icon: SparkIcon, page: AccessibilityPage },
   { id: 'sounds', name: 'Sounds', icon: SoundIcon, page: SoundPage },
@@ -49,6 +64,17 @@ const SYSTEM: SectionDef[] = [
 const MODE_NAMES = { clean: 'Clean', focus: 'Focus', retro: 'Retro', winddown: 'Wind Down' } as const;
 const STYLE_NAMES = { solid: 'Solid', glass: 'Glass', outline: 'Outline', tinted: 'Tinted' } as const;
 const APPEARANCE_NAMES = { dark: 'Dark', light: 'Light', auto: 'Automatic' } as const;
+const LOCK_NAMES = {
+  dot: 'Dot clock',
+  pixel: 'Pixel clock',
+  serif: 'Serif clock',
+  vertical: 'Vertical clock',
+  analog: 'Thin analog',
+  flip: 'Flip clock',
+  binary: 'Binary clock',
+  word: 'Word clock',
+} as const;
+const BATTERY_NAMES = { percent: 'Battery number', ring: 'Battery ring', bar: 'Battery bar', pixel: 'Pixel battery' } as const;
 
 /**
  * Customise: everything about how the phone looks and feels. A live mini
@@ -79,6 +105,8 @@ export function CustomiseApp() {
           : getPreset(theme.presetId).accentName,
     appearance: APPEARANCE_NAMES[settings.appearance],
     wallpapers: theme.retro ? 'Theme' : wallpaperName(settings.wallpaper),
+    lock: LOCK_NAMES[settings.lockClockStyle],
+    statusbar: BATTERY_NAMES[settings.batteryStyle],
     widgets: theme.retro ? 'Retro' : STYLE_NAMES[settings.widgetStyle],
     modes: MODE_NAMES[settings.mode],
     motion: settings.reduceMotion ? 'Reduced' : `${settings.animationSpeed}x speed`,

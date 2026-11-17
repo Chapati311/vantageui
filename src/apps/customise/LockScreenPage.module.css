@@ -1,0 +1,55 @@
+/* Two previews per row, each two grid cells wide; only the top of the screen is shown */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--grid-gap);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  touch-action: pan-y;
+}
+
+/* A window onto the clock part of a 375x667 screen */
+.frame {
+  display: block;
+  aspect-ratio: 375 / 300;
+  overflow: hidden;
+  border: 1px solid var(--color-hairline);
+  border-radius: calc(var(--radius-widget) * 0.6);
+  background: var(--color-bg);
+}
+
+.selected .frame {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
+}
+
+/* Pushed up so the clock is centered in the window */
+.screen {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--grid-margin);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+.name {
+  padding-left: var(--space-4);
+  font-size: var(--text-13);
+  font-weight: 500;
+}

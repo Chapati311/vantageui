@@ -65,3 +65,9 @@
   display: flex;
   justify-content: center;
 }
+
+/* Customise > Lock screen > Position: in the middle of the screen */
+.centered {
+  top: 40%;
+  transform: translateY(-50%);
+}

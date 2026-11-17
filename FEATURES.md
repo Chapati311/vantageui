@@ -49,8 +49,12 @@ they are finished. Details for every item are in SPECS.md.
       still to be checked on the real phone)
 
 ## Phase 4: Customise app and widgets
-- [ ] Customise app: serif title, live mini phone preview, "Surprise me",
+- [x] Customise app: serif title, live mini phone preview, "Surprise me",
       LOOK and SYSTEM section grid [PWA]
+- [x] Customise sections so far: Themes, Colors, Light and dark, Wallpapers,
+      Lock screen (8 clock styles, size, position), Status bar (4 battery
+      styles), Widgets, Modes, Motion and text, Sounds, Setups (save, switch,
+      export/import file) [PWA]
 - [ ] Sections: Themes (gallery of all 21 as mini phones, edit any color,
       own themes, schedule), Widgets, Wallpapers (blur/dim/parallax, separate
       home and lock, daily shuffle, by time of day or weather), Home screen,

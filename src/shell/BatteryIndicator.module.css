@@ -50,3 +50,31 @@
   background: var(--text-primary);
   transform-origin: left center;
 }
+
+/* Ring style: a thin ring that fills clockwise */
+.ring {
+  width: var(--space-16);
+  height: var(--space-16);
+  border-radius: var(--radius-circle);
+  background:
+    radial-gradient(closest-side, var(--color-bg) calc(100% - 2px), transparent calc(100% - 1px)),
+    conic-gradient(var(--text-primary) calc(var(--level) * 360deg), var(--color-hairline) 0);
+}
+
+/* Pixel style: five square blocks, like an old phone */
+.blocks {
+  display: flex;
+  gap: 2px;
+}
+
+.block,
+.blockOn {
+  width: var(--space-4);
+  height: var(--space-12);
+  background: var(--text-primary);
+  opacity: var(--ghost, 0.15);
+}
+
+.blockOn {
+  opacity: 1;
+}

@@ -7,6 +7,7 @@ import { LivePill } from './LivePill';
 import { LockClock } from './LockClock';
 import { NotificationCount } from './NotificationCount';
 import { useNotifications } from '../system/notifications';
+import { useSetting } from '../system/settingsStore';
 import { Wallpaper } from './wallpaper/Wallpaper';
 import styles from './LockScreen.module.css';
 
@@ -23,6 +24,7 @@ interface LockScreenProps {
 export function LockScreen({ locked, onUnlock }: LockScreenProps) {
   // Vantage's own notifications (other apps' need the native bridge)
   const notificationCount = useNotifications().length;
+  const [clockPosition] = useSetting('lockClockPosition');
   const ref = useRef<HTMLDivElement>(null);
 
   // 0 = covering the screen, 1 = slid away above it. A "motion value":
@@ -82,7 +84,7 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
         <NotificationCount count={notificationCount} />
         <BatteryIndicator />
       </div>
-      <div className={styles.clock}>
+      <div className={`${styles.clock} ${clockPosition === 'center' ? styles.centered : ''}`}>
         <LockClock />
       </div>
       <div className={styles.live}>

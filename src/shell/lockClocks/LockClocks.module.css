@@ -1,0 +1,153 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-24);
+}
+
+.time {
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+}
+
+/* ---- Serif: big Instrument Serif numbers */
+.serif {
+  font-family: var(--font-serif);
+  font-size: calc(var(--serif-34) * 3.4);
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.serif.small {
+  font-size: calc(var(--serif-34) * 2.4);
+}
+
+/* ---- Vertical: hours above minutes */
+.vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+/* ---- Thin analog */
+.analog {
+  overflow: visible;
+}
+
+.analogRing {
+  fill: none;
+  stroke: var(--color-hairline);
+  stroke-width: 0.6;
+}
+
+.tick,
+.tickMajor {
+  stroke: var(--text-secondary);
+  stroke-width: 0.6;
+  stroke-linecap: round;
+}
+
+.tickMajor {
+  stroke: var(--text-primary);
+  stroke-width: 1;
+}
+
+.hourHand,
+.minuteHand {
+  stroke: var(--text-primary);
+  stroke-linecap: round;
+}
+
+.hourHand {
+  stroke-width: 2.2;
+}
+
+.minuteHand {
+  stroke-width: 1.2;
+}
+
+/* The one accent on the screen */
+.center {
+  fill: var(--color-accent);
+  filter: var(--glow-accent-filter);
+}
+
+/* ---- Flip: two cards with a hinge */
+.flip {
+  display: flex;
+  gap: var(--space-12);
+  perspective: 600px;
+}
+
+.flipCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: var(--border-widget);
+  border-radius: calc(var(--radius-widget) * 0.6);
+  background: var(--surface-widget);
+  box-shadow: var(--highlight-top);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.flipValue {
+  display: block;
+  transform-origin: center top;
+  backface-visibility: hidden;
+}
+
+.flipLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--color-bg);
+}
+
+/* ---- Binary: columns of dots */
+.binary {
+  display: flex;
+  align-items: flex-end;
+}
+
+.binaryColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.bit {
+  border-radius: var(--radius-circle);
+  background: var(--text-primary);
+  opacity: var(--ghost, 0.07);
+  transition: opacity var(--fade-normal);
+}
+
+.bitHour {
+  opacity: 1;
+}
+
+.bitMinute {
+  opacity: 1;
+  background: var(--text-secondary);
+}
+
+/* ---- Words */
+.word {
+  max-width: calc(3.5 * var(--grid-cell) + 3 * var(--grid-gap));
+  font-family: var(--font-serif);
+  font-size: calc(var(--serif-34) * 1.5);
+  line-height: 1.05;
+  text-align: center;
+}
+
+.word.small {
+  font-size: var(--serif-34);
+}
