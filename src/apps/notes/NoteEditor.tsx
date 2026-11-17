@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { CircleButton } from '../../components/CircleButton';
 import { BackIcon, CheckIcon, ChecklistIcon, TextIcon, TrashIcon } from '../../components/glyphs';
 import { Checklist } from './Checklist';
-import { convertNote, updateNote, type Note } from './notesStore';
+import { updateNote, type Note } from './notesStore';
 import styles from './NoteEditor.module.css';
+import { runAction } from '../../system/actions';
 
 interface NoteEditorProps {
   note: Note;
@@ -35,7 +36,7 @@ export function NoteEditor({ note, onBack, onDelete }: NoteEditorProps) {
         <CircleButton
           small
           label={note.kind === 'text' ? 'Turn into a checklist' : 'Turn into plain text'}
-          onClick={() => convertNote(note)}
+          onClick={() => void runAction('notes.convert', { id: note.id })}
         >
           {note.kind === 'text' ? <ChecklistIcon /> : <TextIcon />}
         </CircleButton>

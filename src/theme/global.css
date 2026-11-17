@@ -47,6 +47,7 @@ button {
 /* The one label style of the design system: 11px, uppercase, letter-spaced, grey */
 .label {
   margin: 0;
+  font-family: var(--font-label, inherit);
   font-size: var(--text-11);
   font-weight: 600;
   line-height: 1;

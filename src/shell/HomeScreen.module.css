@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   padding: var(--top-inset) var(--grid-margin) var(--dock-bottom);
-  background: var(--color-bg);
+  /* See-through: the wallpaper is drawn behind it (see Shell.tsx) */
   overflow: hidden;
   touch-action: none;
 }

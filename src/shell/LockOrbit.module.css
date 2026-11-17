@@ -54,6 +54,11 @@
   box-shadow: var(--glow-accent);
 }
 
+/* Home screen: no core (it would peek through the gaps between widgets) */
+.quiet {
+  display: none;
+}
+
 .paused .ring {
   animation-play-state: paused;
 }

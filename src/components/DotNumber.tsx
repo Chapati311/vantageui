@@ -1,3 +1,4 @@
+import { useTheme } from '../system/theme';
 import type { DotSize } from '../theme/tokens';
 import styles from './DotNumber.module.css';
 
@@ -7,6 +8,10 @@ import styles from './DotNumber.module.css';
  * color, unlit dots faintly visible ("ghost" dots, about 7%). Because we draw
  * the dots ourselves (instead of using a font), a changing number lights its
  * dots up and down one by one instead of jumping.
+ *
+ * In retro themes the same numbers are drawn with SQUARE pixels on a hard
+ * grid (and unlit pixels at 10%), like an old LCD. PixelNumber is that look,
+ * always.
  */
 
 const ROWS = 7;
@@ -65,6 +70,8 @@ interface DotNumberProps {
   narrowOne?: boolean;
   /** Switch dots at once, with no fade. For numbers that change many times a second. */
   instant?: boolean;
+  /** Square pixels instead of round dots (retro themes do this automatically) */
+  pixels?: boolean;
 }
 
 /** One character (or spacer) as a small grid of dots. */
@@ -74,12 +81,14 @@ function DotCell({
   size,
   tone,
   blink,
+  pixels,
 }: {
   rows: string[];
   pitch: number;
   size: number;
   tone: Tone;
   blink: boolean;
+  pixels: boolean;
 }) {
   const columns = rows[0].length;
   return (
@@ -91,16 +100,28 @@ function DotCell({
       aria-hidden="true"
     >
       {rows.flatMap((row, y) =>
-        [...row].map((cell, x) => (
-          <circle
-            key={`${x}-${y}`}
-            className={cell === '1' ? styles.on : styles.off}
-            style={{ transitionDelay: `${(y * columns + x) * DOT_STAGGER_MS}ms` }}
-            cx={x + 0.5}
-            cy={y + 0.5}
-            r={0.42}
-          />
-        )),
+        [...row].map((cell, x) =>
+          pixels ? (
+            // A square pixel with a thin gap around it
+            <rect
+              key={`${x}-${y}`}
+              className={cell === '1' ? styles.on : styles.off}
+              x={x + 0.08}
+              y={y + 0.08}
+              width={0.84}
+              height={0.84}
+            />
+          ) : (
+            <circle
+              key={`${x}-${y}`}
+              className={cell === '1' ? styles.on : styles.off}
+              style={{ transitionDelay: `${(y * columns + x) * DOT_STAGGER_MS}ms` }}
+              cx={x + 0.5}
+              cy={y + 0.5}
+              r={0.42}
+            />
+          ),
+        ),
       )}
     </svg>
   );
@@ -115,7 +136,10 @@ export function DotNumber({
   blinkColon,
   narrowOne,
   instant,
+  pixels,
 }: DotNumberProps) {
+  const retro = useTheme().retro !== null;
+  const square = pixels ?? retro;
   const pitch = size / ROWS; // distance between dot centres, in px
   const characters = [...value];
   const colonAt = characters.indexOf(':');
@@ -150,11 +174,17 @@ export function DotNumber({
             size={size}
             tone={tone}
             blink={character === ':' && !!blinkColon}
+            pixels={square}
           />
         );
         if (narrowOne || index === characters.length - 1) return [cell];
-        return [cell, <DotCell key={`s${index}`} rows={SPACER} pitch={pitch} size={size} tone={tone} blink={false} />];
+        return [cell, <DotCell key={`s${index}`} rows={SPACER} pitch={pitch} size={size} tone={tone} blink={false} pixels={square} />];
       })}
     </span>
   );
+}
+
+/** Dot-matrix numbers drawn with square LCD pixels, in any theme. */
+export function PixelNumber(props: Omit<DotNumberProps, 'pixels'>) {
+  return <DotNumber {...props} pixels />;
 }

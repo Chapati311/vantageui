@@ -1,0 +1,100 @@
+.sundown {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* A warm glow rising from the horizon */
+.sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 30%,
+    rgb(var(--accent-rgb) / 0.1) 58%,
+    rgb(var(--accent-rgb) / 0.22) 68%,
+    transparent 68.2%
+  );
+}
+
+/* The sun: a disc in the accent with horizontal bands cut out of its lower half */
+.sun {
+  position: absolute;
+  left: 50%;
+  top: 68%;
+  width: 62vw;
+  aspect-ratio: 1;
+  margin-left: -31vw;
+  border-radius: var(--radius-circle);
+  background: linear-gradient(180deg, var(--color-accent-from) 0%, var(--color-accent) 60%, var(--color-accent-to) 100%);
+  box-shadow: var(--glow-accent);
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 52%,
+    transparent 52%,
+    transparent 56%,
+    #000 56%,
+    #000 62%,
+    transparent 62%,
+    transparent 67%,
+    #000 67%,
+    #000 72%,
+    transparent 72%,
+    transparent 78%,
+    #000 78%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000 52%,
+    transparent 52%,
+    transparent 56%,
+    #000 56%,
+    #000 62%,
+    transparent 62%,
+    transparent 67%,
+    #000 67%,
+    #000 72%,
+    transparent 72%,
+    transparent 78%,
+    #000 78%
+  );
+  transform: translate3d(0, -78%, 0);
+  will-change: transform;
+  animation: sink 70s ease-in-out infinite alternate;
+}
+
+/* Everything below the horizon is the background color, so the sun "sets" behind it */
+.horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 68%;
+  bottom: 0;
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-hairline);
+}
+
+/* Thin lines on the "water", catching the light */
+.reflection {
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  top: 70%;
+  height: 12%;
+  background: repeating-linear-gradient(
+    180deg,
+    rgb(var(--accent-rgb) / 0.25) 0 1px,
+    transparent 1px 9px
+  );
+  -webkit-mask-image: radial-gradient(ellipse 50% 100% at 50% 0%, #000, transparent);
+  mask-image: radial-gradient(ellipse 50% 100% at 50% 0%, #000, transparent);
+}
+
+@keyframes sink {
+  from {
+    transform: translate3d(0, -78%, 0);
+  }
+  to {
+    transform: translate3d(0, -52%, 0);
+  }
+}

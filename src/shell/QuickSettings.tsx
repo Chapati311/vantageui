@@ -13,6 +13,7 @@ import {
 import { useSetting } from '../system/settingsStore';
 import { MOTION, SPRING, rubberBand } from '../theme/tokens';
 import styles from './QuickSettings.module.css';
+import { runAction } from '../system/actions';
 
 interface QuickSettingsProps {
   open: boolean;
@@ -25,11 +26,13 @@ interface QuickSettingsProps {
  * change their look (and are remembered); they are not connected to the phone.
  */
 export function QuickSettings({ open, onClose }: QuickSettingsProps) {
-  const [wifi, setWifi] = useSetting('wifi');
-  const [bluetooth, setBluetooth] = useSetting('bluetooth');
-  const [flashlight, setFlashlight] = useSetting('flashlight');
-  const [doNotDisturb, setDoNotDisturb] = useSetting('doNotDisturb');
-  const [brightness, setBrightness] = useSetting('brightness');
+  const [wifi] = useSetting('wifi');
+  const [bluetooth] = useSetting('bluetooth');
+  const [flashlight] = useSetting('flashlight');
+  const [doNotDisturb] = useSetting('doNotDisturb');
+  const [brightness] = useSetting('brightness');
+  const toggle = (control: 'wifi' | 'bluetooth' | 'flashlight' | 'doNotDisturb') => (on: boolean) =>
+    void runAction('controls.toggle', { control, on });
   const panel = useRef<HTMLDivElement>(null);
 
   // 0 = parked above the screen, 1 = fully down
@@ -71,13 +74,13 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
 
       <motion.div ref={panel} className={styles.panel} style={{ y }} {...(bind() as object)}>
         <div className={styles.toggles}>
-          <RoundToggle label="Wi-Fi" icon={WifiIcon} on={wifi} onChange={setWifi} />
-          <RoundToggle label="Bluetooth" icon={BluetoothIcon} on={bluetooth} onChange={setBluetooth} />
-          <RoundToggle label="Light" icon={FlashlightIcon} on={flashlight} onChange={setFlashlight} />
-          <RoundToggle label="DND" icon={MoonIcon} on={doNotDisturb} onChange={setDoNotDisturb} />
+          <RoundToggle label="Wi-Fi" icon={WifiIcon} on={wifi} onChange={toggle('wifi')} />
+          <RoundToggle label="Bluetooth" icon={BluetoothIcon} on={bluetooth} onChange={toggle('bluetooth')} />
+          <RoundToggle label="Light" icon={FlashlightIcon} on={flashlight} onChange={toggle('flashlight')} />
+          <RoundToggle label="DND" icon={MoonIcon} on={doNotDisturb} onChange={toggle('doNotDisturb')} />
         </div>
         <div className={styles.dial}>
-          <Dial label="Brightness" icon={SunIcon} value={brightness} onChange={setBrightness} />
+          <Dial label="Brightness" icon={SunIcon} value={brightness} onChange={(level) => void runAction('controls.setBrightness', { level })} />
         </div>
         <span className={styles.handle} />
       </motion.div>

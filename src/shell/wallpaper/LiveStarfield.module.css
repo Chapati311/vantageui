@@ -1,0 +1,55 @@
+.field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Each layer is twice as tall and slowly slides up by half, so it loops */
+.layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  will-change: transform;
+  animation: drift linear infinite;
+}
+
+.far {
+  animation-duration: 240s;
+}
+
+.near {
+  animation-duration: 140s;
+}
+
+.star {
+  position: absolute;
+  border-radius: var(--radius-circle);
+  background: var(--text-primary);
+  opacity: 0;
+  animation: twinkle ease-in-out infinite alternate;
+}
+
+.accent {
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
+}
+
+@keyframes twinkle {
+  from {
+    opacity: 0.08;
+  }
+  to {
+    opacity: var(--peak);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -12%, 0);
+  }
+}

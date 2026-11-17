@@ -1,79 +1,85 @@
-import type { ReactNode } from 'react';
-import { ScrollArea } from '../../components/ScrollArea';
-import { Segmented } from '../../components/Segmented';
-import { Toggle } from '../../components/Toggle';
-import {
-  useSetting,
-  type AccentId,
-  type ModeId,
-  type Wallpaper,
-} from '../../system/settingsStore';
-import { AccentPicker } from './AccentPicker';
+import { useState, type ComponentType } from 'react';
+import { Pressable } from '../../components/Pressable';
+import { BackIcon } from '../../components/glyphs';
+import { useSettings } from '../../system/settingsStore';
+import { useTheme } from '../../system/theme';
+import { getPreset } from '../../theme/presets';
+import { wallpaperName } from '../../theme/wallpapers';
+import { AccentPage } from './AccentPage';
+import { AccessibilityPage } from './AccessibilityPage';
+import { AppearancePage } from './AppearancePage';
+import { ModePage } from './ModePage';
+import { Section, SettingsPage } from './SettingsPage';
+import { SoundPage } from './SoundPage';
+import { ThemesPage } from './ThemesPage';
+import { WallpaperPage } from './WallpaperPage';
+import { WidgetsPage } from './WidgetsPage';
 import styles from './SettingsApp.module.css';
 
-const WALLPAPERS: { id: Wallpaper; label: string }[] = [
-  { id: 'orbit', label: 'Orbit' },
-  { id: 'dots', label: 'Dots' },
-  { id: 'plain', label: 'Plain' },
-];
+type PageId = 'themes' | 'appearance' | 'accent' | 'wallpaper' | 'mode' | 'widgets' | 'access' | 'sound';
 
-const MODES: { id: ModeId; label: string }[] = [
-  { id: 'clean', label: 'Clean' },
-  { id: 'focus', label: 'Focus' },
-  { id: 'retro', label: 'Retro' },
-];
+const PAGES: Record<PageId, ComponentType<{ onBack: () => void }>> = {
+  themes: ThemesPage,
+  appearance: AppearancePage,
+  accent: AccentPage,
+  wallpaper: WallpaperPage,
+  mode: ModePage,
+  widgets: WidgetsPage,
+  access: AccessibilityPage,
+  sound: SoundPage,
+};
 
-const ACCENTS: { id: AccentId; name: string }[] = [
-  { id: 'mint', name: 'Mint' },
-  { id: 'amber', name: 'Amber' },
-  { id: 'coral', name: 'Coral' },
-  { id: 'violet', name: 'Violet' },
-  { id: 'sky', name: 'Sky' },
-];
+const MODE_NAMES = { clean: 'Clean', focus: 'Focus', retro: 'Retro', winddown: 'Wind Down' } as const;
+const STYLE_NAMES = { solid: 'Solid', glass: 'Glass', outline: 'Outline', tinted: 'Tinted' } as const;
+const APPEARANCE_NAMES = { dark: 'Dark', light: 'Light', auto: 'Automatic' } as const;
 
+/** The main Settings list. Each row opens a page. */
 export function SettingsApp() {
-  const [wallpaper, setWallpaper] = useSetting('wallpaper');
-  const [accent, setAccent] = useSetting('accent');
-  const [lightMode, setLightMode] = useSetting('lightMode');
-  const [soundsEnabled, setSoundsEnabled] = useSetting('soundsEnabled');
-  const [mode, setMode] = useSetting('mode');
+  const [page, setPage] = useState<PageId | null>(null);
+  const s = useSettings();
+  const theme = useTheme();
 
-  return (
-    <ScrollArea className={styles.app}>
-      <h1 className={styles.title}>Settings</h1>
+  if (page) {
+    const Page = PAGES[page];
+    return <Page onBack={() => setPage(null)} />;
+  }
 
-      <Section label="Lock screen wallpaper">
-        <Segmented label="Wallpaper" options={WALLPAPERS} value={wallpaper} onChange={setWallpaper} />
-      </Section>
-
-      <Section label="Accent color">
-        <AccentPicker accents={ACCENTS} value={accent} onChange={setAccent} />
-      </Section>
-
-      <Section label="Look and sound">
-        <div className={styles.row}>
-          <span>Light mode</span>
-          <Toggle label="Light mode" on={lightMode} onChange={setLightMode} />
-        </div>
-        <div className={styles.row}>
-          <span>Sounds</span>
-          <Toggle label="Sounds" on={soundsEnabled} onChange={setSoundsEnabled} />
-        </div>
-      </Section>
-
-      <Section label="Mode" note="Saved for later. Focus and Retro don't change anything yet.">
-        <Segmented label="Mode" options={MODES} value={mode} onChange={setMode} />
-      </Section>
-    </ScrollArea>
+  const row = (id: PageId, name: string, value: string) => (
+    <Pressable key={id} className={styles.menuRow} onClick={() => setPage(id)}>
+      <span className={styles.menuName}>{name}</span>
+      <span className={styles.menuValue}>{value}</span>
+      <span className={styles.chevron}>
+        <BackIcon />
+      </span>
+    </Pressable>
   );
-}
 
-function Section({ label, note, children }: { label: string; note?: string; children: ReactNode }) {
+  const accent = theme.retro
+    ? 'Ink'
+    : s.matchWallpaper
+      ? 'From wallpaper'
+      : s.accent
+        ? s.accent.toUpperCase()
+        : `${getPreset(theme.presetId).accentName}`;
+
   return (
-    <section className={styles.section}>
-      <h2 className="label">{label}</h2>
-      {children}
-      {note && <p className={styles.note}>{note}</p>}
-    </section>
+    <SettingsPage title="Settings">
+      <Section label="Look">
+        <div className={styles.menu}>
+          {row('themes', 'Themes', theme.presetName)}
+          {row('appearance', 'Appearance', APPEARANCE_NAMES[s.appearance])}
+          {row('accent', 'Accent', accent)}
+          {row('wallpaper', 'Wallpaper', theme.retro ? 'Theme' : wallpaperName(s.wallpaper))}
+          {row('widgets', 'Widgets', theme.retro ? 'Retro' : STYLE_NAMES[s.widgetStyle])}
+        </div>
+      </Section>
+      <Section label="System">
+        <div className={styles.menu}>
+          {row('mode', 'Mode', MODE_NAMES[s.mode])}
+          {row('access', 'Text and motion', s.reduceMotion ? 'Reduced motion' : `${Math.round(s.textScale * 100)}% text`)}
+          {row('sound', 'Sound', s.soundsEnabled ? `${Math.round(s.soundVolume * 100)}%` : 'Off')}
+        </div>
+      </Section>
+    </SettingsPage>
   );
 }

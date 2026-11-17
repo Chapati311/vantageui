@@ -1,0 +1,14 @@
+.box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 375 / 667;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.screen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: top left;
+}

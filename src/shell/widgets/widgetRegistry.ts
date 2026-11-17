@@ -1,4 +1,5 @@
-import { getSettings, setSetting } from '../../system/settingsStore';
+import { runAction } from '../../system/actions';
+import { getSettings } from '../../system/settingsStore';
 import { playSound } from '../../system/sounds';
 import { AskWidget } from './AskWidget';
 import { BatteryWidget } from './BatteryWidget';
@@ -40,7 +41,7 @@ export const WIDGETS: WidgetDefinition[] = [
     // Same switch as in quick settings. For now it only changes its look.
     onTap: () => {
       const on = !getSettings().flashlight;
-      setSetting('flashlight', on);
+      void runAction('controls.toggle', { control: 'flashlight', on });
       playSound(on ? 'toggleOn' : 'toggleOff');
     },
   },

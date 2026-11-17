@@ -18,7 +18,8 @@ interface Note {
   length: number;
 }
 
-const VOLUME = 0.05;
+/** Loudest a sound gets, at the "Sound volume" setting of 100%. Kept quiet on purpose. */
+const MAX_VOLUME = 0.1;
 
 const SOUNDS: Record<SoundName, Note[]> = {
   unlock: [
@@ -50,7 +51,9 @@ function getContext(): AudioContext | null {
 }
 
 export function playSound(name: SoundName): void {
-  if (!getSettings().soundsEnabled) return;
+  const { soundsEnabled, soundVolume } = getSettings();
+  const volume = MAX_VOLUME * soundVolume;
+  if (!soundsEnabled || volume < 0.001) return;
   const audio = getContext();
   if (!audio) return;
 
@@ -59,14 +62,15 @@ export function playSound(name: SoundName): void {
     const end = start + note.length;
 
     const oscillator = audio.createOscillator();
-    oscillator.type = 'sine';
+    // Retro themes bleep (square wave) like an old phone; modern ones are soft sine tones
+    oscillator.type = document.documentElement.dataset.retro ? 'square' : 'sine';
     oscillator.frequency.setValueAtTime(note.from, start);
     oscillator.frequency.linearRampToValueAtTime(note.to, end);
 
     // Quick fade in and out so there is no click
     const gain = audio.createGain();
     gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(VOLUME, start + 0.008);
+    gain.gain.exponentialRampToValueAtTime(volume, start + 0.008);
     gain.gain.exponentialRampToValueAtTime(0.0001, end);
 
     oscillator.connect(gain).connect(audio.destination);

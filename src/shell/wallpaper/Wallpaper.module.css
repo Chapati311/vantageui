@@ -1,0 +1,51 @@
+.wallpaper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-bg);
+  pointer-events: none;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}
+
+/* Home: optional blur. Scaled up a little so the blurred edges stay off-screen. */
+.blurred {
+  filter: blur(var(--wallpaper-blur));
+  transform: scale(1.08);
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.dim {
+  position: absolute;
+  inset: 0;
+  background: var(--wallpaper-dim);
+}
+
+/* Lock screen on a photo or gradient: darker at the top (clock) and bottom (hint) */
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    var(--scrim) 0%,
+    transparent 45%,
+    transparent 75%,
+    var(--scrim) 100%
+  );
+}
+
+/* Stops every animation inside (orbit, particles, waves, aurora) */
+.paused,
+.paused * {
+  animation-play-state: paused !important;
+}

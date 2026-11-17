@@ -1,0 +1,49 @@
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.glow {
+  position: absolute;
+  width: 150%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-circle);
+  will-change: transform;
+  animation: float ease-in-out infinite alternate;
+}
+
+.one {
+  left: -45%;
+  top: -25%;
+  background: radial-gradient(circle, var(--aurora-1) 0%, transparent 62%);
+  animation-duration: 19s;
+}
+
+.two {
+  right: -60%;
+  top: 15%;
+  background: radial-gradient(circle, var(--aurora-2) 0%, transparent 60%);
+  animation-duration: 26s;
+  animation-delay: -8s;
+}
+
+.three {
+  left: -20%;
+  bottom: -55%;
+  background: radial-gradient(circle, var(--aurora-3) 0%, transparent 60%);
+  animation-duration: 23s;
+  animation-delay: -14s;
+}
+
+@keyframes float {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(8%, 6%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-6%, 10%, 0) scale(0.95);
+  }
+}

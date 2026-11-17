@@ -7,13 +7,15 @@ import styles from './WeatherWidget.module.css';
 
 /** Real weather, from the same shared data as the Weather app. */
 export function WeatherWidget({ size }: WidgetProps) {
-  const { data } = useWeather();
+  const { data, status } = useWeather();
+  // Nothing downloaded yet: say honestly whether it is still loading or failed
+  const missing = status === 'error' ? 'No connection' : 'Loading';
   const today = data?.daily[0];
   const value = data ? data.now.temperature : null;
 
   const details = (
     <div className={styles.details}>
-      <span className={styles.condition}>{data ? data.now.condition : 'No data'}</span>
+      <span className={styles.condition}>{data ? data.now.condition : missing}</span>
       {today && (
         <span className="label">
           {today.high}° / {today.low}°

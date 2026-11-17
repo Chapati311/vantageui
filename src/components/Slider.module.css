@@ -1,0 +1,60 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  height: calc(var(--space-32) + var(--space-24));
+  padding: 0 var(--space-16) 0 var(--space-24);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
+  background: var(--surface-widget);
+  box-shadow: var(--highlight-top);
+}
+
+.label {
+  flex-shrink: 0;
+  width: calc(var(--grid-cell) + var(--space-8));
+  font-size: var(--text-15);
+  font-weight: 500;
+}
+
+/* A thin line with the filled part in the text color; the whole row height is touchable */
+.track {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  touch-action: none;
+  cursor: pointer;
+}
+
+.track::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: var(--space-4);
+  margin-top: -2px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-3);
+}
+
+.fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: var(--space-4);
+  margin-top: -2px;
+  border-radius: var(--radius-pill);
+  background: var(--text-primary);
+  transform-origin: left center;
+}
+
+.value {
+  flex-shrink: 0;
+  width: var(--space-32);
+  text-align: right;
+  font-size: var(--text-13);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}

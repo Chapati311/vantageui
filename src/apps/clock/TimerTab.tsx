@@ -5,16 +5,13 @@ import { MinusIcon, PauseIcon, PlayIcon, PlusIcon, ResetIcon } from '../../compo
 import {
   MAX_TIMER_MS,
   MIN_TIMER_MS,
-  pauseTimer,
-  resetTimer,
-  setTimerDuration,
-  startTimer,
   timerRemaining,
   useClockState,
 } from './clockStore';
 import { formatCountdown } from './format';
 import styles from './TimerTab.module.css';
 import { Pressable } from '../../components/Pressable';
+import { runAction } from '../../system/actions';
 
 const MINUTE = 60_000;
 const PRESET_MINUTES = [1, 5, 10, 25];
@@ -68,7 +65,7 @@ export function TimerTab() {
                 key={minutes}
                 className={`${styles.preset} ${timer.durationMs === minutes * MINUTE ? styles.selected : ''}`}
                 aria-label={`${minutes} minutes`}
-                onClick={() => setTimerDuration(minutes * MINUTE)}
+                onClick={() => void runAction('timer.setDuration', { minutes })}
               >
                 <DotNumber value={String(minutes)} size={28} muted={timer.durationMs !== minutes * MINUTE} />
               </Pressable>
@@ -79,7 +76,7 @@ export function TimerTab() {
               small
               label="One minute less"
               disabled={timer.durationMs <= MIN_TIMER_MS}
-              onClick={() => setTimerDuration(timer.durationMs - MINUTE)}
+              onClick={() => void runAction('timer.setDuration', { minutes: timer.durationMs / MINUTE - 1 })}
             >
               <MinusIcon />
             </CircleButton>
@@ -88,7 +85,7 @@ export function TimerTab() {
               small
               label="One minute more"
               disabled={timer.durationMs >= MAX_TIMER_MS}
-              onClick={() => setTimerDuration(timer.durationMs + MINUTE)}
+              onClick={() => void runAction('timer.setDuration', { minutes: timer.durationMs / MINUTE + 1 })}
             >
               <PlusIcon />
             </CircleButton>
@@ -96,11 +93,11 @@ export function TimerTab() {
         </div>
 
         <div className={styles.actions}>
-          <CircleButton label="Reset" disabled={timer.status === 'idle'} onClick={resetTimer}>
+          <CircleButton label="Reset" disabled={timer.status === 'idle'} onClick={() => void runAction('timer.reset', {})}>
             <ResetIcon />
           </CircleButton>
           {timer.status === 'running' ? (
-            <CircleButton primary label="Pause" onClick={pauseTimer}>
+            <CircleButton primary label="Pause" onClick={() => void runAction('timer.pause', {})}>
               <PauseIcon />
             </CircleButton>
           ) : (
@@ -108,8 +105,8 @@ export function TimerTab() {
               primary
               label="Start"
               onClick={() => {
-                if (timer.status === 'done') resetTimer();
-                startTimer();
+                if (timer.status === 'done') void runAction('timer.reset', {});
+                void runAction('timer.start', {});
               }}
             >
               <PlayIcon />

@@ -4,15 +4,12 @@ import { DotNumber } from '../../components/DotNumber';
 import { ScrollArea } from '../../components/ScrollArea';
 import { FlagIcon, PauseIcon, PlayIcon, ResetIcon } from '../../components/glyphs';
 import {
-  addLap,
-  resetStopwatch,
-  startStopwatch,
-  stopStopwatch,
   stopwatchElapsed,
   useClockState,
 } from './clockStore';
 import { formatStopwatch } from './format';
 import styles from './StopwatchTab.module.css';
+import { runAction } from '../../system/actions';
 
 export function StopwatchTab() {
   const { stopwatch } = useClockState();
@@ -47,20 +44,20 @@ export function StopwatchTab() {
 
       <div className={styles.actions}>
         {stopwatch.running ? (
-          <CircleButton label="Lap" onClick={addLap}>
+          <CircleButton label="Lap" onClick={() => void runAction('stopwatch.lap', {})}>
             <FlagIcon />
           </CircleButton>
         ) : (
-          <CircleButton label="Reset" disabled={!hasTime} onClick={resetStopwatch}>
+          <CircleButton label="Reset" disabled={!hasTime} onClick={() => void runAction('stopwatch.reset', {})}>
             <ResetIcon />
           </CircleButton>
         )}
         {stopwatch.running ? (
-          <CircleButton primary label="Stop" onClick={stopStopwatch}>
+          <CircleButton primary label="Stop" onClick={() => void runAction('stopwatch.stop', {})}>
             <PauseIcon />
           </CircleButton>
         ) : (
-          <CircleButton primary label="Start" onClick={startStopwatch}>
+          <CircleButton primary label="Start" onClick={() => void runAction('stopwatch.start', {})}>
             <PlayIcon />
           </CircleButton>
         )}

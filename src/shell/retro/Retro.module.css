@@ -1,0 +1,445 @@
+/*
+ * The old-phone look. Colors, fonts and the (zero) radii all come from the
+ * theme engine; these rules only lay things out the way old phones did.
+ */
+
+.screen {
+  position: absolute;
+  inset: 0;
+  /* Keeps its layers (soft keys, menu) inside, below apps that open on top */
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--text-primary);
+}
+
+/* ---- Lock: covers the screen, jumps away in steps (transition is stepped in retro) */
+.lock {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--text-primary);
+  transition: transform var(--fade-normal);
+}
+
+.lockGone {
+  transform: translate3d(0, -100%, 0);
+  pointer-events: none;
+}
+
+/* ---- Idle screen (phone style) */
+.idle {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--top-inset) var(--grid-margin) calc(var(--dock-bottom) + var(--space-32) + var(--space-12));
+}
+
+.status {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: var(--space-24);
+}
+
+.signal {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: calc(var(--space-32) + var(--space-8));
+}
+
+.bar {
+  width: 4px;
+  background: var(--text-primary);
+  opacity: var(--ghost);
+}
+
+.operator {
+  font-family: var(--font-label);
+  font-size: 10px;
+  line-height: 1;
+}
+
+/* Four cells inside an outline, filling from the left */
+.battery {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 1px;
+  width: calc(var(--space-32) + var(--space-8));
+  height: var(--space-16);
+  padding: 1px;
+  border: 2px solid var(--text-primary);
+}
+
+.cell {
+  flex: 1;
+  background: var(--text-primary);
+  opacity: var(--ghost);
+}
+
+.lit {
+  opacity: 1;
+}
+
+.idleClock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-16);
+}
+
+.date {
+  margin: 0;
+  font-size: var(--text-22);
+  line-height: 1;
+}
+
+/* ---- Soft keys: the two button labels at the bottom */
+.softKeys {
+  position: absolute;
+  left: var(--grid-margin);
+  right: var(--grid-margin);
+  bottom: var(--dock-bottom);
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+}
+
+.softKey {
+  min-width: calc(var(--grid-cell) + var(--space-12));
+  height: calc(var(--space-32) + var(--space-12));
+  padding: 0 var(--space-4);
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font-family: var(--font-label);
+  font-size: 10px;
+  touch-action: none;
+}
+
+.leftKey {
+  text-align: left;
+}
+
+.rightKey {
+  text-align: right;
+}
+
+.searchZone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30%;
+  height: 35%;
+  border: 0;
+  background: none;
+}
+
+/* ---- Terminal style */
+.terminal {
+  position: absolute;
+  inset: 0;
+  padding: var(--top-inset) var(--grid-margin) 0;
+  font-size: var(--text-17);
+}
+
+.line {
+  margin: 0;
+  line-height: 1.25;
+}
+
+.terminalClock {
+  display: flex;
+  margin: var(--space-4) 0 var(--space-8);
+}
+
+.cursor {
+  animation: cursor 1s infinite;
+}
+
+@keyframes cursor {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---- Menu (phone: 3x3 grid; terminal: numbered list) */
+.menuScreen {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--top-inset) var(--grid-margin) 0;
+  background: var(--color-bg);
+}
+
+.menuTitle {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 12px;
+  text-align: center;
+}
+
+.menuGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-12);
+}
+
+.menuItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-8) 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  touch-action: none;
+}
+
+.menuIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--space-32) + var(--space-24));
+  height: calc(var(--space-32) + var(--space-24));
+  border: 2px solid var(--text-primary);
+}
+
+.menuIcon svg {
+  width: var(--space-32);
+  height: var(--space-32);
+}
+
+/* Pressed: drawn inverted, ink background */
+.menuItem:active .menuIcon {
+  background: var(--text-primary);
+  color: var(--color-bg);
+}
+
+.menuName {
+  font-size: var(--text-15);
+  line-height: 1;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+}
+
+.menuLine {
+  height: calc(var(--space-32) + var(--space-8));
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--text-17);
+  text-align: left;
+  touch-action: none;
+}
+
+.menuLine:active {
+  background: var(--text-primary);
+  color: var(--color-bg);
+}
+
+/* ---- Classic Desktop */
+.desktop {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg);
+  color: var(--text-primary);
+}
+
+.desktopIcons {
+  position: absolute;
+  left: var(--grid-margin);
+  top: var(--top-inset);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.desktopIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: var(--grid-cell);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--retro-on-desktop);
+  font: inherit;
+  touch-action: none;
+}
+
+.desktopGlyph svg {
+  width: var(--space-32);
+  height: var(--space-32);
+}
+
+.desktopLabel {
+  font-size: var(--text-15);
+  line-height: 1;
+}
+
+.desktopClock {
+  position: absolute;
+  left: calc(var(--grid-margin) + var(--grid-cell) + var(--grid-gap));
+  right: var(--grid-margin);
+  top: calc(var(--top-inset) + var(--grid-cell) * 2);
+}
+
+.window {
+  padding: 3px;
+  background: var(--retro-window);
+  box-shadow: var(--highlight-top);
+  color: var(--text-primary);
+}
+
+.titleBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--space-24);
+  padding: 0 var(--space-4) 0 var(--space-8);
+  background: var(--retro-title);
+  color: var(--retro-on-desktop);
+  font-family: var(--font-label);
+  font-size: 8px;
+}
+
+.titleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-16);
+  height: var(--space-16);
+  background: var(--retro-window);
+  box-shadow: var(--highlight-top);
+  color: var(--text-primary);
+}
+
+.windowBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-12);
+  padding: var(--space-16) var(--space-12);
+}
+
+.windowText {
+  margin: 0;
+  font-size: var(--text-17);
+  line-height: 1.1;
+}
+
+.taskbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(var(--space-32) + var(--space-8) + var(--safe-bottom));
+  padding: 0 var(--space-4) var(--safe-bottom);
+  background: var(--retro-window);
+  border-top: 2px solid var(--bevel-light);
+}
+
+.startButton,
+.bevelButton {
+  height: var(--space-32);
+  padding: 0 var(--space-12);
+  border: 0;
+  background: var(--retro-window);
+  box-shadow: var(--highlight-top);
+  color: var(--text-primary);
+  font-family: var(--font-label);
+  font-size: 8px;
+  touch-action: none;
+}
+
+.bevelButton {
+  align-self: flex-end;
+  min-width: calc(var(--grid-cell) + var(--space-12));
+}
+
+/* Pressed in: the bevel turns around */
+.pressedIn,
+.startButton:active,
+.bevelButton:active {
+  box-shadow:
+    inset 1px 1px var(--bevel-darker),
+    inset -1px -1px var(--bevel-light),
+    inset 2px 2px var(--bevel-dark);
+}
+
+.trayClock {
+  height: calc(var(--space-24) + var(--space-4));
+  padding: 0 var(--space-12);
+  box-shadow:
+    inset 1px 1px var(--bevel-dark),
+    inset -1px -1px var(--bevel-light);
+  font-size: var(--text-17);
+  line-height: calc(var(--space-24) + var(--space-4));
+}
+
+.startMenu {
+  position: absolute;
+  left: var(--space-4);
+  bottom: calc(var(--space-32) + var(--space-8) + var(--safe-bottom));
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  width: calc(var(--grid-cell) * 2 + var(--grid-gap) * 2);
+  padding: 3px;
+  background: var(--retro-window);
+  box-shadow: var(--highlight-top);
+}
+
+.startItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  height: calc(var(--space-32) + var(--space-4));
+  padding: 0 var(--space-8);
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--text-17);
+  text-align: left;
+  touch-action: none;
+}
+
+.startItem:active {
+  background: var(--retro-title);
+  color: var(--retro-on-desktop);
+}
+
+.startGlyph svg {
+  display: block;
+  width: var(--space-24);
+  height: var(--space-24);
+}
+
+.logon {
+  position: absolute;
+  left: var(--grid-margin);
+  right: var(--grid-margin);
+  top: 35%;
+}

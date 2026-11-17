@@ -82,6 +82,11 @@ export function useNotes(): NotesState {
   return useSyncExternalStore(subscribe, () => state);
 }
 
+/** One note by id (from memory). */
+export function getNote(id: string): Note | undefined {
+  return state.notes.find((note) => note.id === id);
+}
+
 export function createNote(kind: Note['kind']): Note {
   const now = Date.now();
   const note: Note = { id: newId(), kind, text: '', items: [], createdAt: now, updatedAt: now };

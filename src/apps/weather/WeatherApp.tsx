@@ -5,10 +5,11 @@ import { Temperature } from '../../components/Temperature';
 import { ResetIcon } from '../../components/glyphs';
 import { WeatherArt } from '../../shell/widgets/WeatherArt';
 import { formatTime } from '../../system/timeFormat';
-import { WEATHER_PLACE, refreshWeather, useWeather } from '../../system/weather';
+import { WEATHER_PLACE, useWeather } from '../../system/weather';
 import { DailyList } from './DailyList';
 import { HourlyStrip } from './HourlyStrip';
 import styles from './WeatherApp.module.css';
+import { runAction } from '../../system/actions';
 
 /** Now, the next 24 hours, and 7 days for one place. */
 export function WeatherApp() {
@@ -23,7 +24,7 @@ export function WeatherApp() {
           {status === 'error' ? 'The weather could not be loaded' : 'Loading the weather'}
         </p>
         {status === 'error' && (
-          <CircleButton small label="Try again" onClick={() => refreshWeather(true)}>
+          <CircleButton small label="Try again" onClick={() => void runAction('weather.refresh', {})}>
             <ResetIcon />
           </CircleButton>
         )}
@@ -44,7 +45,7 @@ export function WeatherApp() {
           <h1 className={styles.place}>{WEATHER_PLACE.name}</h1>
           <p className="label">{updated}</p>
         </div>
-        <CircleButton small label="Refresh" onClick={() => refreshWeather(true)}>
+        <CircleButton small label="Refresh" onClick={() => void runAction('weather.refresh', {})}>
           <ResetIcon />
         </CircleButton>
       </header>

@@ -5,7 +5,7 @@
   flex-direction: column;
   gap: var(--space-24);
   padding: calc(var(--top-inset) + var(--space-32)) var(--grid-margin) var(--dock-bottom);
-  background: var(--color-bg);
+  background: var(--app-bg);
   overflow: hidden;
   touch-action: none;
 

@@ -1,0 +1,45 @@
+.lcd {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* The ghost grid, step 1: the whole screen tinted with the ink at --ghost strength */
+.lcd::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--text-primary);
+  opacity: var(--ghost);
+}
+
+/* Step 2: cut into 6px squares by 2px gaps in the screen color */
+.lcd::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, var(--color-bg) 2px, transparent 2px),
+    linear-gradient(0deg, var(--color-bg) 2px, transparent 2px);
+  background-size: 8px 8px;
+}
+
+/* One lit pixel (2px inset, so it sits exactly on a grid square) */
+.pixel {
+  position: absolute;
+  z-index: 1;
+  width: 6px;
+  height: 6px;
+  margin: 2px 0 0 2px;
+  background: var(--text-primary);
+  opacity: 0.55;
+  animation-name: hop;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes hop {
+  to {
+    transform: translate3d(var(--distance), 0, 0);
+  }
+}

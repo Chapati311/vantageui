@@ -1,3 +1,5 @@
+import { getSettings } from '../system/settingsStore';
+
 /**
  * THE DESIGN SYSTEM, for JavaScript. The same values as tokens.css (keep the
  * two in sync), plus the motion settings, which only exist here because
@@ -32,15 +34,44 @@ export type DotSize = 28 | 40 | 64 | 96;
 
 export const ICON = { size: 24, stroke: 1.5 } as const;
 
-/** Springs. Use the one that matches what is moving. */
+/**
+ * Springs. Use the one that matches what is moving.
+ * They follow the "Animation speed" setting: faster speeds make the springs
+ * stiffer (with matching damping, so they never get bouncier).
+ */
+let retroMotion = false;
+
+/** The theme engine turns this on for retro themes: motion then jumps in steps. */
+export function setRetroMotion(on: boolean): void {
+  retroMotion = on;
+}
+
+/** Jumps in 4 steps, like an old screen redrawing. */
+const steppedEase = (t: number) => Math.ceil(t * 4) / 4;
+
+const spring = (stiffness: number, damping: number) => {
+  const speed = getSettings().animationSpeed;
+  if (retroMotion) {
+    // Retro themes: stepped animation, never smooth springs
+    return { type: 'tween' as const, duration: 0.24 / speed, ease: steppedEase };
+  }
+  return { type: 'spring' as const, stiffness: stiffness * speed * speed, damping: damping * speed };
+};
+
 export const SPRING = {
   /** Default for UI: presses, pages, items moving on the grid */
-  ui: { type: 'spring', stiffness: 400, damping: 34 },
+  get ui() {
+    return spring(400, 34);
+  },
   /** An app growing out of its icon and shrinking back */
-  app: { type: 'spring', stiffness: 260, damping: 28 },
+  get app() {
+    return spring(260, 28);
+  },
   /** Sheets: lock screen, quick settings, search */
-  sheet: { type: 'spring', stiffness: 300, damping: 30 },
-} as const;
+  get sheet() {
+    return spring(300, 30);
+  },
+};
 
 export const MOTION = {
   /** Past an edge, things move this much slower than the finger */

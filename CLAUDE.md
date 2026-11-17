@@ -229,26 +229,34 @@ Assistant app that connects to Vantage.
 
 ### Built so far (update this list when something is added)
 
-- Shell: boot animation, lock screen (wallpaper: orbit / dots / plain), home
-  grid with pages and edit mode, fixed dock (4 apps from `DOCK_APP_IDS`) with
-  page dots above it, app view with zoom, search, quick settings, UI sounds,
-  light mode, accent colors.
-- Real apps: Clock (timer, stopwatch, world clock; timers keep running in a
-  store), Weather (live Open-Meteo data, shared with the widget), Notes
-  (IndexedDB, text or checklist), Settings (wallpaper, accent, light mode,
-  sounds, mode switcher).
-- Widgets: clock, weather, battery ring, date, Ask Vantage bar (opens search),
-  now playing, voice note, flashlight, calendar, notes preview.
-- Still fake: now playing tracks, the calendar event, the notification count,
-  the quick settings controls and flashlight (look only), the voice note button.
-  The mode switcher is saved but Focus and Retro change nothing yet.
+- Phase 0 and 1 are done (see FEATURES.md for the full roadmap).
+- Theme engine: all 21 presets from SPECS.md, dark / light / automatic (sun
+  in Zurich or fixed hours), accent picker, colors from wallpaper, status
+  colors, mode colors (Focus grayscale, Retro, Wind Down warm + dimming),
+  300ms crossfade, widget style, text size, bold, high contrast, reduce
+  motion, animation speed.
+- Retro themes: pixel fonts, square pixels with ghost pixels, no rounded
+  corners, stepped motion, square-wave bleeps, and an old-phone layout
+  (phone, terminal and Classic Desktop styles).
+- Wallpapers: Orbit, Starfield, Aurora, Waves, Sundown, Pixel LCD, theme and
+  named gradients, solid colors, your own photo (IndexedDB). Paused when not
+  visible; dimmed / blurred behind the home screen.
+- Shell: boot animation, lock screen, home grid with pages and edit mode,
+  fixed dock, app view with zoom, search, quick settings, UI sounds.
+- Real apps: Clock (timer, stopwatch, world clock), Weather (Open-Meteo),
+  Notes (IndexedDB, text or checklist), Settings (themes, appearance, accent,
+  wallpaper, widgets, mode, text and motion, sound).
+- Widgets: clock, weather, battery ring, date, Ask Vantage bar, now playing
+  ("Available after unlock"), voice note, flashlight, calendar ("No
+  events"), notes preview, photo (a drawn picture until Phase 4).
+- Look only (as asked): the control center switches and the flashlight
+  widget. The voice note button does nothing yet.
 - Placeholders: Phone, Messages, Calculator, Music and Maps show "coming soon".
-- Not built yet: modes (Focus, Retro), adding/removing widgets in edit mode,
-  the Assistant, the native bridge beyond `getBattery`.
 - Known iOS limits: the battery level is unavailable in Safari (shows "--"),
-  timers can't chime while the phone is asleep, and swipes from the very
-  top/bottom edge of the screen belong to iOS, so our edge zones are
-  deliberately generous (top 56px, bottom 40px).
+  timers can't chime while the phone is asleep, a web app can't change the
+  real brightness (Wind Down darkens the picture instead), the status bar text
+  color is fixed when the app starts, and swipes from the very top/bottom
+  edge belong to iOS, so our edge zones are generous (top 56px, bottom 40px).
 
 ## Code organization
 
@@ -271,9 +279,21 @@ src/
 - Small saved settings go through `system/settingsStore.ts` (`useSetting`).
 - The design system lives in `theme/tokens.css` (CSS variables) and
   `theme/tokens.ts` (the same numbers plus springs, for JavaScript). Keep the
-  two in sync. `theme/theme.css` only holds the light mode and accent colour
-  overrides (`data-theme` / `data-accent` on `<html>`) and older variable names
-  that point at the tokens.
+  two in sync.
+- THE THEME ENGINE is `system/theme.ts`. It reads the settings, picks the
+  preset (`theme/presets.ts`, all 21 with their exact colors), and writes every
+  color, font, radius and timing as CSS variables on `<html>`, plus
+  `data-theme`, `data-preset`, `data-mode` and `data-retro`. Components only
+  read variables. `theme/theme.css` holds start values and retro rules.
+- Wallpapers: `shell/wallpaper/Wallpaper.tsx` draws any wallpaper;
+  the list is `theme/wallpapers.ts`; your photo is `system/wallpaperPhoto.ts`.
+- EVERY user-facing action goes through `system/actions.ts`
+  (`runAction('theme.apply', { id: 'ocean' })`). Add new actions there with a
+  plain-words description. Everything that talks to the phone itself goes
+  through `system/nativeBridge.ts` (bridge first, then URL scheme or
+  Shortcut, otherwise "unavailable").
+- Numbers: `DotNumber` draws round dots, or square pixels in retro themes;
+  `PixelNumber` is always pixels.
 - Dot numbers: always `components/DotNumber` (sizes 28 / 40 / 64 / 96), never
   the Doto font. Temperatures: `components/Temperature`.
 - Labels: the global class `label` (11px, uppercase, letter-spaced).
@@ -326,6 +346,9 @@ Planned bridge functions (all return Promises):
 - `npm run dev` - start the dev server (preview in Chrome, iPhone SE mode)
 - `npm run dev -- --host` - dev server reachable from the iPhone on the same Wi-Fi
 - `npm run build` - production build (Vercel runs this automatically)
+- `npm run screenshots:themes` - screenshots of every theme preset (lock,
+  home, Clock, Settings) into `screenshots/themes/`.
+- `npm run check:layout` - checks the home screen never overflows.
 - `npm run screenshots` - the quality check: with `npm run dev` running, saves
   every screen at 375x667 into `screenshots/` (Playwright). Then
   `node scripts/contact-sheet.mjs` puts them side by side on three sheets.

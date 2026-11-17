@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { NoteEditor } from './NoteEditor';
 import { NotesList } from './NotesList';
-import { createNote, deleteNote, isEmpty, useNotes, type Note } from './notesStore';
+import { isEmpty, useNotes, type Note } from './notesStore';
+import { runAction } from '../../system/actions';
 
 /** Notes saved on the device. Shows the list, or one note being edited. */
 export function NotesApp() {
@@ -9,11 +10,11 @@ export function NotesApp() {
   const [openId, setOpenId] = useState<string | null>(null);
   const openNote = notes.find((note) => note.id === openId);
 
-  const create = (kind: Note['kind']) => setOpenId(createNote(kind).id);
+  const create = (kind: Note['kind']) => void runAction('notes.create', { kind, onCreated: setOpenId });
 
   const close = () => {
     // A note you never wrote anything in is thrown away.
-    if (openNote && isEmpty(openNote)) deleteNote(openNote.id);
+    if (openNote && isEmpty(openNote)) void runAction('notes.delete', { id: openNote.id });
     setOpenId(null);
   };
 
@@ -23,7 +24,7 @@ export function NotesApp() {
         note={openNote}
         onBack={close}
         onDelete={() => {
-          deleteNote(openNote.id);
+          void runAction('notes.delete', { id: openNote.id });
           setOpenId(null);
         }}
       />

@@ -1,7 +1,8 @@
 import { motion } from 'motion/react';
-import { resetTimer, useClockState } from '../apps/clock/clockStore';
+import { useClockState } from '../apps/clock/clockStore';
 import { MOTION, SPRING } from '../theme/tokens';
 import styles from './TimerBanner.module.css';
+import { runAction } from '../system/actions';
 
 /**
  * A small glass pill at the top of the screen when a timer has finished,
@@ -22,7 +23,7 @@ export function TimerBanner() {
       animate={{ x: '-50%', y: done ? '0%' : '-300%', opacity: done ? 1 : 0 }}
       whileTap={{ scale: MOTION.pressScale }}
       transition={SPRING.sheet}
-      onClick={resetTimer}
+      onClick={() => void runAction('timer.reset', {})}
     >
       <span className={styles.dot} />
       Timer done

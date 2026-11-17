@@ -4,3 +4,15 @@
   overflow: hidden;
   background: var(--color-bg);
 }
+
+/* Wind Down: a warm amber layer, plus black that slowly dims the screen to 80%.
+   (A web app can't change the real brightness; this darkens the picture instead.) */
+.windDown {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background: linear-gradient(var(--winddown-warm), var(--winddown-warm)),
+    linear-gradient(rgb(0 0 0 / var(--winddown-dim)), rgb(0 0 0 / var(--winddown-dim)));
+  transition: background 60s linear;
+}

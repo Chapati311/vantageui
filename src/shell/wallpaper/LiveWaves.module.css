@@ -1,0 +1,54 @@
+.waves {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  left: 0;
+  width: 200%;
+  will-change: transform;
+  animation: roll linear infinite;
+}
+
+.wave path {
+  fill: rgb(var(--accent-rgb) / 0.07);
+  stroke: var(--color-hairline);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.layer0 {
+  top: 52%;
+  height: 22%;
+  animation-duration: 38s;
+}
+
+.layer1 {
+  top: 60%;
+  height: 26%;
+  animation-duration: 27s;
+  animation-direction: reverse;
+}
+
+.layer1 path {
+  fill: rgb(var(--accent-rgb) / 0.1);
+}
+
+.layer2 {
+  top: 70%;
+  height: 32%;
+  animation-duration: 21s;
+}
+
+.layer2 path {
+  fill: rgb(var(--accent-rgb) / 0.14);
+  stroke: rgb(var(--accent-rgb) / 0.35);
+}
+
+@keyframes roll {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}

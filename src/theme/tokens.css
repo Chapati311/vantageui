@@ -44,8 +44,7 @@
   /* ---- Accent ---------------------------------------------------------- */
   --accent-rgb: 45 212 191; /* #2DD4BF as red green blue */
   --color-on-accent: #06090d; /* text and glyphs on top of the accent */
-  /* (--color-accent and --glow-accent are built from --accent-rgb in theme.css,
-     so the accent chosen in Settings flows through.) */
+  /* (The theme engine replaces these colors with the chosen theme's.) */
 
   /* ---- Typography ------------------------------------------------------ */
   --font-body: 'Inter Variable', system-ui, sans-serif;

@@ -1,13 +1,11 @@
 import { useDrag } from '@use-gesture/react';
 import { animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { useEffect, useRef } from 'react';
-import { useSetting } from '../system/settingsStore';
 import { MOTION, SPRING, rubberBand } from '../theme/tokens';
 import { BatteryIndicator } from './BatteryIndicator';
 import { LockClock } from './LockClock';
-import { LockDots } from './LockDots';
-import { LockOrbit } from './LockOrbit';
 import { NotificationCount } from './NotificationCount';
+import { Wallpaper } from './wallpaper/Wallpaper';
 import styles from './LockScreen.module.css';
 
 /**
@@ -28,7 +26,6 @@ interface LockScreenProps {
  */
 export function LockScreen({ locked, onUnlock }: LockScreenProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [wallpaper] = useSetting('wallpaper');
 
   // 0 = covering the screen, 1 = slid away above it. A "motion value":
   // changing it moves the screen without re-rendering React.
@@ -81,8 +78,8 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
       style={{ y }}
       aria-hidden={!locked}
     >
-      {wallpaper === 'orbit' && <LockOrbit paused={!locked} progress={progress} />}
-      {wallpaper === 'dots' && <LockDots />}
+      {/* Paused while unlocked: nobody can see it, so it saves battery */}
+      <Wallpaper place="lock" paused={!locked} progress={progress} />
       <div className={styles.status}>
         <NotificationCount count={NOTIFICATIONS} />
         <BatteryIndicator />

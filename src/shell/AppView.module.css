@@ -2,7 +2,7 @@
 .view {
   position: absolute;
   inset: 0;
-  background: var(--color-bg);
+  background: var(--app-bg);
   transform-origin: 0 0;
   will-change: transform, opacity;
 }

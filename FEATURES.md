@@ -13,24 +13,24 @@ they are finished. Details for every item are in SPECS.md.
 - [x] Design tokens (tokens.css / tokens.ts) from CLAUDE.md [PWA]
 - [x] Playwright screenshot quality check at 375x667 [PWA]
 - [x] motion + @use-gesture/react installed and used for springs [PWA]
-- [ ] Theme engine with all 21 presets (10 dark, 5 light, 6 retro), every token [PWA]
-- [ ] Status colors (good / warning / bad, dark and light) [PWA]
-- [ ] Mode colors: Focus (grayscale), Retro, Wind Down (warm layer, dimming) [PWA]
-- [ ] Colors from wallpaper (vivid color becomes the accent, surfaces tinted 4%) [PWA]
-- [ ] Light / dark / automatic (schedule or sunset in Zurich), 300 ms crossfade [PWA]
-- [ ] Retro design language: square pixels with ghost pixels, Press Start 2P +
+- [x] Theme engine with all 21 presets (10 dark, 5 light, 6 retro), every token [PWA]
+- [x] Status colors (good / warning / bad, dark and light) [PWA]
+- [x] Mode colors: Focus (grayscale), Retro, Wind Down (warm layer, dimming) [PWA]
+- [x] Colors from wallpaper (vivid color becomes the accent, surfaces tinted 4%) [PWA]
+- [x] Light / dark / automatic (schedule or sunset in Zurich), 300 ms crossfade [PWA]
+- [x] Retro design language: square pixels with ghost pixels, Press Start 2P +
       VT323, no rounded corners, stepped animation, old-phone layout [PWA]
-- [ ] Wallpaper system: live (Orbit, Starfield, Aurora, Waves, Sundown, Pixel LCD),
+- [x] Wallpaper system: live (Orbit, Starfield, Aurora, Waves, Sundown, Pixel LCD),
       gradient, solid, photo; pause when not visible [PWA]
-- [ ] src/system/actions.ts: every user-facing action as a typed, named action [PWA]
-- [ ] src/system/nativeBridge.ts with fallbacks for every bridge function [PWA]
+- [x] src/system/actions.ts: every user-facing action as a typed, named action [PWA]
+- [x] src/system/nativeBridge.ts with fallbacks for every bridge function [PWA]
 
 ## Phase 2: Component kit
 - [ ] Kit in src/components/kit: AppShell, LargeTitle (shrinks on scroll),
       TabBar (floating pill), Section, Row, Toggle, Dial, Slider,
       SegmentedControl, Sheet (spring, drag to dismiss), SearchField,
       EmptyState, ContextMenu (long press), ScrollWheel [PWA]
-- [ ] DotNumber and PixelNumber [PWA]
+- [x] DotNumber and PixelNumber [PWA]
 - [ ] "Kit" test page: every component in every state, in Midnight, Paper and Nokia LCD [PWA]
 
 ## Phase 3: System shell

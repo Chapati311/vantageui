@@ -4,10 +4,10 @@
  */
 
 const DB_NAME = 'vantage';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 /** Every "table" in the database. Add a name here AND raise DB_VERSION to add one. */
-const STORES = ['notes'] as const;
+const STORES = ['notes', 'files'] as const;
 export type StoreName = (typeof STORES)[number];
 
 let opening: Promise<IDBDatabase> | null = null;
@@ -55,4 +55,9 @@ export async function dbPut<T extends { id: string }>(store: StoreName, item: T)
 
 export async function dbDelete(store: StoreName, id: string): Promise<void> {
   await run(store, 'readwrite', (objectStore) => objectStore.delete(id));
+}
+
+/** One item by its id, or undefined. */
+export function dbGet<T>(store: StoreName, id: string): Promise<T | undefined> {
+  return run<T | undefined>(store, 'readonly', (objectStore) => objectStore.get(id) as IDBRequest<T | undefined>);
 }

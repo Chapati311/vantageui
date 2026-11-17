@@ -17,6 +17,8 @@ const RINGS = [
 interface LockOrbitProps {
   /** Stop all movement (when the lock screen is not showing) to save battery */
   paused: boolean;
+  /** Home screen: no glowing core (the page's one accent belongs to a widget) */
+  quiet?: boolean;
   /** How far the lock screen has been swiped away: 0 to 1 */
   progress: MotionValue<number>;
 }
@@ -26,7 +28,7 @@ interface LockOrbitProps {
  * orbiting a glowing core. As you swipe up, the rings spread apart, fade,
  * and lag behind the screen. Only transform and opacity change.
  */
-export function LockOrbit({ paused, progress }: LockOrbitProps) {
+export function LockOrbit({ paused, progress, quiet = false }: LockOrbitProps) {
   const scale = useTransform(progress, [0, 1], [1, 2.6]);
   const opacity = useTransform(progress, [0, 1], [1, 0.15]);
   const y = useTransform(progress, (value) => `${value * 15}vh`);
@@ -51,7 +53,7 @@ export function LockOrbit({ paused, progress }: LockOrbitProps) {
             <span className={styles.dot} />
           </div>
         ))}
-        <span className={styles.core} />
+        <span className={`${styles.core} ${quiet ? styles.quiet : ''}`} />
       </motion.div>
     </div>
   );
