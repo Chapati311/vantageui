@@ -14,6 +14,7 @@ export { ScrollWheel } from './ScrollWheel';
 export { SearchField } from './SearchField';
 export { Section } from './Section';
 export { SegmentedControl } from './SegmentedControl';
+export { SwipeToDelete } from './SwipeToDelete';
 export { Sheet } from './Sheet';
 export { Slider } from './Slider';
 export { TabBar } from './TabBar';

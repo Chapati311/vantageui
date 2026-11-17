@@ -5,6 +5,7 @@ import { getApp, type AppDefinition } from '../system/appRegistry';
 import { hasPasscode } from '../system/passcode';
 import { getSettings, useSetting } from '../system/settingsStore';
 import { useTheme } from '../system/theme';
+import { AlarmRinging } from './AlarmRinging';
 import { AppSwitcher } from './AppSwitcher';
 import { AppView, type ScreenRect } from './AppView';
 import { Boot } from './Boot';
@@ -218,6 +219,7 @@ export function Shell() {
         }}
         onCancel={() => setPasscodeOpen(false)}
       />
+      <AlarmRinging />
       <TimerBanner />
       {/* Wind Down: a warm layer and slow dimming over everything (touches go through) */}
       <div className={styles.windDown} aria-hidden="true" />

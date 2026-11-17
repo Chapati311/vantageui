@@ -9,7 +9,7 @@ import { playSound } from '../../system/sounds';
  * even reload the page.
  */
 
-export type ClockTab = 'timer' | 'stopwatch' | 'world';
+export type ClockTab = 'alarm' | 'world' | 'stopwatch' | 'timer';
 
 export interface TimerState {
   /** What the timer was set to */
@@ -33,6 +33,10 @@ export interface StopwatchState {
 
 export interface ClockState {
   tab: ClockTab;
+  /** The preset pills (minutes); hold one to change it */
+  presets: number[];
+  /** Running timer: numbers turned on their side (true) or flat */
+  vertical: boolean;
   timer: TimerState;
   stopwatch: StopwatchState;
 }
@@ -43,7 +47,9 @@ export const MAX_TIMER_MS = 99 * 60_000;
 const STORAGE_KEY = 'vantage.clock.v1';
 
 const DEFAULTS: ClockState = {
-  tab: 'timer',
+  tab: 'alarm',
+  presets: [1, 3, 5, 10, 25],
+  vertical: true,
   timer: { durationMs: 5 * 60_000, status: 'idle', endsAt: 0, remainingMs: 5 * 60_000 },
   stopwatch: { running: false, startedAt: 0, elapsedMs: 0, laps: [] },
 };
@@ -51,7 +57,10 @@ const DEFAULTS: ClockState = {
 function load(): ClockState {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
-    if (saved?.timer && saved?.stopwatch) return { ...DEFAULTS, ...saved };
+    if (saved?.timer && saved?.stopwatch) {
+      const tab = ['alarm', 'world', 'stopwatch', 'timer'].includes(saved.tab) ? saved.tab : DEFAULTS.tab;
+      return { ...DEFAULTS, ...saved, tab, presets: Array.isArray(saved.presets) ? saved.presets : DEFAULTS.presets };
+    }
   } catch {
     // Broken or blocked storage: start fresh.
   }
@@ -83,6 +92,16 @@ export function useClockState(): ClockState {
 
 export function setClockTab(tab: ClockTab): void {
   update({ tab });
+}
+
+export function setPreset(index: number, minutes: number): void {
+  const presets = [...state.presets];
+  presets[index] = Math.min(99, Math.max(1, Math.round(minutes)));
+  update({ presets });
+}
+
+export function setTimerVertical(vertical: boolean): void {
+  update({ vertical });
 }
 
 // ---- Timer ---------------------------------------------------------------

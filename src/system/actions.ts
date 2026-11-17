@@ -11,6 +11,7 @@ import {
   type ClockTab,
 } from '../apps/clock/clockStore';
 import { openGame, type GameId } from '../apps/arcade/arcadeStore';
+import { deleteAlarm, saveAlarm, setAlarmEnabled, snooze, stopRinging, updateAlarmSettings, type Alarm, type AlarmSettings } from '../apps/clock/alarmStore';
 import { addWidget, removeHomeItem } from '../shell/home/layoutStore';
 import type { WidgetSize } from '../shell/widgets/types';
 import { convertNote, createNote, deleteNote, getNote, type Note } from '../apps/notes/notesStore';
@@ -210,9 +211,19 @@ const ACTIONS = {
   ),
 
   // ---- Clock
-  'clock.showTab': define<{ tab: ClockTab }>('Show the timer, stopwatch or world clock.', ({ tab }) =>
+  'clock.showTab': define<{ tab: ClockTab }>('Show the alarm, world clock, stopwatch or timer tab.', ({ tab }) =>
     setClockTab(tab),
   ),
+  'alarm.save': define<{ alarm: Alarm }>('Add or change an alarm (hour, minute, label, repeat days, sound).', ({ alarm }) => saveAlarm(alarm)),
+  'alarm.delete': define<{ id: string }>('Delete an alarm.', ({ id }) => deleteAlarm(id)),
+  'alarm.setEnabled': define<{ id: string; enabled: boolean }>('Switch an alarm on or off.', ({ id, enabled }) =>
+    setAlarmEnabled(id, enabled),
+  ),
+  'alarm.settings': define<Partial<AlarmSettings>>('Change alarm sound, volume, gentle wake, vibration or snooze length.', (patch) =>
+    updateAlarmSettings(patch),
+  ),
+  'alarm.stop': define<Record<string, never>>('Stop the ringing alarm.', () => stopRinging()),
+  'alarm.snooze': define<Record<string, never>>('Snooze the ringing alarm.', () => snooze()),
   'timer.setDuration': define<{ minutes: number }>('Set the timer length in minutes.', ({ minutes }) =>
     setTimerDuration(minutes * 60_000),
   ),

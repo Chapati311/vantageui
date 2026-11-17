@@ -1,48 +1,70 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CircleButton } from '../../components/CircleButton';
 import { DotNumber } from '../../components/DotNumber';
-import { ScrollArea } from '../../components/ScrollArea';
 import { FlagIcon, PauseIcon, PlayIcon, ResetIcon } from '../../components/glyphs';
-import {
-  stopwatchElapsed,
-  useClockState,
-} from './clockStore';
-import { formatStopwatch } from './format';
-import styles from './StopwatchTab.module.css';
 import { runAction } from '../../system/actions';
+import { stopwatchElapsed, useClockState } from './clockStore';
+import { formatStopwatch } from './format';
+import styles from './Clock.module.css';
 
+const RADIUS = 46;
+
+/**
+ * Stopwatch: the time inside a thin ring, with a dot sweeping round the
+ * ring once a second. Laps below: the fastest in the accent, the slowest grey.
+ * The numbers and the dot are updated directly each frame (no re-render).
+ */
 export function StopwatchTab() {
   const { stopwatch } = useClockState();
-  const [, setFrame] = useState(0);
+  const dotRef = useRef<SVGCircleElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  // Whole seconds for the big dot number: re-rendered once a second, not every frame
+  const [seconds, setSeconds] = useState(() => Math.floor(stopwatchElapsed(stopwatch) / 1000));
 
-  // While running, redraw once per screen frame. Only this tab re-renders.
   useEffect(() => {
+    const paint = () => {
+      const elapsed = stopwatchElapsed(stopwatch);
+      const angle = ((elapsed % 1000) / 1000) * Math.PI * 2 - Math.PI / 2;
+      dotRef.current?.setAttribute('cx', String(50 + RADIUS * Math.cos(angle)));
+      dotRef.current?.setAttribute('cy', String(50 + RADIUS * Math.sin(angle)));
+      if (textRef.current) textRef.current.textContent = formatStopwatch(elapsed);
+      setSeconds(Math.floor(elapsed / 1000));
+    };
+    paint();
     if (!stopwatch.running) return;
     let frame = requestAnimationFrame(function loop() {
-      setFrame((count) => count + 1);
+      paint();
       frame = requestAnimationFrame(loop);
     });
     return () => cancelAnimationFrame(frame);
-  }, [stopwatch.running]);
+  }, [stopwatch]);
 
+  const elapsed = stopwatchElapsed(stopwatch);
   const hasTime = stopwatch.running || stopwatch.elapsedMs > 0;
-  // Newest lap first, each with the time since the lap before it.
-  const laps = stopwatch.laps
-    .map((total, index) => ({
-      number: index + 1,
-      total,
-      split: total - (stopwatch.laps[index - 1] ?? 0),
-    }))
-    .reverse();
+  const laps = stopwatch.laps.map((total, index) => ({ number: index + 1, total, split: total - (stopwatch.laps[index - 1] ?? 0) }));
+  const splits = laps.map((lap) => lap.split);
+  const fastest = laps.length > 1 ? Math.min(...splits) : -1;
+  const slowest = laps.length > 1 ? Math.max(...splits) : -1;
 
   return (
     <div className={styles.stopwatch}>
-      <time className={styles.time}>
-        {/* instant: the hundredths change too fast for the dots to fade */}
-        <DotNumber value={formatStopwatch(stopwatchElapsed(stopwatch))} size={40} instant />
-      </time>
+      <div className={styles.ringBox}>
+        <svg className={styles.ring} viewBox="0 0 100 100" aria-hidden="true">
+          <circle className={styles.ringTrack} cx="50" cy="50" r={RADIUS} />
+          {Array.from({ length: 60 }, (_, i) => (
+            <line key={i} className={i % 5 === 0 ? styles.tickMajor : styles.tick} x1="50" y1="9" x2="50" y2={i % 5 === 0 ? 12 : 10.5} transform={`rotate(${i * 6} 50 50)`} />
+          ))}
+          <circle ref={dotRef} className={styles.sweep} cx="50" cy={50 - RADIUS} r="2.2" />
+        </svg>
+        <span className={styles.ringCenter}>
+          <DotNumber value={`${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`} size={40} />
+          <span ref={textRef} className={styles.hundredths}>
+            {formatStopwatch(elapsed)}
+          </span>
+        </span>
+      </div>
 
-      <div className={styles.actions}>
+      <div className={styles.buttons}>
         {stopwatch.running ? (
           <CircleButton label="Lap" onClick={() => void runAction('stopwatch.lap', {})}>
             <FlagIcon />
@@ -53,25 +75,25 @@ export function StopwatchTab() {
           </CircleButton>
         )}
         {stopwatch.running ? (
-          <CircleButton primary label="Stop" onClick={() => void runAction('stopwatch.stop', {})}>
+          <CircleButton label="Stop" onClick={() => void runAction('stopwatch.stop', {})}>
             <PauseIcon />
           </CircleButton>
         ) : (
-          <CircleButton primary label="Start" onClick={() => void runAction('stopwatch.start', {})}>
+          <CircleButton label="Start" onClick={() => void runAction('stopwatch.start', {})}>
             <PlayIcon />
           </CircleButton>
         )}
       </div>
 
-      <ScrollArea className={styles.laps}>
-        {laps.map((lap) => (
-          <div key={lap.number} className={styles.lap}>
-            <span className={`label ${styles.lapNumber}`}>Lap {lap.number}</span>
-            <span className={styles.lapSplit}>+{formatStopwatch(lap.split)}</span>
+      <div className={styles.laps}>
+        {[...laps].reverse().map((lap) => (
+          <div key={lap.number} className={`${styles.lap} ${lap.split === fastest ? styles.fastest : ''} ${lap.split === slowest ? styles.slowest : ''}`}>
+            <span className="label">Lap {lap.number}</span>
+            <span className={styles.lapSplit}>{formatStopwatch(lap.split)}</span>
             <span className={styles.lapTotal}>{formatStopwatch(lap.total)}</span>
           </div>
         ))}
-      </ScrollArea>
+      </div>
     </div>
   );
 }

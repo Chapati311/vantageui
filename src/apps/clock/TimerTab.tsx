@@ -1,119 +1,195 @@
-import { useEffect, useState } from 'react';
-import { CircleButton } from '../../components/CircleButton';
-import { DotNumber } from '../../components/DotNumber';
-import { MinusIcon, PauseIcon, PlayIcon, PlusIcon, ResetIcon } from '../../components/glyphs';
+import { useEffect, useRef, useState } from "react";
+import { CircleButton } from "../../components/CircleButton";
+import { DotNumber } from "../../components/DotNumber";
+import { PauseIcon, PlayIcon, ResetIcon } from "../../components/glyphs";
+import { Button, Dial, Sheet, ScrollWheel } from "../../components/kit";
+import { Pressable } from "../../components/Pressable";
+import { runAction } from "../../system/actions";
 import {
-  MAX_TIMER_MS,
-  MIN_TIMER_MS,
+  setPreset,
+  setTimerVertical,
   timerRemaining,
   useClockState,
-} from './clockStore';
-import { formatCountdown } from './format';
-import styles from './TimerTab.module.css';
-import { Pressable } from '../../components/Pressable';
-import { runAction } from '../../system/actions';
+} from "./clockStore";
+import { formatCountdown } from "./format";
+import styles from "./Clock.module.css";
 
 const MINUTE = 60_000;
-const PRESET_MINUTES = [1, 5, 10, 25];
+const MINUTE_OPTIONS = Array.from({ length: 99 }, (_, i) => ({
+  value: i + 1,
+  label: `${i + 1} min`,
+}));
+const RING = 2 * Math.PI * 46;
 
-const STATUS_LABEL = {
-  idle: 'Ready',
-  running: 'Running',
-  paused: 'Paused',
-  done: 'Done',
-};
-
-/** Countdown timer. The big number runs down the left side, turned 90 degrees. */
+/**
+ * Timer. Set it by turning the ring of dots (one soft click per minute) or
+ * with a preset pill (hold a pill to change it). While running: huge dot
+ * numbers on their side, and a ring that empties in the accent.
+ */
 export function TimerTab() {
-  const { timer } = useClockState();
+  const { timer, presets, vertical } = useClockState();
   const [, setTick] = useState(0);
+  const [editing, setEditing] = useState<number | null>(null);
+  const [editMinutes, setEditMinutes] = useState(5);
+  const holdTimer = useRef(0);
+  const held = useRef(false);
 
-  // While running, redraw 4 times a second. Only this tab re-renders.
   useEffect(() => {
-    if (timer.status !== 'running') return;
+    if (timer.status !== "running") return;
     const interval = window.setInterval(() => setTick((tick) => tick + 1), 250);
     return () => window.clearInterval(interval);
   }, [timer.status]);
 
   const remaining = timerRemaining(timer);
-  const progress = 1 - remaining / timer.durationMs; // 0 at the start, 1 when done
-  const canEdit = timer.status === 'idle' || timer.status === 'done';
+  const minutes = Math.round(timer.durationMs / MINUTE);
+  const setting = timer.status === "idle";
+  const done = timer.status === "done";
+
+  if (setting) {
+    return (
+      <div className={styles.timer}>
+        <div className={styles.dialBox}>
+          <Dial
+            label="Timer"
+            size="large"
+            dots={61}
+            steps={60}
+            value={Math.min(60, minutes) / 60}
+            onChange={(value) =>
+              void runAction("timer.setDuration", {
+                minutes: Math.max(1, Math.round(value * 60)),
+              })
+            }
+          >
+            <DotNumber value={String(minutes).padStart(2, "0")} size={64} />
+            <span className="label">Minutes</span>
+          </Dial>
+        </div>
+        <div className={styles.presets}>
+          {presets.map((preset, index) => (
+            <Pressable
+              key={index}
+              className={`${styles.preset} ${preset === minutes ? styles.presetOn : ""}`}
+              onPointerDown={() => {
+                held.current = false;
+                holdTimer.current = window.setTimeout(() => {
+                  held.current = true;
+                  setEditMinutes(preset);
+                  setEditing(index);
+                }, 500);
+              }}
+              onPointerUp={() => window.clearTimeout(holdTimer.current)}
+              onPointerLeave={() => window.clearTimeout(holdTimer.current)}
+              onClick={() =>
+                !held.current &&
+                void runAction("timer.setDuration", { minutes: preset })
+              }
+            >
+              {preset}
+            </Pressable>
+          ))}
+        </div>
+        <div className={styles.buttons}>
+          <CircleButton
+            label={vertical ? "Numbers flat" : "Numbers on their side"}
+            small
+            onClick={() => setTimerVertical(!vertical)}
+          >
+            <span className={styles.orientation}>{vertical ? "↕" : "↔"}</span>
+          </CircleButton>
+          <CircleButton
+            label="Start"
+            onClick={() => void runAction("timer.start", {})}
+          >
+            <PlayIcon />
+          </CircleButton>
+        </div>
+        <Sheet
+          open={editing !== null}
+          onClose={() => setEditing(null)}
+          title="Preset"
+        >
+          <ScrollWheel
+            label="Minutes"
+            options={MINUTE_OPTIONS}
+            value={editMinutes}
+            onChange={setEditMinutes}
+          />
+          <Button
+            kind="primary"
+            wide
+            onPress={() => {
+              if (editing !== null) setPreset(editing, editMinutes);
+              setEditing(null);
+            }}
+          >
+            Save
+          </Button>
+        </Sheet>
+      </div>
+    );
+  }
 
   return (
-    <div className={styles.timer}>
-      <div className={styles.display}>
-        <div className={styles.track}>
-          <div className={styles.progress} style={{ transform: `scaleY(${progress})` }} />
-        </div>
-        {/* The hero: the same dot numbers as everywhere, turned 90 degrees */}
-        <time className={styles.time} aria-label={`${formatCountdown(remaining)} left`}>
-          <span className={styles.turned}>
-            <DotNumber value={formatCountdown(remaining)} size={96} />
-          </span>
+    <div className={`${styles.timer} ${done ? styles.timerDone : ""}`}>
+      <div className={styles.runningBox}>
+        <svg
+          className={styles.runningRing}
+          viewBox="0 0 100 100"
+          aria-hidden="true"
+        >
+          <circle className={styles.ringTrack} cx="50" cy="50" r="46" />
+          <circle
+            className={styles.ringLeft}
+            cx="50"
+            cy="50"
+            r="46"
+            strokeDasharray={`${RING * (remaining / timer.durationMs)} ${RING}`}
+            transform="rotate(-90 50 50)"
+          />
+        </svg>
+        <time
+          className={vertical ? styles.turned : styles.flat}
+          aria-label={`${formatCountdown(remaining)} left`}
+        >
+          <DotNumber
+            value={formatCountdown(remaining)}
+            size={vertical ? 64 : 40}
+          />
         </time>
       </div>
-
-      <div className={styles.side}>
-        <div className={`label ${timer.status === 'done' ? styles.done : ''}`}>
-          {STATUS_LABEL[timer.status]}
-        </div>
-
-        <div className={`${styles.setup} ${canEdit ? '' : styles.locked}`}>
-          <div className={styles.presets}>
-            {PRESET_MINUTES.map((minutes) => (
-              <Pressable
-                key={minutes}
-                className={`${styles.preset} ${timer.durationMs === minutes * MINUTE ? styles.selected : ''}`}
-                aria-label={`${minutes} minutes`}
-                onClick={() => void runAction('timer.setDuration', { minutes })}
-              >
-                <DotNumber value={String(minutes)} size={28} muted={timer.durationMs !== minutes * MINUTE} />
-              </Pressable>
-            ))}
-          </div>
-          <div className={styles.stepper}>
-            <CircleButton
-              small
-              label="One minute less"
-              disabled={timer.durationMs <= MIN_TIMER_MS}
-              onClick={() => void runAction('timer.setDuration', { minutes: timer.durationMs / MINUTE - 1 })}
-            >
-              <MinusIcon />
-            </CircleButton>
-            <span className={`label ${styles.unit}`}>min</span>
-            <CircleButton
-              small
-              label="One minute more"
-              disabled={timer.durationMs >= MAX_TIMER_MS}
-              onClick={() => void runAction('timer.setDuration', { minutes: timer.durationMs / MINUTE + 1 })}
-            >
-              <PlusIcon />
-            </CircleButton>
-          </div>
-        </div>
-
-        <div className={styles.actions}>
-          <CircleButton label="Reset" disabled={timer.status === 'idle'} onClick={() => void runAction('timer.reset', {})}>
+      {done ? (
+        <Button
+          kind="primary"
+          onPress={() => void runAction("timer.reset", {})}
+        >
+          Stop
+        </Button>
+      ) : (
+        <div className={styles.buttons}>
+          <CircleButton
+            label="Reset"
+            onClick={() => void runAction("timer.reset", {})}
+          >
             <ResetIcon />
           </CircleButton>
-          {timer.status === 'running' ? (
-            <CircleButton primary label="Pause" onClick={() => void runAction('timer.pause', {})}>
+          {timer.status === "running" ? (
+            <CircleButton
+              label="Pause"
+              onClick={() => void runAction("timer.pause", {})}
+            >
               <PauseIcon />
             </CircleButton>
           ) : (
             <CircleButton
-              primary
-              label="Start"
-              onClick={() => {
-                if (timer.status === 'done') void runAction('timer.reset', {});
-                void runAction('timer.start', {});
-              }}
+              label="Resume"
+              onClick={() => void runAction("timer.start", {})}
             >
               <PlayIcon />
             </CircleButton>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
