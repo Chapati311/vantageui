@@ -3,16 +3,12 @@ import { animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { MOTION, SPRING, rubberBand } from '../theme/tokens';
 import { BatteryIndicator } from './BatteryIndicator';
+import { LivePill } from './LivePill';
 import { LockClock } from './LockClock';
 import { NotificationCount } from './NotificationCount';
+import { useNotifications } from '../system/notifications';
 import { Wallpaper } from './wallpaper/Wallpaper';
 import styles from './LockScreen.module.css';
-
-/**
- * Waiting notifications. There is no notification system yet (Phase 3), and
- * other apps' notifications need the native bridge, so there are none.
- */
-const NOTIFICATIONS = 0;
 
 interface LockScreenProps {
   locked: boolean;
@@ -25,6 +21,8 @@ interface LockScreenProps {
  * flick is enough, however short.
  */
 export function LockScreen({ locked, onUnlock }: LockScreenProps) {
+  // Vantage's own notifications (other apps' need the native bridge)
+  const notificationCount = useNotifications().length;
   const ref = useRef<HTMLDivElement>(null);
 
   // 0 = covering the screen, 1 = slid away above it. A "motion value":
@@ -81,11 +79,14 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
       {/* Paused while unlocked: nobody can see it, so it saves battery */}
       <Wallpaper place="lock" paused={!locked} progress={progress} />
       <div className={styles.status}>
-        <NotificationCount count={NOTIFICATIONS} />
+        <NotificationCount count={notificationCount} />
         <BatteryIndicator />
       </div>
       <div className={styles.clock}>
         <LockClock />
+      </div>
+      <div className={styles.live}>
+        <LivePill unlockFirst />
       </div>
       <div className={`label ${styles.hint}`}>Swipe up to unlock</div>
     </motion.div>

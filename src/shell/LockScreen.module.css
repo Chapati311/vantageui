@@ -55,3 +55,13 @@
     animation: none;
   }
 }
+
+/* A running timer or stopwatch, above the unlock hint */
+.live {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--dock-bottom) + var(--space-32));
+  display: flex;
+  justify-content: center;
+}

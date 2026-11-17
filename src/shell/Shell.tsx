@@ -1,13 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { LockIcon, SoundIcon, WifiIcon } from '../components/glyphs';
+import { BellIcon, GridIcon, LockIcon, SoundIcon, WifiIcon } from '../components/glyphs';
 import { registerShell, runAction } from '../system/actions';
 import { getApp, type AppDefinition } from '../system/appRegistry';
+import { hasPasscode } from '../system/passcode';
 import { useSetting } from '../system/settingsStore';
 import { useTheme } from '../system/theme';
+import { AppSwitcher } from './AppSwitcher';
 import { AppView, type ScreenRect } from './AppView';
 import { Boot } from './Boot';
 import { HomeScreen } from './HomeScreen';
 import { LockScreen } from './LockScreen';
+import { NotificationCenter } from './NotificationCenter';
+import { PasscodeScreen } from './PasscodeScreen';
 import { QuickSettings } from './QuickSettings';
 import { RetroHome } from './retro/RetroHome';
 import { RetroLock } from './retro/RetroLock';
@@ -39,6 +43,11 @@ export function Shell() {
   const [openApp, setOpenApp] = useState<OpenApp | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [switcherOpen, setSwitcherOpen] = useState(false);
+  const [passcodeOpen, setPasscodeOpen] = useState(false);
+  /** Recently opened apps, most recent first (for the app switcher) */
+  const [recents, setRecents] = useState<string[]>([]);
   const [soundsEnabled] = useSetting('soundsEnabled');
   const [homeBlur] = useSetting('homeBlur');
   const theme = useTheme();
@@ -60,25 +69,46 @@ export function Shell() {
     openApp: (appId: string, from?: DOMRect | null) => {
       const app = getApp(appId);
       if (!app) return;
-      setSearchOpen(false);
-      setQuickSettingsOpen(false);
+      closeAllOverlays();
+      setRecents((list) => [appId, ...list.filter((id) => id !== appId)].slice(0, 8));
       setOpenApp({ app, from: from ?? findIconRect(appId) });
     },
     closeApp: () => setOpenApp(null),
     lock: () => {
       setOpenApp(null);
-      setSearchOpen(false);
-      setQuickSettingsOpen(false);
+      closeAllOverlays();
+      setPasscodeOpen(false);
       setLocked(true);
     },
-    unlock: () => setLocked(false),
+    // With a passcode set, unlocking asks for it first
+    unlock: () => (hasPasscode() ? setPasscodeOpen(true) : setLocked(false)),
     openSearch,
-    openControlCenter: () => setQuickSettingsOpen(true),
-    closeOverlays: () => {
-      setSearchOpen(false);
-      setQuickSettingsOpen(false);
+    openControlCenter: () => {
+      setNotificationsOpen(false);
+      setQuickSettingsOpen(true);
     },
+    openNotifications: () => {
+      setQuickSettingsOpen(false);
+      setNotificationsOpen(true);
+    },
+    openAppSwitcher: () => {
+      closeAllOverlays();
+      setOpenApp(null);
+      setSwitcherOpen(true);
+    },
+    closeOverlays: () => closeAllOverlays(),
   });
+
+  function closeAllOverlays() {
+    setSearchOpen(false);
+    setQuickSettingsOpen(false);
+    setNotificationsOpen(false);
+    setSwitcherOpen(false);
+  }
+
+  /** Top edge: the left half pulls down notifications, the right half the control center. */
+  const swipeDownFromTop = (x: number) =>
+    void runAction(x < window.innerWidth / 2 ? 'shell.openNotifications' : 'shell.openControlCenter', {});
   useEffect(() => registerShell(controls.current), []);
 
   const openAppFrom = (appId: string, from: ScreenRect | null) =>
@@ -100,6 +130,20 @@ export function Shell() {
         icon: WifiIcon,
         keywords: ['wifi', 'bluetooth', 'flashlight', 'brightness', 'toggles'],
         run: () => void runAction('shell.openControlCenter', {}),
+      },
+      {
+        id: 'notifications',
+        name: 'Notifications',
+        icon: BellIcon,
+        keywords: ['alerts', 'messages'],
+        run: () => void runAction('shell.openNotifications', {}),
+      },
+      {
+        id: 'recents',
+        name: 'Recent apps',
+        icon: GridIcon,
+        keywords: ['switcher', 'multitask', 'recent'],
+        run: () => void runAction('shell.openAppSwitcher', {}),
       },
       {
         id: 'sounds',
@@ -130,7 +174,7 @@ export function Shell() {
           <HomeScreen
             onOpenApp={openAppFrom}
             onSwipeDown={openSearch}
-            onSwipeDownFromTop={() => void runAction('shell.openControlCenter', {})}
+            onSwipeDownFromTop={swipeDownFromTop}
           />
         </>
       )}
@@ -148,10 +192,32 @@ export function Shell() {
           from={openApp.from}
           getReturnRect={() => findIconRect(openApp.app.id)}
           onClosed={() => setOpenApp(null)}
+          onOpenSwitcher={() => void runAction('shell.openAppSwitcher', {})}
+          onSwipeDownFromTop={swipeDownFromTop}
+          onSwitchApp={(direction) => {
+            const next = recents[direction === 1 ? 1 : recents.length - 1];
+            if (next && next !== openApp.app.id) void runAction('app.open', { appId: next });
+          }}
         />
       )}
+      <AppSwitcher
+        open={switcherOpen}
+        recents={recents}
+        onOpen={(appId, from) => void runAction('app.open', { appId, from: from as DOMRect })}
+        onRemove={(appId) => setRecents((list) => list.filter((id) => id !== appId))}
+        onClose={() => setSwitcherOpen(false)}
+      />
       <QuickSettings open={quickSettingsOpen} onClose={() => setQuickSettingsOpen(false)} />
+      <NotificationCenter open={notificationsOpen} onClose={() => setNotificationsOpen(false)} />
       {retro ? <RetroLock locked={locked} onUnlock={unlock} /> : <LockScreen locked={locked} onUnlock={unlock} />}
+      <PasscodeScreen
+        open={passcodeOpen}
+        onSuccess={() => {
+          setPasscodeOpen(false);
+          setLocked(false);
+        }}
+        onCancel={() => setPasscodeOpen(false)}
+      />
       <TimerBanner />
       {/* Wind Down: a warm layer and slow dimming over everything (touches go through) */}
       <div className={styles.windDown} aria-hidden="true" />

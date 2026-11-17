@@ -1,0 +1,67 @@
+/* 32px tall glass pill */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  height: var(--space-32);
+  padding: 0 var(--space-12) 0 var(--space-4);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--highlight-top);
+  color: var(--text-primary);
+  font: inherit;
+  touch-action: manipulation;
+}
+
+/* A thin ring around the icon that fills up as the timer runs */
+.ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-24);
+  height: var(--space-24);
+  border-radius: var(--radius-circle);
+  background:
+    radial-gradient(closest-side, var(--color-surface) calc(100% - 2px), transparent calc(100% - 1px)),
+    conic-gradient(var(--text-primary) calc(var(--progress) * 360deg), var(--color-hairline) 0);
+  color: var(--text-secondary);
+}
+
+.ring svg {
+  width: var(--space-12);
+  height: var(--space-12);
+}
+
+.time {
+  font-size: var(--text-13);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.paused {
+  color: var(--text-secondary);
+}
+
+/* Home screen: fits the 16px page-dots row (overhangs 4px into the gaps around it) */
+.compact {
+  height: var(--space-24);
+  padding-left: 2px;
+}
+
+.compact .ring {
+  width: calc(var(--space-16) + var(--space-4));
+  height: calc(var(--space-16) + var(--space-4));
+}
+
+.compact .ring svg {
+  width: var(--space-8);
+  height: var(--space-8);
+}
+
+.compact .time {
+  font-size: var(--text-11);
+}

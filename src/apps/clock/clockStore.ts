@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { pushNotification } from '../../system/notifications';
 import { playSound } from '../../system/sounds';
 
 /**
@@ -105,6 +106,8 @@ function scheduleFinish(): void {
   if (left <= 0) {
     update({ timer: { ...timer, status: 'done', remainingMs: 0 } });
     playSound('timerDone');
+    const minutes = Math.round(timer.durationMs / 60_000);
+    pushNotification({ appId: 'clock', title: 'Timer', body: `Your ${minutes} min timer is done.` });
   } else {
     finishTimeout = window.setTimeout(scheduleFinish, left);
   }

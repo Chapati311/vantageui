@@ -24,6 +24,8 @@ import {
   type ModeId,
   type Settings,
 } from './settingsStore';
+import { clearNotifications, dismissNotification, pushNotification } from './notifications';
+import { hasPasscode, removePasscode, setPasscode } from './passcode';
 import { playSound } from './sounds';
 import { refreshWeather } from './weather';
 import { removeWallpaperPhoto, setWallpaperPhoto } from './wallpaperPhoto';
@@ -46,6 +48,8 @@ export interface ShellControls {
   unlock: () => void;
   openSearch: () => void;
   openControlCenter: () => void;
+  openNotifications: () => void;
+  openAppSwitcher: () => void;
   closeOverlays: () => void;
 }
 
@@ -85,17 +89,36 @@ const ACTIONS = {
   ),
   'app.close': define<Record<string, never>>('Close the open app and go back home.', () => shell?.closeApp()),
   'shell.lock': define<Record<string, never>>('Lock the phone.', () => shell?.lock()),
-  'shell.unlock': define<Record<string, never>>('Unlock the phone.', () => {
+  'shell.unlock': define<Record<string, never>>('Unlock the phone (asks for the passcode if one is set).', () => {
     shell?.unlock();
-    playSound('unlock');
+    if (!hasPasscode()) playSound('unlock');
   }),
   'shell.openSearch': define<Record<string, never>>('Open search.', () => shell?.openSearch()),
   'shell.openControlCenter': define<Record<string, never>>('Open the control center (quick settings).', () =>
     shell?.openControlCenter(),
   ),
-  'shell.closeOverlays': define<Record<string, never>>('Close search and the control center.', () =>
-    shell?.closeOverlays(),
+  'shell.openNotifications': define<Record<string, never>>('Open the notification center.', () =>
+    shell?.openNotifications(),
   ),
+  'shell.openAppSwitcher': define<Record<string, never>>('Show the recently used apps.', () =>
+    shell?.openAppSwitcher(),
+  ),
+  'shell.closeOverlays': define<Record<string, never>>(
+    'Close search, the control center, the notification center and the app switcher.',
+    () => shell?.closeOverlays(),
+  ),
+
+  // ---- Notifications
+  'notifications.push': define<{ appId: string; title: string; body: string }>(
+    'Show a notification from a Vantage app.',
+    (notification) => pushNotification(notification),
+  ),
+  'notifications.dismiss': define<{ id: string }>('Remove one notification.', ({ id }) => dismissNotification(id)),
+  'notifications.clear': define<Record<string, never>>('Remove all notifications.', () => clearNotifications()),
+
+  // ---- Passcode
+  'passcode.set': define<{ code: string }>('Set (or change) the 6-digit passcode.', ({ code }) => setPasscode(code)),
+  'passcode.remove': define<Record<string, never>>('Turn the passcode off.', () => removePasscode()),
 
   // ---- Look
   'theme.apply': define<{ id: string }>(

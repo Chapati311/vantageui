@@ -34,18 +34,19 @@ they are finished. Details for every item are in SPECS.md.
 - [x] "Kit" test page: every component in every state, in Midnight, Paper and Nokia LCD [PWA]
 
 ## Phase 3: System shell
-- [ ] Lock screen: living orbit wallpaper, dot clock with blinking colon, status bar [PWA]
-- [ ] Home screen: Nothing-style grid, no app list [PWA]
-- [ ] Search [PWA]
-- [ ] Control center with circular dials [PWA]
-- [ ] Notification center [PWA]
-- [ ] Live pill (timers, music, recording, Lock In) [PWA]
-- [ ] App switcher [PWA]
-- [ ] Apps zoom out of their icons [PWA]
-- [ ] Edge-swipe gestures [PWA]
-- [ ] Boot animation [PWA]
-- [ ] Passcode screen [PWA]
-- [ ] Spring physics everywhere, 60 fps on the SE [PWA]
+- [x] Lock screen: living orbit wallpaper, dot clock with blinking colon, status bar [PWA]
+- [x] Home screen: Nothing-style grid, no app list [PWA]
+- [x] Search [PWA]
+- [x] Control center with circular dials [PWA]
+- [x] Notification center [PWA]
+- [x] Live pill (timers, music, recording, Lock In) [PWA]
+- [x] App switcher [PWA]
+- [x] Apps zoom out of their icons [PWA]
+- [x] Edge-swipe gestures [PWA]
+- [x] Boot animation [PWA]
+- [x] Passcode screen [PWA]
+- [ ] Spring physics everywhere, 60 fps on the SE [PWA] (springs done; 60 fps
+      still to be checked on the real phone)
 
 ## Phase 4: Customise app and widgets
 - [ ] Customise app: serif title, live mini phone preview, "Surprise me",

@@ -1,0 +1,92 @@
+/* Over the lock screen, so its wallpaper glows through the glass */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-24);
+  padding: var(--top-inset) var(--grid-margin) var(--dock-bottom);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  touch-action: none;
+  /* Above every lock screen (the retro ones sit at 20) */
+  z-index: 30;
+}
+
+.message {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.dots {
+  display: flex;
+  gap: var(--space-16);
+  margin-bottom: var(--space-16);
+}
+
+.dot {
+  width: var(--space-12);
+  height: var(--space-12);
+  border: 1px solid var(--text-secondary);
+  border-radius: var(--radius-circle);
+}
+
+.filled {
+  border-color: var(--text-primary);
+  background: var(--text-primary);
+}
+
+/* Three grid columns wide, keys exactly one cell */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, var(--grid-cell));
+  gap: var(--grid-gap) var(--space-24);
+}
+
+.key,
+.textKey {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--grid-cell);
+  height: var(--grid-cell);
+  padding: 0;
+  border-radius: var(--radius-circle);
+  color: var(--text-primary);
+  font: inherit;
+  touch-action: manipulation;
+}
+
+.key {
+  border: var(--border-widget);
+  background: var(--surface-widget);
+  box-shadow: var(--highlight-top);
+}
+
+.key:active {
+  background: var(--color-surface-3);
+}
+
+.textKey {
+  border: 0;
+  background: none;
+  font-size: var(--text-15);
+  font-weight: 500;
+}
+
+.textKey svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.textKey:disabled {
+  opacity: 0;
+}
+
+.waiting .key {
+  opacity: 0.35;
+  pointer-events: none;
+}

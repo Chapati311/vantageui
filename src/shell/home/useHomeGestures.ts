@@ -51,7 +51,8 @@ interface Options {
   onMoveItem: (id: string, to: { page: number; col: number; row: number }) => HomeItem;
   onTapItem: (id: string) => void;
   onSwipeDown?: () => void;
-  onSwipeDownFromTop?: () => void;
+  /** Gets where along the top edge the swipe started (px from the left) */
+  onSwipeDownFromTop?: (x: number) => void;
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -341,7 +342,7 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
         mode = 'idle';
         if (!cancelled && pointerY - startY > SWIPE_DOWN_MIN) {
           const { onSwipeDown, onSwipeDownFromTop } = latest.current;
-          if (startY < TOP_EDGE) onSwipeDownFromTop?.();
+          if (startY < TOP_EDGE) onSwipeDownFromTop?.(startX);
           else onSwipeDown?.();
         }
       } else if (mode === 'ignored') {

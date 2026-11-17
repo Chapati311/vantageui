@@ -229,7 +229,7 @@ Assistant app that connects to Vantage.
 
 ### Built so far (update this list when something is added)
 
-- Phases 0, 1 and 2 are done (see FEATURES.md for the full roadmap).
+- Phases 0, 1, 2 and 3 are done (see FEATURES.md for the full roadmap).
 - Component kit (`src/components/kit`): AppShell + LargeTitle, TabBar, Section,
   Row (swipe to delete), Toggle, Slider, SegmentedControl, Dial (dots, steps),
   ScrollWheel, Sheet, SearchField, EmptyState (empty / loading / error),
@@ -246,7 +246,12 @@ Assistant app that connects to Vantage.
   named gradients, solid colors, your own photo (IndexedDB). Paused when not
   visible; dimmed / blurred behind the home screen.
 - Shell: boot animation, lock screen, home grid with pages and edit mode,
-  fixed dock, app view with zoom, search, quick settings, UI sounds.
+  fixed dock, app view with zoom, search, quick settings, UI sounds,
+  notification center (`system/notifications.ts`), live pill (running timer
+  or stopwatch, in the page-dots row and on the lock screen), app switcher
+  (swipe up and hold in an app), passcode screen (`system/passcode.ts`,
+  Settings > Passcode). Edge swipes: top-left = notifications, top-right =
+  controls, bottom = home, bottom sideways = previous app.
 - Real apps: Clock (timer, stopwatch, world clock), Weather (Open-Meteo),
   Notes (IndexedDB, text or checklist), Settings (themes, appearance, accent,
   wallpaper, widgets, mode, text and motion, sound).
@@ -356,6 +361,8 @@ Planned bridge functions (all return Promises):
   home, Clock, Settings) into `screenshots/themes/`.
 - `npm run screenshots:kit` - the Kit page in Midnight, Paper and Nokia LCD
   into `screenshots/kit/`.
+- `npm run screenshots:shell` - lock, passcode, home, notifications,
+  controls, app switcher and search in Midnight, Paper and Nokia LCD.
 - `npm run check:layout` - checks the home screen never overflows.
 - `npm run screenshots` - the quality check: with `npm run dev` running, saves
   every screen at 375x667 into `screenshots/` (Playwright). Then

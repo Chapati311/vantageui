@@ -5,6 +5,7 @@ import { getWidget } from './widgets/widgetRegistry';
 import { Dock } from './home/Dock';
 import { HomeItemContent, HomeItemView } from './home/HomeItemView';
 import { PageDots } from './home/PageDots';
+import { LivePill, useHasLiveActivity } from './LivePill';
 import {
   COLS,
   MAX_PAGES,
@@ -26,7 +27,8 @@ interface HomeScreenProps {
   /** Swipe down in the middle of the screen */
   onSwipeDown?: () => void;
   /** Swipe down starting at the very top */
-  onSwipeDownFromTop?: () => void;
+  /** Gets where along the top edge the swipe started (px from the left) */
+  onSwipeDownFromTop?: (x: number) => void;
 }
 
 /**
@@ -36,6 +38,7 @@ interface HomeScreenProps {
  * Long-press to rearrange and resize.
  */
 export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeScreenProps) {
+  const live = useHasLiveActivity();
   const surfaceRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const metrics = useGridMetrics(surfaceRef, gridRef);
@@ -180,9 +183,10 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
         )}
       </div>
 
-      {/* Page dots have their own row, 8px above the dock */}
+      {/* Page dots have their own row, 8px above the dock. A running timer or
+          stopwatch takes their place (the live pill). */}
       <div className={styles.dots}>
-        <PageDots count={pageCount} current={Math.min(page, pageCount - 1)} />
+        {live ? <LivePill compact /> : <PageDots count={pageCount} current={Math.min(page, pageCount - 1)} />}
       </div>
 
       <Dock onOpenApp={(appId, from) => onOpenApp?.(appId, from)} />

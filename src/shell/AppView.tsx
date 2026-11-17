@@ -22,10 +22,18 @@ interface AppViewProps {
   /** Where to shrink back to when closing. Asked at close time. */
   getReturnRect: () => ScreenRect | null;
   onClosed: () => void;
+  /** Swipe up from the bottom edge and hold: show the recent apps */
+  onOpenSwitcher?: () => void;
+  /** Swipe sideways along the bottom edge: jump to the previous / next recent app */
+  onSwitchApp?: (direction: 1 | -1) => void;
+  /** Pulled down from the top edge (gets where it started, px from the left) */
+  onSwipeDownFromTop?: (x: number) => void;
 }
 
 /** Without a flick, swipe up further than this (px) from the bottom edge to go home. */
 const CLOSE_DISTANCE = 80;
+/** Dragged up further than this (px) and let go slowly: show the recent apps instead. */
+const HOLD_DISTANCE = 220;
 /** Used when the icon is not on screen: shrink into the middle. */
 const FALLBACK_SIZE = 72;
 
@@ -35,7 +43,7 @@ const FALLBACK_SIZE = 72;
  * edge (it follows the finger first; a quick flick is enough).
  * Only transform and opacity change.
  */
-export function AppView({ app, from, getReturnRect, onClosed }: AppViewProps) {
+export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, onSwitchApp, onSwipeDownFromTop }: AppViewProps) {
   const ref = useRef<HTMLDivElement>(null);
   const closing = useRef(false);
 
@@ -109,24 +117,58 @@ export function AppView({ app, from, getReturnRect, onClosed }: AppViewProps) {
   });
 
   // Swipe up from the bottom edge: the app shrinks with the finger.
+  // Let go quickly to go home; slow down and hold to see the recent apps.
+  // Sideways along the edge: switch to the previous / next app.
   const bind = useDrag(
-    ({ first, last, movement: [, moved], velocity: [, speed], direction: [, direction] }) => {
+    ({ first, last, movement: [movedX, moved], velocity: [, speed], direction: [, direction], memo }) => {
       if (closing.current) return;
       if (first) stopAll(); // catch it mid-spring
       const { width, height } = size();
+      // Decide once which way this swipe goes
+      const axis: 'x' | 'y' | undefined =
+        memo ?? (Math.abs(movedX) > 12 || Math.abs(moved) > 12 ? (Math.abs(movedX) > Math.abs(moved) ? 'x' : 'y') : undefined);
+
+      if (axis === 'x') {
+        if (!last) {
+          x.set(movedX * 0.6);
+          return axis;
+        }
+        if (Math.abs(movedX) > width / 4 && onSwitchApp) {
+          onSwitchApp(movedX > 0 ? -1 : 1);
+        } else {
+          void springTo({ x: 0, y: 0, scaleX: 1, scaleY: 1 }, 1);
+        }
+        return axis;
+      }
+
       const up = Math.max(0, -moved);
       const scale = 1 - Math.min(1, up / (height * 0.6)) * 0.5;
-
       if (!last) {
         scaleX.set(scale);
         scaleY.set(scale);
         x.set((width * (1 - scale)) / 2);
         y.set((height * (1 - scale)) / 2 - up * 0.3);
-        return;
+        return axis;
       }
       const flick = speed > MOTION.flickVelocity && direction < 0;
-      if (flick || up > CLOSE_DISTANCE) close();
-      else void springTo({ x: 0, y: 0, scaleX: 1, scaleY: 1 }, 1); // not far enough: back to full-screen
+      if (!flick && up > HOLD_DISTANCE && onOpenSwitcher) {
+        // Held high up without flicking: the recent apps
+        onOpenSwitcher();
+        void springTo(squeezedInto(null), 0);
+      } else if (flick || up > CLOSE_DISTANCE) {
+        close();
+      } else {
+        void springTo({ x: 0, y: 0, scaleX: 1, scaleY: 1 }, 1); // not far enough: back to full-screen
+      }
+      return axis;
+    },
+    { filterTaps: true },
+  );
+
+  // Pull down from the top edge: notifications (left half) or controls (right half)
+  const bindTop = useDrag(
+    ({ last, movement: [, moved], initial: [startX] }) => {
+      if (last && moved > 40) onSwipeDownFromTop?.(startX);
     },
     { axis: 'y', filterTaps: true },
   );
@@ -137,6 +179,7 @@ export function AppView({ app, from, getReturnRect, onClosed }: AppViewProps) {
     <motion.div ref={ref} className={styles.view} style={{ x, y, scaleX, scaleY, opacity }}>
       <OverlayLayer>
         <div className={styles.content}>{Content ? <Content /> : <PlaceholderApp app={app} />}</div>
+        <div className={styles.topZone} aria-hidden="true" {...(bindTop() as object)} />
         <div className={styles.homeZone} aria-label="Swipe up to go home" {...(bind() as object)}>
           <span className={styles.homeBar} />
         </div>

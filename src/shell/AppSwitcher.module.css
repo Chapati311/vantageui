@@ -1,0 +1,79 @@
+.layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--scrim);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* Cards side by side; the row scrolls sideways and snaps to a card */
+.row {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: var(--space-32) calc((100% - (2.5 * var(--grid-cell) + 2 * var(--grid-gap))) / 2);
+  scroll-snap-type: x mandatory;
+  touch-action: pan-x;
+  scrollbar-width: none;
+}
+
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+/* Each card is 2.5 grid cells wide: a 375x667 screen at about half size */
+.card {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  width: calc(2.5 * var(--grid-cell) + 2 * var(--grid-gap));
+  margin-right: var(--grid-gap);
+  scroll-snap-align: center;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding-left: var(--space-4);
+  font-size: var(--text-13);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.glyph {
+  display: flex;
+  color: var(--text-secondary);
+}
+
+.glyph svg {
+  width: var(--space-16);
+  height: var(--space-16);
+}
+
+.preview {
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  background: var(--app-bg);
+  box-shadow: var(--highlight-top);
+  touch-action: pan-x;
+}
+
+/* The app, laid out exactly like in AppView */
+.app {
+  position: absolute;
+  inset: 0;
+  padding: var(--top-inset) var(--grid-margin) calc(var(--safe-bottom) + var(--size-home-zone));
+  background: var(--app-bg);
+  color: var(--text-primary);
+}

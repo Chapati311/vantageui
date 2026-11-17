@@ -1,6 +1,7 @@
 import { useState, type ComponentType } from 'react';
 import { Pressable } from '../../components/Pressable';
 import { BackIcon } from '../../components/glyphs';
+import { useHasPasscode } from '../../system/passcode';
 import { useSettings } from '../../system/settingsStore';
 import { useTheme } from '../../system/theme';
 import { getPreset } from '../../theme/presets';
@@ -9,6 +10,7 @@ import { AccentPage } from './AccentPage';
 import { AccessibilityPage } from './AccessibilityPage';
 import { AppearancePage } from './AppearancePage';
 import { ModePage } from './ModePage';
+import { PasscodePage } from './PasscodePage';
 import { Section, SettingsPage } from './SettingsPage';
 import { SoundPage } from './SoundPage';
 import { ThemesPage } from './ThemesPage';
@@ -16,7 +18,7 @@ import { WallpaperPage } from './WallpaperPage';
 import { WidgetsPage } from './WidgetsPage';
 import styles from './SettingsApp.module.css';
 
-type PageId = 'themes' | 'appearance' | 'accent' | 'wallpaper' | 'mode' | 'widgets' | 'access' | 'sound';
+type PageId = 'themes' | 'appearance' | 'accent' | 'wallpaper' | 'mode' | 'widgets' | 'access' | 'sound' | 'passcode';
 
 const PAGES: Record<PageId, ComponentType<{ onBack: () => void }>> = {
   themes: ThemesPage,
@@ -27,6 +29,7 @@ const PAGES: Record<PageId, ComponentType<{ onBack: () => void }>> = {
   widgets: WidgetsPage,
   access: AccessibilityPage,
   sound: SoundPage,
+  passcode: PasscodePage,
 };
 
 const MODE_NAMES = { clean: 'Clean', focus: 'Focus', retro: 'Retro', winddown: 'Wind Down' } as const;
@@ -38,6 +41,7 @@ export function SettingsApp() {
   const [page, setPage] = useState<PageId | null>(null);
   const s = useSettings();
   const theme = useTheme();
+  const passcodeOn = useHasPasscode();
 
   if (page) {
     const Page = PAGES[page];
@@ -78,6 +82,7 @@ export function SettingsApp() {
           {row('mode', 'Mode', MODE_NAMES[s.mode])}
           {row('access', 'Text and motion', s.reduceMotion ? 'Reduced motion' : `${Math.round(s.textScale * 100)}% text`)}
           {row('sound', 'Sound', s.soundsEnabled ? `${Math.round(s.soundVolume * 100)}%` : 'Off')}
+          {row('passcode', 'Passcode', passcodeOn ? 'On' : 'Off')}
         </div>
       </Section>
     </SettingsPage>
