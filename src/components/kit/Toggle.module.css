@@ -36,3 +36,8 @@
 .on .knob {
   background: var(--color-on-accent);
 }
+
+.toggle:disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}

@@ -2,6 +2,7 @@ import { useDrag } from '@use-gesture/react';
 import { animate, motion, useMotionValue } from 'motion/react';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { PlaceholderApp } from '../apps/PlaceholderApp';
+import { OverlayLayer } from '../components/kit/OverlayLayer';
 import type { AppDefinition } from '../system/appRegistry';
 import { MOTION, SPRING } from '../theme/tokens';
 import styles from './AppView.module.css';
@@ -134,10 +135,12 @@ export function AppView({ app, from, getReturnRect, onClosed }: AppViewProps) {
 
   return (
     <motion.div ref={ref} className={styles.view} style={{ x, y, scaleX, scaleY, opacity }}>
-      <div className={styles.content}>{Content ? <Content /> : <PlaceholderApp app={app} />}</div>
-      <div className={styles.homeZone} aria-label="Swipe up to go home" {...(bind() as object)}>
-        <span className={styles.homeBar} />
-      </div>
+      <OverlayLayer>
+        <div className={styles.content}>{Content ? <Content /> : <PlaceholderApp app={app} />}</div>
+        <div className={styles.homeZone} aria-label="Swipe up to go home" {...(bind() as object)}>
+          <span className={styles.homeBar} />
+        </div>
+      </OverlayLayer>
     </motion.div>
   );
 }

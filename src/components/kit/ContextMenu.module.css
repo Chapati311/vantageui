@@ -1,0 +1,72 @@
+.target {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+}
+
+.lifted {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* A card of actions, 48px per row */
+.menu {
+  position: absolute;
+  width: calc(2.5 * var(--grid-cell) + 2 * var(--grid-gap));
+  overflow: hidden;
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  background: var(--color-surface-2);
+  box-shadow: var(--highlight-top);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+  width: 100%;
+  height: calc(var(--space-32) + var(--space-16));
+  padding: 0 var(--space-16) 0 var(--space-24);
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--text-15);
+  font-weight: 500;
+  text-align: left;
+}
+
+.item + .item {
+  border-top: 1px solid var(--color-hairline);
+}
+
+.item:active {
+  background: var(--color-surface-3);
+}
+
+.item:disabled {
+  opacity: 0.35;
+}
+
+.item svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: var(--text-secondary);
+}
+
+.destructive,
+.destructive svg {
+  color: var(--status-bad);
+}

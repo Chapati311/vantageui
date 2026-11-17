@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Pressable } from '../../components/Pressable';
 import { ScaledPreview } from '../../components/ScaledPreview';
-import { Slider } from '../../components/Slider';
+import { Slider } from '../../components/kit/Slider';
 import { Wallpaper } from '../../shell/wallpaper/Wallpaper';
 import { runAction } from '../../system/actions';
 import { useSettings } from '../../system/settingsStore';

@@ -1,5 +1,5 @@
-import { Slider } from '../../components/Slider';
-import { Toggle } from '../../components/Toggle';
+import { Slider } from '../../components/kit/Slider';
+import { Toggle } from '../../components/kit/Toggle';
 import { useSettings } from '../../system/settingsStore';
 import { playSound } from '../../system/sounds';
 import { changeSetting } from './setSetting';

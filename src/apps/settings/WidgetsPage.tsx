@@ -1,5 +1,5 @@
 import { ChoiceList } from '../../components/ChoiceList';
-import { Slider } from '../../components/Slider';
+import { Slider } from '../../components/kit/Slider';
 import { useSettings, type WidgetStyle } from '../../system/settingsStore';
 import { useTheme } from '../../system/theme';
 import { changeSetting } from './setSetting';

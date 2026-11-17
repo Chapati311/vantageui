@@ -194,3 +194,82 @@ export function BellIcon() {
     </Icon>
   );
 }
+
+export function SearchIcon() {
+  return (
+    <Icon>
+      <circle cx="10.500" cy="10.500" r="6" />
+      <path d="M15 15l4.500 4.500" />
+    </Icon>
+  );
+}
+
+export function CloseIcon() {
+  return (
+    <Icon>
+      <path d="M6.500 6.500l11 11M17.500 6.500l-11 11" />
+    </Icon>
+  );
+}
+
+export function EditIcon() {
+  return (
+    <Icon>
+      <path d="M5 19l1-4L15.500 5.500l3 3L9 18l-4 1zM13.500 7.500l3 3" />
+    </Icon>
+  );
+}
+
+export function CopyIcon() {
+  return (
+    <Icon>
+      <rect x="8.500" y="8.500" width="10" height="11" rx="2" />
+      <path d="M15.500 8.500V6a1.500 1.500 0 0 0-1.500-1.500H7A1.500 1.500 0 0 0 5.500 6v9A1.500 1.500 0 0 0 7 16.500h1.500" />
+    </Icon>
+  );
+}
+
+export function ShareIcon() {
+  return (
+    <Icon>
+      <path d="M12 4v11M8 7.500L12 4l4 3.500M6.500 11v7.500a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V11" />
+    </Icon>
+  );
+}
+
+export function PinIcon() {
+  return (
+    <Icon>
+      <path d="M9 4.500h6M10 4.500v5L7 13h10l-3-3.500v-5M12 13v6.500" />
+    </Icon>
+  );
+}
+
+export function WarningIcon() {
+  return (
+    <Icon>
+      <path d="M12 4.500l8 14H4l8-14zM12 10v3.500" />
+      <path d="M12 16.200h.01" strokeWidth="2.200" />
+    </Icon>
+  );
+}
+
+export function GridIcon() {
+  return (
+    <Icon>
+      <rect x="4.500" y="4.500" width="6" height="6" rx="1.500" />
+      <rect x="13.500" y="4.500" width="6" height="6" rx="1.500" />
+      <rect x="4.500" y="13.500" width="6" height="6" rx="1.500" />
+      <rect x="13.500" y="13.500" width="6" height="6" rx="1.500" />
+    </Icon>
+  );
+}
+
+export function ListIcon() {
+  return (
+    <Icon>
+      <path d="M8.500 7h11M8.500 12h11M8.500 17h11" />
+      <path d="M4.500 7h.01M4.500 12h.01M4.500 17h.01" strokeWidth="2.200" />
+    </Icon>
+  );
+}

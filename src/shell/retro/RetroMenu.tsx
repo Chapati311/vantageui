@@ -1,5 +1,5 @@
 import { Pressable } from '../../components/Pressable';
-import { APPS } from '../../system/appRegistry';
+import { HOME_APPS } from '../../system/appRegistry';
 import type { RetroStyle } from '../../theme/presets';
 import { SoftKeys } from './SoftKeys';
 import styles from './Retro.module.css';
@@ -21,7 +21,7 @@ export function RetroMenu({ style, onOpenApp, onBack }: RetroMenuProps) {
       <p className={styles.menuTitle}>{terminal ? '> apps' : 'Menu'}</p>
       {terminal ? (
         <div className={styles.menuList}>
-          {APPS.map((app, index) => (
+          {HOME_APPS.map((app, index) => (
             <Pressable key={app.id} className={styles.menuLine} onClick={() => onOpenApp(app.id)}>
               {index + 1} {app.name.toUpperCase()}
             </Pressable>
@@ -29,7 +29,7 @@ export function RetroMenu({ style, onOpenApp, onBack }: RetroMenuProps) {
         </div>
       ) : (
         <div className={styles.menuGrid}>
-          {APPS.slice(0, 9).map((app) => {
+          {HOME_APPS.slice(0, 9).map((app) => {
             const Glyph = app.icon;
             return (
               <Pressable key={app.id} className={styles.menuItem} onClick={() => onOpenApp(app.id)}>

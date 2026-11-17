@@ -1,7 +1,7 @@
 import { useDrag } from '@use-gesture/react';
 import { animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { useEffect, useRef } from 'react';
-import { Dial } from '../components/Dial';
+import { Dial } from '../components/kit/Dial';
 import { RoundToggle } from '../components/RoundToggle';
 import {
   BluetoothIcon,

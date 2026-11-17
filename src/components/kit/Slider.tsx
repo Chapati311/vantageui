@@ -11,10 +11,11 @@ interface SliderProps {
   onChange: (value: number) => void;
   /** How the value is shown on the right, e.g. (v) => `${v}px` */
   format?: (value: number) => string;
+  disabled?: boolean;
 }
 
 /** A pill-shaped slider you drag anywhere on. Changes apply while you drag. */
-export function Slider({ label, value, min, max, step, onChange, format }: SliderProps) {
+export function Slider({ label, value, min, max, step, onChange, format, disabled }: SliderProps) {
   const track = useRef<HTMLDivElement>(null);
   const fraction = (value - min) / (max - min);
 
@@ -27,7 +28,7 @@ export function Slider({ label, value, min, max, step, onChange, format }: Slide
   };
 
   return (
-    <div className={styles.row}>
+    <div className={`${styles.row} ${disabled ? styles.disabled : ''}`} aria-disabled={disabled}>
       <span className={styles.label}>{label}</span>
       <div
         ref={track}

@@ -298,10 +298,10 @@ export function computeTheme(s: Settings, now = new Date()) {
     '--glow-accent': glow > 0 ? `0 0 24px ${rgba(accent, 0.35 * glow)}` : 'none',
     '--glow-accent-filter': glow > 0 ? `drop-shadow(0 0 5px ${rgba(accent, 0.7 * glow)})` : 'none',
 
-    // Status colors (SPECS.md)
-    '--status-good': status.good,
-    '--status-warn': status.warn,
-    '--status-bad': status.bad,
+    // Status colors (SPECS.md). A retro screen only has its ink, so status is drawn in ink there.
+    '--status-good': retro ? rgbToHex(palette.text) : status.good,
+    '--status-warn': retro ? rgbToHex(palette.text) : status.warn,
+    '--status-bad': retro ? rgbToHex(palette.text) : status.bad,
 
     // Unlit "ghost" dots and pixels: 7% for LED dots, 10% for LCD pixels
     '--ghost': retro ? '0.1' : '0.07',

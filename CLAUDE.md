@@ -229,7 +229,11 @@ Assistant app that connects to Vantage.
 
 ### Built so far (update this list when something is added)
 
-- Phase 0 and 1 are done (see FEATURES.md for the full roadmap).
+- Phases 0, 1 and 2 are done (see FEATURES.md for the full roadmap).
+- Component kit (`src/components/kit`): AppShell + LargeTitle, TabBar, Section,
+  Row (swipe to delete), Toggle, Slider, SegmentedControl, Dial (dots, steps),
+  ScrollWheel, Sheet, SearchField, EmptyState (empty / loading / error),
+  ContextMenu, Button. The hidden "Kit" app (search "kit") shows them all.
 - Theme engine: all 21 presets from SPECS.md, dark / light / automatic (sun
   in Zurich or fixed hours), accent picker, colors from wallpaper, status
   colors, mode colors (Focus grayscale, Retro, Wind Down warm + dimming),
@@ -292,6 +296,8 @@ src/
   plain-words description. Everything that talks to the phone itself goes
   through `system/nativeBridge.ts` (bridge first, then URL scheme or
   Shortcut, otherwise "unavailable").
+- Apps are built ONLY from `components/kit` (import from `components/kit`).
+  Sheets and menus draw in the app's overlay layer (`OverlayLayer` in AppView).
 - Numbers: `DotNumber` draws round dots, or square pixels in retro themes;
   `PixelNumber` is always pixels.
 - Dot numbers: always `components/DotNumber` (sizes 28 / 40 / 64 / 96), never
@@ -348,6 +354,8 @@ Planned bridge functions (all return Promises):
 - `npm run build` - production build (Vercel runs this automatically)
 - `npm run screenshots:themes` - screenshots of every theme preset (lock,
   home, Clock, Settings) into `screenshots/themes/`.
+- `npm run screenshots:kit` - the Kit page in Midnight, Paper and Nokia LCD
+  into `screenshots/kit/`.
 - `npm run check:layout` - checks the home screen never overflows.
 - `npm run screenshots` - the quality check: with `npm run dev` running, saves
   every screen at 375x667 into `screenshots/` (Playwright). Then

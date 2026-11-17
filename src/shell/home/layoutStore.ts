@@ -1,4 +1,4 @@
-import { APPS, DOCK_APP_IDS, getApp } from '../../system/appRegistry';
+import { HOME_APPS, DOCK_APP_IDS, getApp } from '../../system/appRegistry';
 import { getWidget } from '../widgets/widgetRegistry';
 import type { WidgetSize } from '../widgets/types';
 import { DEFAULT_LAYOUT } from './defaultLayout';
@@ -28,7 +28,7 @@ function isValid(item: HomeItem): boolean {
 /** Gives every app in the registry that is not on the home screen yet a free spot. */
 function addMissingApps(layout: HomeItem[]): HomeItem[] {
   const result = [...layout];
-  for (const app of APPS) {
+  for (const app of HOME_APPS) {
     const id = `app:${app.id}`;
     if (DOCK_APP_IDS.includes(app.id) || result.some((item) => item.id === id)) continue;
     const slot = firstFreeSlot(result, { w: 1, h: 1 }, countPages(result) - 1);

@@ -26,12 +26,12 @@ they are finished. Details for every item are in SPECS.md.
 - [x] src/system/nativeBridge.ts with fallbacks for every bridge function [PWA]
 
 ## Phase 2: Component kit
-- [ ] Kit in src/components/kit: AppShell, LargeTitle (shrinks on scroll),
+- [x] Kit in src/components/kit: AppShell, LargeTitle (shrinks on scroll),
       TabBar (floating pill), Section, Row, Toggle, Dial, Slider,
       SegmentedControl, Sheet (spring, drag to dismiss), SearchField,
       EmptyState, ContextMenu (long press), ScrollWheel [PWA]
 - [x] DotNumber and PixelNumber [PWA]
-- [ ] "Kit" test page: every component in every state, in Midnight, Paper and Nokia LCD [PWA]
+- [x] "Kit" test page: every component in every state, in Midnight, Paper and Nokia LCD [PWA]
 
 ## Phase 3: System shell
 - [ ] Lock screen: living orbit wallpaper, dot clock with blinking colon, status bar [PWA]

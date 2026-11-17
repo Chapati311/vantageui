@@ -82,3 +82,15 @@ export function SettingsIcon() {
     </Icon>
   );
 }
+
+export function KitIcon() {
+  return (
+    <Icon>
+      <circle cx="8" cy="8" r="3.500" />
+      <rect x="12.500" y="4.500" width="7" height="7" rx="1.500" />
+      <path d="M4.500 16h7M4.500 19.500h4" />
+      <path d="M13 17.500h6.500" />
+      <circle cx="17" cy="17.500" r="1.800" />
+    </Icon>
+  );
+}

@@ -1,0 +1,76 @@
+.layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+}
+
+/* Rounded on top, flush with the bottom edge; never taller than the screen minus the status bar */
+.sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100% - var(--top-inset) - var(--space-16));
+  padding: var(--space-8) var(--grid-margin) calc(var(--safe-bottom) + var(--space-24));
+  border: var(--border-widget);
+  border-bottom: 0;
+  border-radius: var(--radius-widget) var(--radius-widget) 0 0;
+  background: var(--color-surface);
+  box-shadow: var(--highlight-top);
+  touch-action: none;
+  will-change: transform;
+}
+
+.grabber {
+  align-self: center;
+  flex-shrink: 0;
+  width: var(--space-32);
+  height: var(--space-4);
+  margin-bottom: var(--space-8);
+  border-radius: var(--radius-pill);
+  background: var(--text-tertiary);
+}
+
+/* 44px: title in the middle, an action on the right */
+.header {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--space-32) + var(--space-12));
+  margin-bottom: var(--space-8);
+}
+
+.title {
+  font-size: var(--text-17);
+  font-weight: 600;
+}
+
+.action {
+  position: absolute;
+  right: 0;
+  display: flex;
+}
+
+.body {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  scrollbar-width: none;
+}
+
+.body::-webkit-scrollbar {
+  display: none;
+}

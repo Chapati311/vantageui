@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DotNumber } from '../../components/DotNumber';
 import { Pressable } from '../../components/Pressable';
-import { APPS } from '../../system/appRegistry';
+import { HOME_APPS } from '../../system/appRegistry';
 import { formatTime } from '../../system/timeFormat';
 import { useClock } from '../../system/useClock';
 import styles from './Retro.module.css';
@@ -32,7 +32,7 @@ export function RetroDesktop({ onOpenApp }: { onOpenApp: (appId: string) => void
   return (
     <div className={styles.desktop}>
       <div className={styles.desktopIcons}>
-        {APPS.slice(0, 4).map((app) => {
+        {HOME_APPS.slice(0, 4).map((app) => {
           const Glyph = app.icon;
           return (
             <Pressable key={app.id} className={styles.desktopIcon} onClick={() => onOpenApp(app.id)}>
@@ -54,7 +54,7 @@ export function RetroDesktop({ onOpenApp }: { onOpenApp: (appId: string) => void
 
       {startOpen && (
         <div className={styles.startMenu}>
-          {APPS.map((app) => {
+          {HOME_APPS.map((app) => {
             const Glyph = app.icon;
             return (
               <Pressable

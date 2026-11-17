@@ -58,3 +58,8 @@
   color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
 }
+
+.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}

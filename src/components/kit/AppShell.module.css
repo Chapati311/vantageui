@@ -1,0 +1,113 @@
+/* Fills the app area (AppView already keeps clear of the status bar and home bar) */
+.shell {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 44px: back button on the left, actions on the right, small title in the middle */
+.bar {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(var(--space-32) + var(--space-12));
+  margin-bottom: var(--space-8);
+}
+
+.side {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: calc(var(--space-32) + var(--space-12));
+}
+
+.end {
+  justify-content: flex-end;
+}
+
+.compactTitle {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-17);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* A hairline under the bar, only once the content scrolls under it */
+.barLine {
+  position: absolute;
+  left: calc(var(--grid-margin) * -1);
+  right: calc(var(--grid-margin) * -1);
+  bottom: calc(var(--space-8) * -1);
+  height: 1px;
+  background: var(--color-hairline);
+}
+
+/* The scrolling content */
+.body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  scrollbar-width: none;
+  padding-bottom: var(--space-32);
+}
+
+.body::-webkit-scrollbar {
+  display: none;
+}
+
+.fixed {
+  overflow: hidden;
+  padding-bottom: 0;
+}
+
+/* Leave room under the content for the floating tab bar */
+.withTabs .body {
+  padding-bottom: calc(var(--space-32) * 2 + var(--space-24));
+}
+
+.withTabs .fixed {
+  padding-bottom: calc(var(--space-32) * 2 + var(--space-8));
+}
+
+.tabBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  /* Above the content that scrolls under it */
+  z-index: 2;
+}
+
+.tabBar > * {
+  pointer-events: auto;
+}
+
+/* Instrument Serif 34, shrinks from its left edge */
+.largeTitle {
+  flex-shrink: 0;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--serif-34);
+  font-weight: 400;
+  line-height: 1;
+  transform-origin: left center;
+}

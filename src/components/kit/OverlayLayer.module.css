@@ -1,0 +1,11 @@
+/* Empty until a sheet or menu opens; never blocks touches by itself */
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.layer > * {
+  pointer-events: auto;
+}

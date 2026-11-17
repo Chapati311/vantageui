@@ -10,6 +10,7 @@
 
 /* 36px + border and padding = a 46px tall control */
 .option {
+  position: relative;
   flex: 1;
   min-width: 0;
   height: calc(var(--space-32) + var(--space-4));
@@ -20,6 +21,7 @@
   color: var(--text-secondary);
   font: inherit;
   font-size: var(--text-11);
+  font-family: var(--font-label, inherit);
   font-weight: 600;
   letter-spacing: var(--label-tracking);
   text-transform: uppercase;
@@ -27,7 +29,27 @@
   touch-action: none;
 }
 
+.option:disabled {
+  opacity: 0.35;
+}
+
 .selected {
-  background: var(--color-surface-3);
   color: var(--text-primary);
+}
+
+/* The highlight that springs from option to option */
+.highlight {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-3);
+}
+
+.text {
+  position: relative;
+}
+
+.disabled {
+  opacity: 0.35;
+  pointer-events: none;
 }

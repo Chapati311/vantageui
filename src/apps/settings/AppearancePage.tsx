@@ -1,5 +1,5 @@
 import { ChoiceList } from '../../components/ChoiceList';
-import { Slider } from '../../components/Slider';
+import { Slider } from '../../components/kit/Slider';
 import { runAction } from '../../system/actions';
 import { useSettings, type Appearance } from '../../system/settingsStore';
 import { sunTimes } from '../../system/sun';

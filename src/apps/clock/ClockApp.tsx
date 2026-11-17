@@ -1,4 +1,4 @@
-import { Segmented } from '../../components/Segmented';
+import { SegmentedControl } from '../../components/kit/SegmentedControl';
 import { useClockState, type ClockTab } from './clockStore';
 import { StopwatchTab } from './StopwatchTab';
 import { TimerTab } from './TimerTab';
@@ -17,7 +17,7 @@ export function ClockApp() {
 
   return (
     <div className={styles.app}>
-      <Segmented label="Clock" options={TABS} value={tab} onChange={(tab) => void runAction('clock.showTab', { tab })} />
+      <SegmentedControl label="Clock" options={TABS} value={tab} onChange={(tab) => void runAction('clock.showTab', { tab })} />
       <div className={styles.tab}>
         {tab === 'timer' && <TimerTab />}
         {tab === 'stopwatch' && <StopwatchTab />}

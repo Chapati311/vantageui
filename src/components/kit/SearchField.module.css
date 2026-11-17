@@ -1,0 +1,81 @@
+/* 48px pill */
+.field {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  height: calc(var(--space-32) + var(--space-16));
+  padding: 0 var(--space-4) 0 var(--space-16);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
+  background: var(--surface-widget);
+  box-shadow: var(--highlight-top);
+}
+
+.field:focus-within {
+  border-color: var(--color-hairline);
+}
+
+.icon {
+  flex-shrink: 0;
+  display: flex;
+  color: var(--text-secondary);
+}
+
+.icon svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--text-primary);
+  caret-color: var(--color-accent);
+  font: inherit;
+  /* 17px: smaller text would make iOS zoom in when the field is tapped */
+  font-size: var(--text-17);
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Hide the browser's own clear button: we draw ours */
+.input::-webkit-search-cancel-button {
+  display: none;
+}
+
+/* 40px round touch target with a small cross */
+.clear {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--space-32) + var(--space-8));
+  height: calc(var(--space-32) + var(--space-8));
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-circle);
+  background: none;
+  color: var(--text-secondary);
+}
+
+.clear svg {
+  width: var(--space-16);
+  height: var(--space-16);
+}
+
+.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}

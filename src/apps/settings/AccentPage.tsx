@@ -1,5 +1,5 @@
 import { Pressable } from '../../components/Pressable';
-import { Toggle } from '../../components/Toggle';
+import { Toggle } from '../../components/kit/Toggle';
 import { CheckIcon } from '../../components/glyphs';
 import { runAction } from '../../system/actions';
 import { useSettings } from '../../system/settingsStore';
