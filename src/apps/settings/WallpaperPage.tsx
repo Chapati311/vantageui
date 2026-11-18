@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Pressable } from '../../components/Pressable';
 import { ScaledPreview } from '../../components/ScaledPreview';
-import { Slider } from '../../components/kit/Slider';
+import { Row, Section as KitSection, SegmentedControl, Slider, Toggle } from '../../components/kit';
 import { Wallpaper } from '../../shell/wallpaper/Wallpaper';
 import { runAction } from '../../system/actions';
 import { useSettings } from '../../system/settingsStore';
@@ -27,10 +27,13 @@ export function WallpaperPage({ onBack }: { onBack: () => void }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const choose = (wallpaper: WallpaperConfig) => void runAction('wallpaper.set', { wallpaper });
+  // Which screen the tiles below change
+  const [screen, setScreen] = useState<'both' | 'home' | 'lock'>(s.lockWallpaper ? 'home' : 'both');
+  const current = screen === 'lock' ? (s.lockWallpaper ?? s.wallpaper) : s.wallpaper;
+  const choose = (wallpaper: WallpaperConfig) => void runAction('wallpaper.set', { wallpaper, screen });
 
   const tile = (wallpaper: WallpaperConfig, name: string) => {
-    const selected = sameWallpaper(wallpaper, s.wallpaper);
+    const selected = sameWallpaper(wallpaper, current);
     return (
       <Pressable
         key={name}
@@ -60,6 +63,29 @@ export function WallpaperPage({ onBack }: { onBack: () => void }) {
 
   return (
     <SettingsPage title="Wallpaper" onBack={onBack}>
+      <Section label="Change it for" note={screen === 'lock' ? 'The lock screen gets its own wallpaper.' : screen === 'home' ? 'Only the home screen changes.' : 'Home and lock screen the same.'}>
+        <SegmentedControl
+          label="Change it for"
+          value={screen}
+          onChange={setScreen}
+          options={[
+            { id: 'both', label: 'Both' },
+            { id: 'home', label: 'Home' },
+            { id: 'lock', label: 'Lock' },
+          ]}
+        />
+      </Section>
+
+      <Section label="Every day">
+        <KitSection>
+          <Row
+            title="Daily shuffle"
+            detail="A different live wallpaper every day"
+            trailing={<Toggle label="Daily shuffle" on={s.wallpaperShuffle} onChange={(on) => changeSetting('wallpaperShuffle', on)} />}
+          />
+        </KitSection>
+      </Section>
+
       <Section label="Theme" note="The wallpaper that belongs to the theme you are using.">
         <div className={styles.tiles}>{tile({ kind: 'theme' }, `${theme.presetName}'s own`)}</div>
       </Section>

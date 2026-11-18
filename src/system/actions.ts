@@ -180,8 +180,10 @@ const ACTIONS = {
   ),
   'theme.applySavedPreset': define<{ id: string }>('Switch to a saved preset.', ({ id }) => applyCustomPreset(id)),
   'theme.deleteSavedPreset': define<{ id: string }>('Delete a saved preset.', ({ id }) => deleteCustomPreset(id)),
-  'wallpaper.set': define<{ wallpaper: WallpaperConfig }>('Change the wallpaper.', ({ wallpaper }) =>
-    updateSettings({ wallpaper }),
+  'wallpaper.set': define<{ wallpaper: WallpaperConfig; screen?: 'home' | 'lock' | 'both' }>(
+    'Change the wallpaper of the home screen, the lock screen, or both (default: both).',
+    ({ wallpaper, screen = 'both' }) =>
+      updateSettings(screen === 'lock' ? { lockWallpaper: wallpaper } : screen === 'home' ? { wallpaper } : { wallpaper, lockWallpaper: null }),
   ),
   'wallpaper.setPhoto': define<{ file: Blob }>('Use a photo as the wallpaper.', async ({ file }) => {
     await setWallpaperPhoto(file);

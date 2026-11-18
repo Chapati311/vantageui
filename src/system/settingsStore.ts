@@ -95,6 +95,12 @@ export interface Settings {
   springBounce: number;
   /** Lock screen wallpaper lags behind the swipe a little */
   parallax: boolean;
+  /** The lock screen's own wallpaper (null = the same as the home screen) */
+  lockWallpaper: WallpaperConfig | null;
+  /** A different live wallpaper every day */
+  wallpaperShuffle: boolean;
+  /** App ids not shown on the home screen (still found in search) */
+  hiddenApps: string[];
   /** Per app: open the Vantage version, or the original iPhone app */
   appStyles: Record<string, 'vantage' | 'original'>;
 
@@ -165,6 +171,9 @@ export const DEFAULT_SETTINGS: Settings = {
   springBounce: 0,
   parallax: true,
   appStyles: {},
+  lockWallpaper: null,
+  wallpaperShuffle: false,
+  hiddenApps: [],
   widgetStyle: 'solid',
   widgetOpacity: 1,
   cornerRadius: 28,
@@ -278,6 +287,9 @@ export function sanitizeSettings(input: unknown): Settings {
     controlStyle: oneOf(raw.controlStyle, ['dial', 'slider'] as const, d.controlStyle),
     springBounce: between(raw.springBounce, 0, 1, d.springBounce),
     parallax: bool(raw.parallax, d.parallax),
+    lockWallpaper: isWallpaperConfig(raw.lockWallpaper) ? raw.lockWallpaper : null,
+    wallpaperShuffle: bool(raw.wallpaperShuffle, d.wallpaperShuffle),
+    hiddenApps: Array.isArray(raw.hiddenApps) ? (raw.hiddenApps as unknown[]).filter((id): id is string => typeof id === 'string') : [],
     appStyles:
       raw.appStyles && typeof raw.appStyles === 'object'
         ? Object.fromEntries(

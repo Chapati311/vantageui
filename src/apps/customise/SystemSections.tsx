@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Row, Section as KitSection, SegmentedControl, Slider, Toggle } from '../../components/kit';
 import { runAction } from '../../system/actions';
+import { DOCK_APP_IDS, HOME_APPS } from '../../system/appRegistry';
 import { useSettings, type Settings } from '../../system/settingsStore';
 import { Section, SettingsPage } from '../settings/SettingsPage';
 
@@ -45,8 +46,17 @@ export function HomeScreenPage({ onBack }: { onBack: () => void }) {
           ]}
         />
       </Section>
-      <Section label="Layout" note="Hold any empty spot or widget on the home screen to move things, resize widgets, add new ones or remove them.">
-        <span />
+      <Section label="Apps on the home screen" note="Hidden apps are still found by search. Hold the home screen to move, resize, add or remove widgets.">
+        <KitSection>
+          {HOME_APPS.filter((app) => !DOCK_APP_IDS.includes(app.id)).map((app) => (
+            <Switch
+              key={app.id}
+              title={app.name}
+              on={!s.hiddenApps.includes(app.id)}
+              onChange={(on) => set('hiddenApps', on ? s.hiddenApps.filter((id) => id !== app.id) : [...s.hiddenApps, app.id])}
+            />
+          ))}
+        </KitSection>
       </Section>
     </Page>
   );

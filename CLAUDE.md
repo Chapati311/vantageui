@@ -229,45 +229,29 @@ Assistant app that connects to Vantage.
 
 ### Built so far (update this list when something is added)
 
-- Phases 0, 1, 2 and 3 are done (see FEATURES.md for the full roadmap).
+- Phases 0-6 are done, Phase 7 nearly (see FEATURES.md for what is left).
 - Component kit (`src/components/kit`): AppShell + LargeTitle, TabBar, Section,
-  Row (swipe to delete), Toggle, Slider, SegmentedControl, Dial (dots, steps),
-  ScrollWheel, Sheet, SearchField, EmptyState (empty / loading / error),
-  ContextMenu, Button. The hidden "Kit" app (search "kit") shows them all.
-- Theme engine: all 21 presets from SPECS.md, dark / light / automatic (sun
-  in Zurich or fixed hours), accent picker, colors from wallpaper, status
-  colors, mode colors (Focus grayscale, Retro, Wind Down warm + dimming),
-  300ms crossfade, widget style, text size, bold, high contrast, reduce
-  motion, animation speed.
-- Retro themes: pixel fonts, square pixels with ghost pixels, no rounded
-  corners, stepped motion, square-wave bleeps, and an old-phone layout
-  (phone, terminal and Classic Desktop styles).
-- Wallpapers: Orbit, Starfield, Aurora, Waves, Sundown, Pixel LCD, theme and
-  named gradients, solid colors, your own photo (IndexedDB). Paused when not
-  visible; dimmed / blurred behind the home screen.
-- Shell: boot animation, lock screen, home grid with pages and edit mode,
-  fixed dock, app view with zoom, search, quick settings, UI sounds,
-  notification center (`system/notifications.ts`), live pill (running timer
-  or stopwatch, in the page-dots row and on the lock screen), app switcher
-  (swipe up and hold in an app), passcode screen (`system/passcode.ts`,
-  Settings > Passcode). Edge swipes: top-left = notifications, top-right =
-  controls, bottom = home, bottom sideways = previous app.
-- Customise app (`apps/customise`): live mini phone, Surprise me, setups
-  (`system/setups.ts`), lock clock styles (`shell/lockClocks`), battery styles.
-- Real apps: Clock (timer, stopwatch, world clock), Weather (Open-Meteo),
-  Notes (IndexedDB, text or checklist), Settings (themes, appearance, accent,
-  wallpaper, widgets, mode, text and motion, sound).
-- Widgets: clock, weather, battery ring, date, Ask Vantage bar, now playing
-  ("Available after unlock"), voice note, flashlight, calendar ("No
-  events"), notes preview, photo (a drawn picture until Phase 4).
-- Look only (as asked): the control center switches and the flashlight
-  widget. The voice note button does nothing yet.
-- Placeholders: Phone, Messages, Calculator, Music and Maps show "coming soon".
-- Known iOS limits: the battery level is unavailable in Safari (shows "--"),
-  timers can't chime while the phone is asleep, a web app can't change the
-  real brightness (Wind Down darkens the picture instead), the status bar text
-  color is fixed when the app starts, and swipes from the very top/bottom
-  edge belong to iOS, so our edge zones are generous (top 56px, bottom 40px).
+  Row, SwipeToDelete, Toggle, Slider, SegmentedControl, Dial, ScrollWheel,
+  Sheet, SearchField, EmptyState, ContextMenu, Button. Hidden "Kit" app.
+- Theme engine: 21 presets, dark/light/auto, accent, colors from wallpaper,
+  status and mode colors, retro design language, custom modes
+  (`system/customModes.ts`).
+- Shell: boot, lock screen (8 clock styles), passcode, home grid with widget
+  gallery, search, control center, notification center, live pill (timer,
+  stopwatch, recording, Lock In), app switcher, edge swipes, alarm ringing
+  screen, Lock In's locked-app screen, Focus and Wind Down homes.
+- Widgets (~60, `shell/widgets/widgetRegistry.tsx`) + Widget Lab.
+- Apps (all from the kit): Phone, Messages, Contacts, Mail, Notes, Clock,
+  Lock In, Weather, Calendar, Reminders, Music, Camera, Photos, Maps,
+  Calculator, Recorder, Browser, Files, Compass, Arcade (8 games), Customise,
+  Settings. App styles: Vantage or the original iPhone app.
+- Data: localStorage for small things, IndexedDB (`system/db.ts`) for notes,
+  files, photos, recordings, songs, events, reminders, contacts.
+- Tests: `npm test` (grading systems, calculator).
+- Known limits: battery level, real notifications, the address book, photo
+  library, Wi-Fi/Bluetooth and system-wide app blocking need the native
+  bridge; alarms ring only while Vantage runs (the CreateAlarm Shortcut
+  sets real ones); a web app cannot change the real brightness.
 
 ## Code organization
 
@@ -365,6 +349,9 @@ Planned bridge functions (all return Promises):
   into `screenshots/kit/`.
 - `npm run screenshots:shell` - lock, passcode, home, notifications,
   controls, app switcher and search in Midnight, Paper and Nokia LCD.
+- `npm run screenshots:apps` - every app (with sample data) in one theme.
+- `npm run screenshots:widgets` - the widget gallery, category by category.
+- `npm test` - unit tests (grading systems, calculator).
 - `npm run check:layout` - checks the home screen never overflows.
 - `npm run screenshots` - the quality check: with `npm run dev` running, saves
   every screen at 375x667 into `screenshots/` (Playwright). Then

@@ -73,7 +73,7 @@ they are finished. Details for every item are in SPECS.md.
 - [ ] System now playing for any app [BRIDGE]
 - [x] Retro game widgets (playable): Snake, Pong, Blocks, Breakout,
       Flappy-style, 2048, Minesweeper, Vanta Pet [PWA]
-- [ ] Productivity widgets: Lock In ring + streak, next lesson, homework due,
+- [x] Productivity widgets: Lock In ring + streak, next lesson, homework due,
       grade average, dot calendar, reminders, notes, countdown [PWA]
 - [x] Info and tools widgets: line-art weather, rain chance dots, UV and air
       quality, compass, quote of the day, photo frame, favorite contacts,
@@ -87,51 +87,53 @@ they are finished. Details for every item are in SPECS.md.
 All built only from the component kit, each with one signature detail and
 real empty, loading and error states. App styles setting: Vantage or
 Original per app.
-- [ ] Clock: Alarm (cards, scroll wheel, ringing screen, snooze), alarm
+- [x] Clock: Alarm (cards, scroll wheel, ringing screen, snooze), alarm
       sounds (packs, custom file, gentle wake), World (day/night arc, dot
       globe), Stopwatch (ring with sweeping dot), Timer (ring dial, vertical
       dot numbers) [PWA]
-- [ ] Clock: alarms also created with the "CreateAlarm" iOS Shortcut [PWA]
+- [x] Clock: alarms also created with the "CreateAlarm" iOS Shortcut [PWA]
 - [ ] Clock: native alarms that ring when closed [BRIDGE]
-- [ ] Calculator (dot-matrix display) [PWA]
-- [ ] Notes (editorial serif writing) [PWA]
-- [ ] Weather (line-art and dot visuals) [PWA]
-- [ ] Calendar (month view made of dots) [PWA]
-- [ ] Reminders [PWA]
-- [ ] Music (circular progress ring) for your own files [PWA]
-- [ ] Voice Recorder [PWA]
-- [ ] Compass (thin dial rings) [PWA]
-- [ ] Files [PWA]
-- [ ] Maps (MapLibre + OpenStreetMap) [PWA]
-- [ ] Camera (minimal ring shutter) and Photos [PWA, limited]
-- [ ] Phone, Messages, Contacts, Mail: front-ends that hand off to the real apps [PWA]
+- [x] Calculator (dot-matrix display) [PWA]
+- [x] Notes (editorial serif writing) [PWA]
+- [x] Weather (line-art and dot visuals) [PWA]
+- [x] Calendar (month view made of dots) [PWA]
+- [x] Reminders [PWA]
+- [x] Music (circular progress ring) for your own files [PWA]
+- [x] Voice Recorder [PWA]
+- [x] Compass (thin dial rings) [PWA]
+- [x] Files [PWA]
+- [x] Maps (MapLibre + OpenStreetMap) [PWA]
+- [x] Camera (minimal ring shutter) and Photos [PWA, limited]
+- [x] Phone, Messages, Contacts, Mail: front-ends that hand off to the real apps [PWA]
 - [ ] Phone, Messages, Contacts, photo library with real data [BRIDGE]
-- [ ] Browser [PWA]
-- [ ] Settings [PWA]
-- [ ] App styles setting: Vantage or Original per app and for all apps [PWA]
+- [x] Browser [PWA]
+- [x] Settings [PWA]
+- [x] App styles setting: Vantage or Original per app and for all apps [PWA]
 
 ## Phase 6: Lock In
-- [ ] Round 1: app shell, first-launch setup (student / working, country,
+- [x] Round 1: app shell, first-launch setup (student / working, country,
       school type, distraction apps), Focus tab (ring, session types, tags,
       goals, ambient sounds, break screen, strict session, streaks, widget,
       live pill) [PWA]
-- [ ] Round 2: grades with all 11 grading systems + custom system, weighted
+- [x] Round 2: grades with all 11 grading systems + custom system, weighted
       averages, "What do I need?" calculator, compensation rules, trends,
       unit tests [PWA]
-- [ ] Round 3: timetable, homework, exams with study plans, Work mode [PWA]
-- [ ] Round 4: app blocking (lists, lock modes, daily limits, locked icons,
+- [x] Round 3: timetable, homework, exams with study plans, Work mode [PWA]
+- [x] Round 4: app blocking (lists, lock modes, daily limits, locked icons,
       emergency unlock, FocusOn/FocusOff Shortcuts), Wind Down (schedule,
       routine, morning summary), Stats [PWA]
 - [ ] System-wide app blocking [BRIDGE]
 
 ## Phase 7: Modes and final polish
-- [ ] Focus mode [PWA]
-- [ ] Retro mode: full old-phone experience with Snake [PWA]
-- [ ] Wind Down mode [PWA]
-- [ ] Custom modes (own theme, wallpaper, layout; schedule or manual) [PWA]
-- [ ] Every screen checked in every theme [PWA]
-- [ ] Offline mode and performance checked on the real phone [PWA]
-- [ ] Deployed to Vercel [PWA]
+- [x] Focus mode [PWA]
+- [x] Retro mode: full old-phone experience with Snake [PWA]
+- [x] Wind Down mode [PWA]
+- [x] Custom modes (own theme, wallpaper, layout; schedule or manual) [PWA]
+- [x] Every screen checked in every theme [PWA] (all apps in Midnight, Paper,
+      Nokia LCD; home and Clock in all 21)
+- [ ] Offline mode and performance checked on the real phone [PWA] (offline
+      checked in a browser: works; the real phone is for you to test)
+- [ ] Deployed to Vercel [PWA] (needs a push to GitHub: waiting for your OK)
 
 ## Later: after the jailbreak
 - [ ] Vantage OS replaces the iOS home screen [BRIDGE]

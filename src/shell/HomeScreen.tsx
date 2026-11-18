@@ -8,6 +8,7 @@ import { PageDots } from './home/PageDots';
 import { WidgetGallery } from './home/WidgetGallery';
 import { runAction } from '../system/actions';
 import { LivePill, useHasLiveActivity } from './LivePill';
+import { useSetting } from '../system/settingsStore';
 import {
   COLS,
   MAX_PAGES,
@@ -55,7 +56,12 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
   // ...and what is shown: the same layout, fitted to the rows this screen has room
   // for. Anything that would stick out below the last row moves to a later page.
   const rows = metrics?.rows ?? MAX_ROWS;
-  const layout = useMemo(() => fitToRows(saved, rows), [saved, rows]);
+  // Apps you hid in Customise > Home screen stay out of sight (search still finds them)
+  const [hiddenApps] = useSetting('hiddenApps');
+  const layout = useMemo(
+    () => fitToRows(saved.filter((item) => !(item.kind === 'app' && hiddenApps.includes(item.ref))), rows),
+    [saved, rows, hiddenApps],
+  );
   const layoutRef = useRef(layout);
   layoutRef.current = layout;
   const [editing, setEditing] = useState(false);

@@ -10,6 +10,7 @@ import { canOpenApp, openApp as openNativeApp } from '../system/nativeBridge';
 import { AlarmRinging } from './AlarmRinging';
 import { LockedApp } from './LockedApp';
 import { ModeHome } from './ModeHome';
+import { useDailyShuffle } from './dailyShuffle';
 import { useCustomModeSchedule } from '../system/customModes';
 import { morningSummary, useWindDownSchedule } from './windDownSchedule';
 import { AppSwitcher } from './AppSwitcher';
@@ -148,6 +149,7 @@ export function Shell() {
   // Wind Down and your own scheduled modes switch on and off by themselves
   useWindDownSchedule();
   useCustomModeSchedule();
+  useDailyShuffle();
 
   const openAppFrom = (appId: string, from: ScreenRect | null) =>
     void runAction('app.open', { appId, from: from as DOMRect | null });
