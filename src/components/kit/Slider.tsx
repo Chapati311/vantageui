@@ -1,4 +1,5 @@
 import { useRef, type PointerEvent } from 'react';
+import { playSound } from '../../system/sounds';
 import styles from './Slider.module.css';
 
 interface SliderProps {
@@ -24,7 +25,10 @@ export function Slider({ label, value, min, max, step, onChange, format, disable
     const raw = min + ((event.clientX - rect.left) / rect.width) * (max - min);
     const snapped = Math.round(raw / step) * step;
     const next = Math.min(max, Math.max(min, Number(snapped.toFixed(4))));
-    if (next !== value) onChange(next);
+    if (next !== value) {
+      onChange(next);
+      playSound('tick');
+    }
   };
 
   return (

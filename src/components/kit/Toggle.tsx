@@ -27,6 +27,8 @@ export function Toggle({ label, on, onChange, disabled }: ToggleProps) {
       className={`${styles.toggle} ${on ? styles.on : ''}`}
       onClick={flip}
     >
+      {/* The color fills in from the thumb's side as the thumb springs across */}
+      <motion.span className={styles.fill} initial={false} animate={{ scaleX: on ? 1 : 0, opacity: on ? 1 : 0 }} transition={SPRING.ui} />
       <motion.span
         className={styles.knob}
         initial={false}

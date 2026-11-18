@@ -18,8 +18,13 @@
   background: var(--color-surface-3);
 }
 
-.on::before {
+/* The accent fill: grows from the left, under the thumb (driven by motion) */
+.fill {
+  position: absolute;
+  inset: var(--space-8) 0;
+  border-radius: var(--radius-pill);
   background: var(--color-accent);
+  transform-origin: left center;
 }
 
 /* The knob: its position is driven by motion (it springs across) */

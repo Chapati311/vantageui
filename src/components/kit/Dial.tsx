@@ -58,12 +58,10 @@ export function Dial({ label, value, onChange, onInput, steps, dots, icon: Glyph
   const update = (next: number) => {
     setDragValue(next);
     onInput?.(next);
-    // A soft click each time the dial passes a step
-    if (steps) {
-      const step = Math.round(next * steps);
-      if (lastStep.current !== null && step !== lastStep.current) playSound('tick');
-      lastStep.current = step;
-    }
+    // A soft click each time the dial passes a step (every 5% without steps)
+    const step = Math.round(next * (steps ?? 20));
+    if (lastStep.current !== null && step !== lastStep.current) playSound('tick');
+    lastStep.current = step;
   };
 
   const knob = pointAt(shown);
@@ -81,7 +79,7 @@ export function Dial({ label, value, onChange, onInput, steps, dots, icon: Glyph
       onPointerDown={(event) => {
         event.stopPropagation();
         event.currentTarget.setPointerCapture(event.pointerId);
-        lastStep.current = steps ? Math.round(value * steps) : null;
+        lastStep.current = Math.round(value * (steps ?? 20));
         update(readPointer(event) ?? value);
       }}
       onPointerMove={(event) => {

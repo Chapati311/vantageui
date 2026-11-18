@@ -74,3 +74,57 @@
 .body::-webkit-scrollbar {
   display: none;
 }
+
+/* Content arrives one piece after another (30 ms apart) */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.body > * {
+  animation: rise 0.36s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+.body > *:nth-child(2) {
+  animation-delay: 30ms;
+}
+
+.body > *:nth-child(3) {
+  animation-delay: 60ms;
+}
+
+.body > *:nth-child(4) {
+  animation-delay: 90ms;
+}
+
+.body > *:nth-child(5) {
+  animation-delay: 120ms;
+}
+
+.body > *:nth-child(6) {
+  animation-delay: 150ms;
+}
+
+.body > *:nth-child(7) {
+  animation-delay: 180ms;
+}
+
+.body > *:nth-child(8) {
+  animation-delay: 210ms;
+}
+
+.body > *:nth-child(9) {
+  animation-delay: 240ms;
+}
+
+.body > *:nth-child(10) {
+  animation-delay: 270ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .body > * {
+    animation: none;
+  }
+}

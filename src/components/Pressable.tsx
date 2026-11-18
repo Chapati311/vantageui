@@ -7,7 +7,8 @@ import { MOTION, SPRING } from '../theme/tokens';
  * Spread these onto any motion element, or just use <Pressable>.
  */
 export const pressState = {
-  whileTap: { scale: MOTION.pressScale },
+  // Shrink a little and light up a touch while a finger is on it
+  whileTap: { scale: MOTION.pressScale, filter: 'brightness(1.12)' },
   transition: SPRING.ui,
 } as const;
 
