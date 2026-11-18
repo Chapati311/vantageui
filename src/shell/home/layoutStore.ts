@@ -5,7 +5,8 @@ import { DEFAULT_LAYOUT } from './defaultLayout';
 import { COLS, MAX_PAGES, MAX_ROWS, countPages, firstFreeSlot, type HomeItem } from './layout';
 
 /** Change the version if the layout format ever changes (old saved layouts are then ignored). */
-const STORAGE_KEY = 'vantage.homeLayout.v4';
+/** v5: three balanced pages with folders (older layouts are replaced once). */
+const STORAGE_KEY = 'vantage.homeLayout.v5';
 
 const isWholeNumber = (value: unknown): value is number => Number.isInteger(value);
 
@@ -22,15 +23,31 @@ function isValid(item: HomeItem): boolean {
   if (item.kind === 'widget') {
     return !!getWidget(item.ref)?.sizes.includes(`${item.w}x${item.h}` as WidgetSize);
   }
+  if (item.kind === 'folder') {
+    return item.w === 1 && item.h === 1 && Array.isArray(item.folder?.apps);
+  }
   return false;
 }
 
-/** Gives every app in the registry that is not on the home screen yet a free spot. */
+/**
+ * Gives every app in the registry that is not on the home screen yet a free
+ * spot. An app counts as placed when its icon is there, it is in a folder,
+ * or a widget on the home screen opens it.
+ */
 function addMissingApps(layout: HomeItem[]): HomeItem[] {
   const result = [...layout];
+  const placed = new Set<string>(DOCK_APP_IDS);
+  for (const item of layout) {
+    if (item.kind === 'app') placed.add(item.ref);
+    if (item.kind === 'folder') item.folder?.apps.forEach((app) => placed.add(app));
+    if (item.kind === 'widget') {
+      const opens = getWidget(item.ref)?.appId;
+      if (opens) placed.add(opens);
+    }
+  }
   for (const app of HOME_APPS) {
     const id = `app:${app.id}`;
-    if (DOCK_APP_IDS.includes(app.id) || result.some((item) => item.id === id)) continue;
+    if (placed.has(app.id)) continue;
     const slot = firstFreeSlot(result, { w: 1, h: 1 }, countPages(result) - 1);
     if (slot) result.push({ ...slot, id, kind: 'app', ref: app.id });
   }

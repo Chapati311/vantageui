@@ -78,6 +78,11 @@ export function IconsPage({ onBack }: { onBack: () => void }) {
           ]}
         />
       </Section>
+      <Section label="Names">
+        <KitSection>
+          <Switch title="Show names under icons" on={s.iconLabels} onChange={(on) => set('iconLabels', on)} />
+        </KitSection>
+      </Section>
       <Section label="Style" note="Tinted uses your accent color.">
         <Choice
           label="Icon style"

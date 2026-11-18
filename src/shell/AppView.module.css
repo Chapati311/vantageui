@@ -4,6 +4,7 @@
   inset: 0;
   background: var(--app-bg);
   transform-origin: 0 0;
+  overflow: hidden;
   will-change: transform, opacity;
 }
 

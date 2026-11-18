@@ -14,7 +14,7 @@ import { useDailyShuffle } from './dailyShuffle';
 import { useCustomModeSchedule } from '../system/customModes';
 import { morningSummary, useWindDownSchedule } from './windDownSchedule';
 import { AppSwitcher } from './AppSwitcher';
-import { AppView, type ScreenRect } from './AppView';
+import { AppView, shapeOf, type ScreenRect } from './AppView';
 import { Boot } from './Boot';
 import { HomeScreen } from './HomeScreen';
 import { LockScreen } from './LockScreen';
@@ -35,8 +35,10 @@ interface OpenApp {
 
 /** Where an app's icon is right now (on the grid or in the dock), if it is visible. */
 function findIconRect(appId: string): ScreenRect | null {
-  const rect = document.querySelector(`[data-app-icon="${appId}"]`)?.getBoundingClientRect();
-  return rect && rect.right > 0 && rect.left < window.innerWidth ? rect : null;
+  const element = document.querySelector(`[data-app-icon="${appId}"]`);
+  if (!element) return null;
+  const shape = shapeOf(element);
+  return shape.left + shape.width > 0 && shape.left < window.innerWidth ? shape : null;
 }
 
 /**
@@ -77,7 +79,7 @@ export function Shell() {
 
   // Let actions (src/system/actions.ts) drive the shell: open apps, lock, ...
   const controls = useRef({
-    openApp: (appId: string, from?: DOMRect | null) => {
+    openApp: (appId: string, from?: ScreenRect | null) => {
       const app = getApp(appId);
       if (!app) return;
       closeAllOverlays();
@@ -234,7 +236,8 @@ export function Shell() {
           key={openApp.app.id}
           app={openApp.app}
           from={openApp.from}
-          getReturnRect={() => findIconRect(openApp.app.id)}
+          // Back into what it came out of (a widget), or its icon
+          getReturnRect={() => openApp.from ?? findIconRect(openApp.app.id)}
           onClosed={() => setOpenApp(null)}
           onOpenSwitcher={() => void runAction('shell.openAppSwitcher', {})}
           onSwipeDownFromTop={swipeDownFromTop}

@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { AppIcon } from '../../components/AppIcon';
+import { AppTile, FolderTile } from '../../components/AppTile';
+import { WidgetEditContext } from './widgetEdit';
 import { Icon } from '../../components/Icon';
 import { Pressable, pressState } from '../../components/Pressable';
 import { getApp } from '../../system/appRegistry';
@@ -10,15 +11,23 @@ import type { HomeItem } from './layout';
 import styles from './HomeItemView.module.css';
 
 /** What is inside a home screen slot: the widget or the app icon itself. */
-export function HomeItemContent({ item }: { item: HomeItem }) {
+export function HomeItemContent({ item, editTick = 0 }: { item: HomeItem; editTick?: number }) {
   const widget = item.kind === 'widget' ? getWidget(item.ref) : undefined;
   const app = item.kind === 'app' ? getApp(item.ref) : undefined;
   const WidgetComponent = widget?.component;
 
   return (
     <>
-      {WidgetComponent && <WidgetComponent size={`${item.w}x${item.h}` as WidgetSize} />}
-      {app && <AppIcon app={app} />}
+      {WidgetComponent && (
+        // A widget can have its own style (long-press > Style)
+        <div className={styles.widgetStyle} data-widget-style={item.style}>
+          <WidgetEditContext.Provider value={editTick}>
+            <WidgetComponent size={`${item.w}x${item.h}` as WidgetSize} />
+          </WidgetEditContext.Provider>
+        </div>
+      )}
+      {app && <AppTile app={app} />}
+      {item.kind === 'folder' && item.folder && <FolderTile name={item.folder.name} apps={item.folder.apps} />}
     </>
   );
 }
@@ -39,18 +48,20 @@ interface HomeItemViewProps {
   onResize: (id: string) => void;
   /** Edit mode: take a widget off the home screen */
   onRemove: (id: string) => void;
+  /** Bumped when "Edit" is chosen in the item's menu */
+  editTick?: number;
 }
 
 /**
  * One home screen item at its place on the grid. When its place changes
  * (something was rearranged) it springs there.
  */
-export function HomeItemView({ item, x, y, width, height, editing, hidden, index, onResize, onRemove }: HomeItemViewProps) {
+export function HomeItemView({ item, x, y, width, height, editing, hidden, index, onResize, onRemove, editTick }: HomeItemViewProps) {
   const widget = item.kind === 'widget' ? getWidget(item.ref) : undefined;
-  if (!widget && !getApp(item.ref)) return null;
+  if (!widget && !getApp(item.ref) && item.kind !== 'folder') return null;
 
   // Only things that DO something when tapped get a press state.
-  const tappable = !editing && (item.kind === 'app' || !!widget?.onTap);
+  const tappable = !editing && (item.kind !== 'widget' || !!widget?.onTap || !!widget?.appId);
   const canResize = editing && !!widget && widget.sizes.length > 1;
 
   return (
@@ -74,7 +85,7 @@ export function HomeItemView({ item, x, y, width, height, editing, hidden, index
             .filter(Boolean)
             .join(' ')}
         >
-          <HomeItemContent item={item} />
+          <HomeItemContent item={item} editTick={editTick} />
         </div>
       </motion.div>
       {editing && widget && (

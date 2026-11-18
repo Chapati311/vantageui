@@ -51,6 +51,7 @@ const openArcade = (game: GameId) => ({ openApp }: WidgetTapContext) => {
 
 const game = (id: GameId, name: string, description: string): WidgetDefinition => ({
   id: `game-${id}`,
+  appId: 'arcade',
   name,
   category: 'games',
   description,
@@ -66,33 +67,33 @@ const game = (id: GameId, name: string, description: string): WidgetDefinition =
  */
 export const WIDGETS: WidgetDefinition[] = [
   // ---- Time
-  { id: 'clock', name: 'Dot clock', category: 'time', description: 'Big dot-matrix hours and minutes.', component: ClockWidget, sizes: ['2x2', '2x1'] },
-  { id: 'vertical-clock', name: 'Vertical clock', category: 'time', description: 'Hours above minutes.', component: VerticalClockWidget, sizes: ['2x2'] },
-  { id: 'analog', name: 'Thin analog', category: 'time', description: 'Hairline hands on a quiet face.', component: AnalogClockWidget, sizes: ['1x1', '2x2'] },
-  { id: 'flip', name: 'Flip clock', category: 'time', description: 'Cards that flip every minute.', component: FlipClockWidget, sizes: ['2x1', '2x2'] },
-  { id: 'binary', name: 'Binary clock', category: 'time', description: 'Count the dots: 1, 2, 4, 8.', component: BinaryClockWidget, sizes: ['2x2', '2x1'] },
-  { id: 'word-clock', name: 'Word clock', category: 'time', description: '"It\'s twenty past seven."', component: WordClockWidget, sizes: ['2x2', '4x1'] },
-  { id: 'world', name: 'World clocks', category: 'time', description: 'London, New York, Tokyo, Sydney.', component: WorldClocksWidget, sizes: ['2x2', '4x1'] },
-  { id: 'sun', name: 'Sunrise and sunset', category: 'time', description: "Today's sun path in Zurich.", component: SunArcWidget, sizes: ['2x1', '2x2'] },
-  { id: 'moon', name: 'Moon phase', category: 'time', description: "Tonight's moon, drawn.", component: MoonWidget, sizes: ['1x1', '2x1'] },
-  { id: 'date', name: 'Date', category: 'time', description: 'Weekday and day.', component: DateWidget, sizes: ['1x1', '2x2'] },
+  { id: 'clock', appId: 'clock', name: 'Dot clock', category: 'time', description: 'Big dot-matrix hours and minutes.', component: ClockWidget, sizes: ['2x2', '2x1'] },
+  { id: 'vertical-clock', appId: 'clock', name: 'Vertical clock', category: 'time', description: 'Hours above minutes.', component: VerticalClockWidget, sizes: ['2x2'] },
+  { id: 'analog', appId: 'clock', name: 'Thin analog', category: 'time', description: 'Hairline hands on a quiet face.', component: AnalogClockWidget, sizes: ['1x1', '2x2'] },
+  { id: 'flip', appId: 'clock', name: 'Flip clock', category: 'time', description: 'Cards that flip every minute.', component: FlipClockWidget, sizes: ['2x1', '2x2'] },
+  { id: 'binary', appId: 'clock', name: 'Binary clock', category: 'time', description: 'Count the dots: 1, 2, 4, 8.', component: BinaryClockWidget, sizes: ['2x2', '2x1'] },
+  { id: 'word-clock', appId: 'clock', name: 'Word clock', category: 'time', description: '"It\'s twenty past seven."', component: WordClockWidget, sizes: ['2x2', '4x1'] },
+  { id: 'world', appId: 'clock', name: 'World clocks', category: 'time', description: 'London, New York, Tokyo, Sydney.', component: WorldClocksWidget, sizes: ['2x2', '4x1'] },
+  { id: 'sun', appId: 'weather', name: 'Sunrise and sunset', category: 'time', description: "Today's sun path in Zurich.", component: SunArcWidget, sizes: ['2x1', '2x2'] },
+  { id: 'moon', appId: 'weather', name: 'Moon phase', category: 'time', description: "Tonight's moon, drawn.", component: MoonWidget, sizes: ['1x1', '2x1'] },
+  { id: 'date', appId: 'calendar', name: 'Date', category: 'time', description: 'Weekday and day.', component: DateWidget, sizes: ['1x1', '2x2'] },
 
   // ---- Space and beauty
-  { id: 'solar', name: 'Solar system', category: 'space', description: 'The planets where they really are today.', component: SolarSystemWidget, sizes: ['2x2', '4x2'] },
-  { id: 'orbit', name: 'Orbit', category: 'space', description: 'Slow rings around a glowing core.', component: OrbitWidget, sizes: ['1x1', '2x2'] },
-  { id: 'starfield', name: 'Starfield', category: 'space', description: 'Twinkling stars.', component: StarfieldWidget, sizes: ['2x2', '2x1', '4x2'] },
-  { id: 'aurora', name: 'Aurora drift', category: 'space', description: 'Soft northern-light glows.', component: AuroraWidget, sizes: ['2x2', '4x2'] },
-  { id: 'lava', name: 'Lava lamp', category: 'space', description: 'Blobs rising and sinking.', component: LavaLampWidget, sizes: ['1x1', '2x2'] },
-  { id: 'rain-glass', name: 'Rain on glass', category: 'space', description: 'Drops sliding down a window.', component: RainOnGlassWidget, sizes: ['2x2', '2x1'] },
-  { id: 'waves', name: 'Ocean waves', category: 'space', description: 'A calm wave line.', component: WavesWidget, sizes: ['2x1', '4x1', '2x2'] },
-  { id: 'breathe', name: 'Breathing circle', category: 'space', description: 'Breathe in for 4, out for 4.', component: BreathingWidget, sizes: ['2x2', '1x1'] },
+  { id: 'solar', appId: 'customise', name: 'Solar system', category: 'space', description: 'The planets where they really are today.', component: SolarSystemWidget, sizes: ['2x2', '4x2'] },
+  { id: 'orbit', appId: 'customise', name: 'Orbit', category: 'space', description: 'Slow rings around a glowing core.', component: OrbitWidget, sizes: ['1x1', '2x2'] },
+  { id: 'starfield', appId: 'customise', name: 'Starfield', category: 'space', description: 'Twinkling stars.', component: StarfieldWidget, sizes: ['2x2', '2x1', '4x2'] },
+  { id: 'aurora', appId: 'customise', name: 'Aurora drift', category: 'space', description: 'Soft northern-light glows.', component: AuroraWidget, sizes: ['2x2', '4x2'] },
+  { id: 'lava', appId: 'customise', name: 'Lava lamp', category: 'space', description: 'Blobs rising and sinking.', component: LavaLampWidget, sizes: ['1x1', '2x2'] },
+  { id: 'rain-glass', appId: 'weather', name: 'Rain on glass', category: 'space', description: 'Drops sliding down a window.', component: RainOnGlassWidget, sizes: ['2x2', '2x1'] },
+  { id: 'waves', appId: 'customise', name: 'Ocean waves', category: 'space', description: 'A calm wave line.', component: WavesWidget, sizes: ['2x1', '4x1', '2x2'] },
+  { id: 'breathe', appId: 'lockin', name: 'Breathing circle', category: 'space', description: 'Breathe in for 4, out for 4.', component: BreathingWidget, sizes: ['2x2', '1x1'] },
 
   // ---- Music
-  { id: 'spotify', name: 'Spotify', category: 'music', description: 'Now playing, with cover and controls.', component: SpotifyWidget, sizes: ['2x2', '4x2'] },
-  { id: 'apple-music', name: 'Apple Music', category: 'music', description: 'MusicKit player inside Vantage.', component: AppleMusicWidget, sizes: ['2x2'] },
-  { id: 'visualizer', name: 'Dot visualizer', category: 'music', description: 'Dots that jump with your music.', component: VisualizerWidget, sizes: ['2x1', '4x1'] },
-  { id: 'vinyl', name: 'Spinning vinyl', category: 'music', description: 'Spins while your music plays.', component: VinylWidget, sizes: ['2x2'] },
-  { id: 'music', name: 'System now playing', category: 'music', description: 'Any app (after unlock).', component: MusicWidget, sizes: ['2x2'] },
+  { id: 'spotify', appId: 'music', name: 'Spotify', category: 'music', description: 'Now playing, with cover and controls.', component: SpotifyWidget, sizes: ['2x2', '4x2'] },
+  { id: 'apple-music', appId: 'music', name: 'Apple Music', category: 'music', description: 'MusicKit player inside Vantage.', component: AppleMusicWidget, sizes: ['2x2'] },
+  { id: 'visualizer', appId: 'music', name: 'Dot visualizer', category: 'music', description: 'Dots that jump with your music.', component: VisualizerWidget, sizes: ['2x1', '4x1'] },
+  { id: 'vinyl', appId: 'music', name: 'Spinning vinyl', category: 'music', description: 'Spins while your music plays.', component: VinylWidget, sizes: ['2x2'] },
+  { id: 'music', appId: 'music', name: 'Now playing', category: 'music', description: 'Spotify or your own music, with a dot visualizer.', component: MusicWidget, sizes: ['2x2'] },
 
   // ---- Retro games
   game('snake', 'Snake', 'Eat the dots, avoid your tail.'),
@@ -102,20 +103,21 @@ export const WIDGETS: WidgetDefinition[] = [
   game('flappy', 'Flap', 'Tap through the gaps.'),
   game('2048', '2048', 'Slide and merge tiles.'),
   game('mines', 'Mines', 'Find the safe squares.'),
-  { id: 'pet', name: 'Vanta Pet', category: 'games', description: 'A pixel pet. It loves when you focus.', component: PetWidget, sizes: ['1x1', '2x2'], onTap: openArcade('pet') },
+  { id: 'pet', appId: 'arcade', name: 'Vanta Pet', category: 'games', description: 'A pixel pet. It loves when you focus.', component: PetWidget, sizes: ['1x1', '2x2'], onTap: openArcade('pet') },
 
   // ---- Productivity
-  { id: 'lockin', name: 'Lock In', category: 'productivity', description: "Today's focus ring and streak. One tap to start.", component: LockInRingWidget, sizes: ['2x2'], onTap: ({ openApp }) => openApp('lockin') },
-  { id: 'plant', name: 'Lock In plant', category: 'productivity', description: 'Grows with your focus streak.', component: PlantWidget, sizes: ['1x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
-  { id: 'next-lesson', name: 'Next lesson', category: 'productivity', description: 'From your timetable.', component: NextLessonWidget, sizes: ['2x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
-  { id: 'homework', name: 'Homework due', category: 'productivity', description: 'What is due soonest.', component: HomeworkWidget, sizes: ['2x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
-  { id: 'grades', name: 'Grade average', category: 'productivity', description: 'Your average, green to red.', component: GradeAverageWidget, sizes: ['1x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
-  { id: 'reminders', name: 'Reminders', category: 'productivity', description: "Today's reminders.", component: RemindersWidget, sizes: ['2x1', '2x2'], onTap: ({ openApp }) => openApp('reminders') },
-  { id: 'dot-calendar', name: 'Dot calendar', category: 'productivity', description: 'This month as dots.', component: DotCalendarWidget, sizes: ['2x2'] },
-  { id: 'calendar', name: 'Up next', category: 'productivity', description: 'Date and your next event.', component: CalendarWidget, sizes: ['2x2'] },
-  { id: 'countdown', name: 'Countdown', category: 'productivity', description: 'Days until something good.', component: CountdownWidget, sizes: ['2x2', '2x1', '1x1'] },
+  { id: 'lockin', appId: 'lockin', name: 'Lock In', category: 'productivity', description: "Today's focus ring and streak. One tap to start.", component: LockInRingWidget, sizes: ['1x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
+  { id: 'plant', appId: 'lockin', name: 'Lock In plant', category: 'productivity', description: 'Grows with your focus streak.', component: PlantWidget, sizes: ['1x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
+  { id: 'next-lesson', appId: 'lockin', name: 'Next lesson', category: 'productivity', description: 'From your timetable.', component: NextLessonWidget, sizes: ['2x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
+  { id: 'homework', appId: 'lockin', name: 'Homework due', category: 'productivity', description: 'What is due soonest.', component: HomeworkWidget, sizes: ['2x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
+  { id: 'grades', appId: 'lockin', name: 'Grade average', category: 'productivity', description: 'Your average, green to red.', component: GradeAverageWidget, sizes: ['1x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
+  { id: 'reminders', appId: 'reminders', name: 'Reminders', category: 'productivity', description: "Today's reminders.", component: RemindersWidget, sizes: ['2x1', '2x2'], onTap: ({ openApp }) => openApp('reminders') },
+  { id: 'dot-calendar', appId: 'calendar', name: 'Dot calendar', category: 'productivity', description: 'This month as dots.', component: DotCalendarWidget, sizes: ['2x2'] },
+  { id: 'calendar', appId: 'calendar', name: 'Up next', category: 'productivity', description: 'Date and your next event.', component: CalendarWidget, sizes: ['2x2'] },
+  { id: 'countdown', appId: 'calendar', editable: true, name: 'Countdown', category: 'productivity', description: 'Days until something good.', component: CountdownWidget, sizes: ['2x2', '2x1', '1x1'] },
   {
     id: 'notes',
+    appId: 'notes',
     name: 'Notes',
     category: 'productivity',
     description: 'Your latest note.',
@@ -125,13 +127,13 @@ export const WIDGETS: WidgetDefinition[] = [
   },
 
   // ---- Info and tools
-  { id: 'weather', name: 'Weather', category: 'info', description: 'Line-art weather for Zurich.', component: WeatherWidget, sizes: ['2x1', '2x2', '1x1'] },
-  { id: 'rain', name: 'Rain chance', category: 'info', description: 'Dots for rain in the next hours.', component: RainDotsWidget, sizes: ['2x1', '4x1'] },
-  { id: 'air', name: 'UV and air', category: 'info', description: 'UV index and air quality.', component: AirWidget, sizes: ['2x1'] },
-  { id: 'compass', name: 'Compass', category: 'info', description: 'Thin dial rings that find north.', component: CompassWidget, sizes: ['2x2', '1x1'] },
-  { id: 'quote', name: 'Quote of the day', category: 'info', description: 'A new line every day.', component: QuoteWidget, sizes: ['2x2', '4x2', '4x1'] },
-  { id: 'photo', name: 'Photo frame', category: 'info', description: 'A photo you choose.', component: PhotoWidget, sizes: ['2x2', '2x1', '4x2'] },
-  { id: 'favorites', name: 'Favorites', category: 'info', description: 'Call your people in one tap.', component: FavoritesWidget, sizes: ['2x2', '4x1'] },
+  { id: 'weather', appId: 'weather', name: 'Weather', category: 'info', description: 'Line-art weather for Zurich.', component: WeatherWidget, sizes: ['2x1', '2x2', '1x1'] },
+  { id: 'rain', appId: 'weather', name: 'Rain chance', category: 'info', description: 'Dots for rain in the next hours.', component: RainDotsWidget, sizes: ['2x1', '4x1'] },
+  { id: 'air', appId: 'weather', name: 'UV and air', category: 'info', description: 'UV index and air quality.', component: AirWidget, sizes: ['2x1'] },
+  { id: 'compass', appId: 'compass', name: 'Compass', category: 'info', description: 'Thin dial rings that find north.', component: CompassWidget, sizes: ['2x2', '1x1'] },
+  { id: 'quote', appId: 'notes', name: 'Quote of the day', category: 'info', description: 'A new line every day.', component: QuoteWidget, sizes: ['2x2', '4x2', '4x1'] },
+  { id: 'photo', appId: 'photos', editable: true, name: 'Photo frame', category: 'info', description: 'A photo you choose.', component: PhotoWidget, sizes: ['2x2', '2x1', '4x2'] },
+  { id: 'favorites', appId: 'phone', name: 'Favorites', category: 'info', description: 'Call your people in one tap.', component: FavoritesWidget, sizes: ['2x2', '4x1'] },
   {
     id: 'flashlight',
     name: 'Flashlight',
@@ -146,7 +148,7 @@ export const WIDGETS: WidgetDefinition[] = [
       playSound(on ? 'toggleOn' : 'toggleOff');
     },
   },
-  { id: 'voice', name: 'Voice note', category: 'info', description: 'Tap to record, tap to save.', component: VoiceNoteWidget, sizes: ['1x1'] },
+  { id: 'voice', appId: 'recorder', name: 'Voice note', category: 'info', description: 'Tap to record, tap to save.', component: VoiceNoteWidget, sizes: ['1x1'] },
   {
     id: 'ask',
     name: 'Ask Vantage',
@@ -159,15 +161,15 @@ export const WIDGETS: WidgetDefinition[] = [
   },
 
   // ---- Fun
-  { id: 'dice', name: 'Dice', category: 'fun', description: 'Tap to roll.', component: DiceWidget, sizes: ['1x1', '2x2'] },
-  { id: 'coin', name: 'Coin flip', category: 'fun', description: 'Heads or tails.', component: CoinWidget, sizes: ['1x1', '2x2'] },
-  { id: 'tally', name: 'Tally counter', category: 'fun', description: 'Tap to count, minus to undo.', component: TallyWidget, sizes: ['2x1', '2x2'] },
+  { id: 'dice', appId: 'arcade', name: 'Dice', category: 'fun', description: 'Tap to roll.', component: DiceWidget, sizes: ['1x1', '2x2'] },
+  { id: 'coin', appId: 'arcade', name: 'Coin flip', category: 'fun', description: 'Heads or tails.', component: CoinWidget, sizes: ['1x1', '2x2'] },
+  { id: 'tally', appId: 'arcade', name: 'Tally counter', category: 'fun', description: 'Tap to count, minus to undo.', component: TallyWidget, sizes: ['2x1', '2x2'] },
 
   // ---- Devices
-  { id: 'battery', name: 'Battery ring', category: 'devices', description: "This phone's battery.", component: BatteryWidget, sizes: ['1x1', '2x2'] },
-  { id: 'airpods', name: 'AirPods', category: 'devices', description: 'Left, right and case (after unlock).', component: AirPodsWidget, sizes: ['2x2', '2x1'] },
-  { id: 'devices', name: 'Connected devices', category: 'devices', description: 'Bluetooth devices (after unlock).', component: ConnectedDevicesWidget, sizes: ['2x1', '2x2'] },
-  { id: 'storage', name: 'Storage', category: 'devices', description: 'What Vantage stores on the phone.', component: StorageWidget, sizes: ['2x1', '2x2'] },
+  { id: 'battery', appId: 'settings', name: 'Battery ring', category: 'devices', description: "This phone's battery.", component: BatteryWidget, sizes: ['1x1', '2x2'] },
+  { id: 'airpods', appId: 'settings', name: 'AirPods', category: 'devices', description: 'Left, right and case (after unlock).', component: AirPodsWidget, sizes: ['2x2', '2x1'] },
+  { id: 'devices', appId: 'settings', name: 'Connected devices', category: 'devices', description: 'Bluetooth devices (after unlock).', component: ConnectedDevicesWidget, sizes: ['2x1', '2x2'] },
+  { id: 'storage', appId: 'files', name: 'Storage', category: 'devices', description: 'What Vantage stores on the phone.', component: StorageWidget, sizes: ['2x1', '2x2'] },
 ];
 
 // ---- Widgets made in the Widget Lab. Their definitions are made on demand

@@ -1,10 +1,11 @@
 import { AppIcon } from '../../components/AppIcon';
+import { shapeOf, type ScreenRect } from '../AppView';
 import { Pressable } from '../../components/Pressable';
 import { DOCK_APP_IDS, getApp } from '../../system/appRegistry';
 import styles from './Dock.module.css';
 
 interface DockProps {
-  onOpenApp: (appId: string, from: DOMRect) => void;
+  onOpenApp: (appId: string, from: ScreenRect) => void;
 }
 
 /**
@@ -25,7 +26,7 @@ export function Dock({ onOpenApp }: DockProps) {
             aria-label={app.name}
             // The dock handles its own taps (the page-swipe code ignores it)
             data-no-gesture
-            onClick={(event) => onOpenApp(id, event.currentTarget.getBoundingClientRect())}
+            onClick={(event) => onOpenApp(id, shapeOf(event.currentTarget.querySelector('[data-app-icon]') ?? event.currentTarget))}
           >
             <AppIcon app={app} />
           </Pressable>

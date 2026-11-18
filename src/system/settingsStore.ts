@@ -75,6 +75,8 @@ export interface Settings {
   /** How the page indicator above the dock looks */
   pageDots: 'dots' | 'numbers' | 'hidden';
   iconShape: IconShape;
+  /** Small names under the app icons on the home screen */
+  iconLabels: boolean;
   iconStyle: IconStyle;
   uiFont: UiFont;
 
@@ -159,6 +161,7 @@ export const DEFAULT_SETTINGS: Settings = {
   batteryStyle: 'percent',
   pageDots: 'dots',
   iconShape: 'circle',
+  iconLabels: true,
   iconStyle: 'outline',
   uiFont: 'inter',
   bootAnimation: true,
@@ -275,6 +278,7 @@ export function sanitizeSettings(input: unknown): Settings {
     lockClockPosition: oneOf(raw.lockClockPosition, ['top', 'center'] as const, d.lockClockPosition),
     batteryStyle: oneOf(raw.batteryStyle, ['percent', 'ring', 'bar', 'pixel'] as const, d.batteryStyle),
     pageDots: oneOf(raw.pageDots, ['dots', 'numbers', 'hidden'] as const, d.pageDots),
+    iconLabels: bool(raw.iconLabels, d.iconLabels),
     iconShape: oneOf(raw.iconShape, ['circle', 'squircle', 'square'] as const, d.iconShape),
     iconStyle: oneOf(raw.iconStyle, ['outline', 'filled', 'tinted'] as const, d.iconStyle),
     uiFont: oneOf(raw.uiFont, ['inter', 'system', 'serif', 'mono'] as const, d.uiFont),

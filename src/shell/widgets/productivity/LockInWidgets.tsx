@@ -8,12 +8,14 @@ import { useLockIn } from '../../../apps/lockin/lockInStore';
 import { dayKey } from '../../../system/events';
 import { useReminders } from '../../../system/reminders';
 import { useClock } from '../../../system/useClock';
+import type { WidgetProps } from '../types';
 import styles from './ProductivityWidgets.module.css';
 
 const RING = 2 * Math.PI * 44;
 
 /** Today's focus as a ring (toward your daily goal) and your streak. One tap on "Lock in" starts a Pomodoro. */
-export function LockInRingWidget() {
+export function LockInRingWidget({ size }: WidgetProps) {
+  const small = size === '1x1';
   const data = useLockIn();
   useFocusSessions();
   const { session } = useFocus();
@@ -30,23 +32,23 @@ export function LockInRingWidget() {
   const pomodoro = SESSION_TYPES[0];
 
   return (
-    <Widget shape="rounded">
-      <div className={styles.lockin}>
+    <Widget shape={small ? 'circle' : 'rounded'}>
+      <div className={`${styles.lockin} ${small ? styles.lockinSmall : ''}`}>
         <svg className={styles.lockinRing} viewBox="0 0 100 100" aria-hidden="true">
           <circle className={styles.ringTrack} cx="50" cy="50" r="44" />
           <circle className={session ? styles.ringFocus : styles.ringDone} cx="50" cy="50" r="44" strokeDasharray={`${RING * (session ? 1 - left / (session.plan.work * 60_000 || 1) : fraction)} ${RING}`} transform="rotate(-90 50 50)" />
         </svg>
         <div className={styles.lockinCenter}>
           {session ? (
-            <DotNumber value={`${String(Math.floor(left / 60_000)).padStart(2, '0')}:${String(Math.floor((left % 60_000) / 1000)).padStart(2, '0')}`} size={28} />
+            <DotNumber value={small ? String(Math.ceil(left / 60_000)) : `${String(Math.floor(left / 60_000)).padStart(2, '0')}:${String(Math.floor((left % 60_000) / 1000)).padStart(2, '0')}`} size={small ? 28 : 28} />
           ) : (
             <>
-              <DotNumber value={String(streakDays())} size={28} />
-              <span className="label">day streak</span>
+              <DotNumber value={small ? String(Math.min(99, Math.round(fraction * 100))) : String(streakDays())} size={28} />
+              {!small && <span className="label">day streak</span>}
             </>
           )}
         </div>
-        {!session && (
+        {!session && !small && (
           <button
             type="button"
             className={styles.lockinButton}

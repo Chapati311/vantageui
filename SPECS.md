@@ -279,12 +279,6 @@ gradients, solids and photos. Animations pause when not visible.
 
 ---
 
-## 6. Vantage AI (planned for LATER, do not build yet)
+## 6. Vantage AI
 
-The Vantage app becomes the phone-wide assistant (Ask Vantage bar, long
-press, wake word) using the user's own AI API key, controlling the phone
-through one "actions" system: open apps, change any Customise setting,
-start Lock In sessions, add grades/homework, set alarms, control music,
-summarize notifications. Prepare for it now by routing every user-facing
-action through `src/system/actions.ts` (typed, named actions with params),
-so the AI can call the same actions later.
+See VANTAGE.md (full spec and build prompt). Build it after POLISH_PROMPT.md is done.

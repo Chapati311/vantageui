@@ -3,6 +3,7 @@ import { DotNumber } from '../../../components/DotNumber';
 import { Widget } from '../../../components/Widget';
 import { Button, Sheet } from '../../../components/kit';
 import { useClock } from '../../../system/useClock';
+import { useWidgetEdit } from '../../home/widgetEdit';
 import styles from './ProductivityWidgets.module.css';
 
 const monthFormat = new Intl.DateTimeFormat('en-GB', { month: 'long' });
@@ -68,6 +69,9 @@ export function CountdownWidget() {
   const [name, setName] = useState(countdown?.name ?? '');
   const [date, setDate] = useState(countdown?.date ?? '');
 
+  // Hold the widget > Edit
+  useWidgetEdit(() => setEditing(true));
+
   const target = countdown ? new Date(`${countdown.date}T00:00:00`) : null;
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const days = target ? Math.round((target.getTime() - startOfToday.getTime()) / 86_400_000) : null;
@@ -86,7 +90,7 @@ export function CountdownWidget() {
 
   return (
     <Widget shape="rounded">
-      <button type="button" className={styles.countdown} onClick={() => setEditing(true)} aria-label={countdown ? `${days} days until ${countdown.name}. Tap to change` : 'Set a countdown'}>
+      <div className={styles.countdown} role="img" aria-label={countdown ? `${days} days until ${countdown.name}` : 'Countdown, not set'}>
         {countdown && days !== null ? (
           <>
             <DotNumber value={String(Math.max(0, days))} size={40} />
@@ -95,10 +99,10 @@ export function CountdownWidget() {
         ) : (
           <>
             <span className={styles.countdownTitle}>Countdown</span>
-            <span className="label">Tap to set a day</span>
+            <span className="label">Hold, then Edit</span>
           </>
         )}
-      </button>
+      </div>
       <Sheet open={editing} onClose={() => setEditing(false)} title="Countdown">
         <input className={styles.input} placeholder="What is it?" aria-label="Name" value={name} maxLength={24} onChange={(event) => setName(event.target.value)} />
         <input className={styles.input} type="date" aria-label="Date" value={date} onChange={(event) => setDate(event.target.value)} />

@@ -50,6 +50,8 @@ interface Options {
   /** Moves an item and returns where it ended up (unchanged if there was no room). */
   onMoveItem: (id: string, to: { page: number; col: number; row: number }) => HomeItem;
   onTapItem: (id: string) => void;
+  /** Long-press on an item outside edit mode: its menu */
+  onLongPressItem?: (id: string) => void;
   onSwipeDown?: () => void;
   /** Gets where along the top edge the swipe started (px from the left) */
   onSwipeDownFromTop?: (x: number) => void;
@@ -107,6 +109,8 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
     let velocityX = 0; // px per ms
 
     let pressedItemId: string | null = null;
+    /** The press started on a widget's own button (play, roll the dice...) */
+    let pressedControl = false;
     let longPressTimer = 0;
 
     // Paging
@@ -271,7 +275,14 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
 
     const onLongPress = () => {
       if (mode !== 'pressed') return;
-      const { editing, startEditing } = latest.current;
+      const { editing, startEditing, onLongPressItem } = latest.current;
+      // Outside edit mode, holding an item shows its menu (Edit home screen is in there)
+      if (!editing && pressedItemId && onLongPressItem) {
+        mode = 'ignored';
+        navigator.vibrate?.(10);
+        onLongPressItem(pressedItemId);
+        return;
+      }
       if (!editing) startEditing();
       if (pressedItemId) beginDrag(pressedItemId);
       else mode = 'ignored';
@@ -287,7 +298,10 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
       startY = pointerY;
       lastTime = event.timeStamp;
       velocityX = 0;
-      pressedItemId = element.closest<HTMLElement>('[data-item-id]')?.dataset.itemId ?? null;
+      const item = element.closest<HTMLElement>('[data-item-id]');
+      pressedItemId = item?.dataset.itemId ?? null;
+      const control = element.closest('button, [role="button"], input, a');
+      pressedControl = Boolean(item && control && item.contains(control) && control !== item);
       mode = 'pressed';
       longPressTimer = window.setTimeout(onLongPress, LONG_PRESS_MS);
     };
@@ -335,7 +349,7 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
         const { editing, stopEditing, onTapItem } = latest.current;
         if (editing) {
           if (!pressedItemId) stopEditing(); // tap empty space = done
-        } else if (pressedItemId) {
+        } else if (pressedItemId && !pressedControl) {
           onTapItem(pressedItemId);
         }
       } else if (mode === 'vertical') {

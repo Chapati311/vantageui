@@ -14,6 +14,7 @@ import { openGame, type GameId } from '../apps/arcade/arcadeStore';
 import { deleteAlarm, saveAlarm, setAlarmEnabled, snooze, stopRinging, updateAlarmSettings, type Alarm, type AlarmSettings } from '../apps/clock/alarmStore';
 import { addWidget, removeHomeItem } from '../shell/home/layoutStore';
 import type { WidgetSize } from '../shell/widgets/types';
+import type { ScreenRect } from '../shell/AppView';
 import { convertNote, createNote, deleteNote, getNote, type Note } from '../apps/notes/notesStore';
 import type { WallpaperConfig } from '../theme/wallpapers';
 import {
@@ -49,7 +50,7 @@ import { removeWallpaperPhoto, setWallpaperPhoto } from './wallpaperPhoto';
 
 /** What the system shell (Shell.tsx) lets actions do. It registers itself at startup. */
 export interface ShellControls {
-  openApp: (appId: string, from?: DOMRect | null) => void;
+  openApp: (appId: string, from?: ScreenRect | null) => void;
   closeApp: () => void;
   lock: () => void;
   unlock: () => void;
@@ -87,7 +88,7 @@ const define = <P>(description: string, run: (params: P) => void | Promise<void>
 
 const ACTIONS = {
   // ---- Shell
-  'app.open': define<{ appId: string; from?: DOMRect | null }>(
+  'app.open': define<{ appId: string; from?: ScreenRect | null }>(
     'Open an app by its id (phone, messages, notes, clock, weather, calculator, music, maps, settings).',
     ({ appId, from }) => {
       shell?.openApp(appId, from ?? null);

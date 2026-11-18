@@ -240,3 +240,14 @@
 .bad {
   color: var(--status-bad);
 }
+
+/* 1x1: just the ring and today's % of your goal (or the minutes left) */
+.lockinSmall .lockinRing {
+  inset: 8%;
+  width: 84%;
+  height: 84%;
+}
+
+.lockinSmall .lockinCenter {
+  margin-top: 0;
+}

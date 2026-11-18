@@ -1,5 +1,5 @@
 import { useDrag } from '@use-gesture/react';
-import { animate, motion, useMotionValue } from 'motion/react';
+import { animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { OverlayLayer } from '../components/kit/OverlayLayer';
 import type { AppDefinition } from '../system/appRegistry';
@@ -12,6 +12,18 @@ export interface ScreenRect {
   top: number;
   width: number;
   height: number;
+  /** Corner roundness of the shape the app grows out of (px) */
+  radius?: number;
+}
+
+/** Where an element is on screen and how round its corners are (for growing an app out of it). */
+export function shapeOf(element: Element): ScreenRect {
+  const rect = element.getBoundingClientRect();
+  // The visible shape is the first element inside that has rounded corners
+  const shaped = [element, ...Array.from(element.querySelectorAll('*'))].find((node) => getComputedStyle(node).borderTopLeftRadius !== '0px');
+  const value = shaped ? getComputedStyle(shaped).borderTopLeftRadius : '0px';
+  const radius = value.endsWith('%') ? (Math.min(rect.width, rect.height) * parseFloat(value)) / 100 : parseFloat(value);
+  return { left: rect.left, top: rect.top, width: rect.width, height: rect.height, radius: Math.min(radius, Math.min(rect.width, rect.height) / 2) };
 }
 
 interface AppViewProps {
@@ -52,6 +64,15 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
   const scaleX = useMotionValue(1);
   const scaleY = useMotionValue(1);
   const opacity = useMotionValue(1);
+  // The shape morphs from the icon/widget's rounded corners to the full screen
+  const shape = useRef({ radius: 0, startScale: 1 });
+  const borderRadius = useTransform([scaleX, scaleY], ([sx, sy]: number[]) => {
+    const { radius, startScale } = shape.current;
+    if (!radius || startScale >= 1) return '0px';
+    const progress = Math.min(1, Math.max(0, (sx - startScale) / (1 - startScale)));
+    const visible = radius * (1 - progress);
+    return `${visible / Math.max(sx, 0.01)}px / ${visible / Math.max(sy, 0.01)}px`;
+  });
 
   const size = () => ({
     width: ref.current?.offsetWidth ?? window.innerWidth,
@@ -89,6 +110,7 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
   // Opening: start squeezed into the icon, then spring to full-screen.
   useLayoutEffect(() => {
     const start = squeezedInto(from);
+    shape.current = { radius: from?.radius ?? 0, startScale: start.scaleX };
     x.set(start.x);
     y.set(start.y);
     scaleX.set(start.scaleX);
@@ -103,7 +125,10 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
   const close = () => {
     if (closing.current) return;
     closing.current = true;
-    void springTo(squeezedInto(getReturnRect()), 0).then(onClosed);
+    const back = getReturnRect();
+    const target = squeezedInto(back);
+    shape.current = { radius: back?.radius ?? 0, startScale: target.scaleX };
+    void springTo(target, 0).then(onClosed);
   };
 
   // Escape closes the app (handy when testing on a computer).
@@ -175,7 +200,7 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
   const Content = app.component;
 
   return (
-    <motion.div ref={ref} className={styles.view} style={{ x, y, scaleX, scaleY, opacity }}>
+    <motion.div ref={ref} className={styles.view} style={{ x, y, scaleX, scaleY, opacity, borderRadius }}>
       <OverlayLayer>
         <div className={styles.content}>
           <Content />

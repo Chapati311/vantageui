@@ -1,4 +1,4 @@
-import { useState, type ComponentType } from 'react';
+import type { ComponentType } from 'react';
 import { BellIcon, BoltIcon, FlagIcon, GridIcon, LockIcon, MoonIcon, SoundIcon, SunIcon, TextIcon, WifiIcon } from '../../components/glyphs';
 import { AppShell, Button } from '../../components/kit';
 import { Pressable } from '../../components/Pressable';
@@ -18,6 +18,7 @@ import { SoundPage } from '../settings/SoundPage';
 import { ThemesPage } from '../settings/ThemesPage';
 import { WallpaperPage } from '../settings/WallpaperPage';
 import { WidgetsPage } from '../settings/WidgetsPage';
+import { setCustomiseSection, useCustomiseSection } from './customiseNav';
 import { LivePreview } from './LivePreview';
 import { LockScreenPage } from './LockScreenPage';
 import { MusicPage } from './MusicPage';
@@ -115,7 +116,8 @@ const BATTERY_NAMES = { percent: 'Battery number', ring: 'Battery ring', bar: 'B
  * random look; the sections are grouped LOOK and SYSTEM.
  */
 export function CustomiseApp() {
-  const [open, setOpen] = useState<SectionId | null>(null);
+  const open = useCustomiseSection() as SectionId | null;
+  const setOpen = setCustomiseSection;
   const settings = useSettings();
   const theme = useTheme();
   const setups = useSetups();

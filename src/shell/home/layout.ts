@@ -17,9 +17,13 @@ export const MAX_ITEMS_PER_PAGE = GRID.maxItemsPerPage;
 export interface HomeItem {
   /** Unique, e.g. "widget:clock" or "app:phone" */
   id: string;
-  kind: 'widget' | 'app';
-  /** The widget id or app id it shows */
+  kind: 'widget' | 'app' | 'folder';
+  /** The widget id or app id it shows (a folder: its own id) */
   ref: string;
+  /** A widget can look different from the others (long-press > Style) */
+  style?: 'solid' | 'glass' | 'outline' | 'tinted';
+  /** A folder's name and the apps in it */
+  folder?: { name: string; apps: string[] };
   page: number;
   col: number;
   row: number;

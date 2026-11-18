@@ -28,7 +28,8 @@ for (const height of HEIGHTS) {
   const result = await page.evaluate(({ maxItems }) => {
     const box = (el) => el.getBoundingClientRect();
     const grid = box(document.querySelector('[class*="_grid_"]'));
-    const dots = box(document.querySelector('[class*="_dots_"]'));
+    // The page indicator (not a widget's own dots)
+    const dots = box(document.querySelector('[aria-label^="Page "]'));
     const dock = box(document.querySelector('nav[aria-label="Dock"]'));
     const items = [...document.querySelectorAll('[data-item-id]')].map((el) => {
       const r = box(el);

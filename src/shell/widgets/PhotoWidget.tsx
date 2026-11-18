@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { EditIcon } from '../../components/glyphs';
 import { dbGet, dbPut } from '../../system/db';
-import { PictureIcon } from '../../apps/customise/icons';
+import { useWidgetEdit } from '../home/widgetEdit';
 import styles from './PhotoWidget.module.css';
 
 const PHOTO_ID = 'photo-widget';
@@ -21,9 +22,29 @@ async function shrink(file: Blob): Promise<Blob> {
   return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob ?? file), 'image/jpeg', 0.85));
 }
 
+/** The built-in picture: dusk over layered hills, drawn in code (no file needed). */
+function DefaultPicture() {
+  return (
+    <svg className={styles.image} viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="photo-sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#1b2a41" />
+          <stop offset="0.55" stopColor="#3d5a73" />
+          <stop offset="1" stopColor="#d99a6c" />
+        </linearGradient>
+      </defs>
+      <rect width="100" height="100" fill="url(#photo-sky)" />
+      <circle cx="68" cy="56" r="9" fill="#f2c79a" />
+      <path d="M0 62 Q18 48 36 60 T72 56 T100 60 V100 H0Z" fill="#33506a" />
+      <path d="M0 74 Q22 60 44 72 T84 68 T100 72 V100 H0Z" fill="#223a50" />
+      <path d="M0 86 Q26 74 52 84 T100 82 V100 H0Z" fill="#111f2c" />
+    </svg>
+  );
+}
+
 /**
- * A photo frame. Tap it to choose a photo (from the photo library or the
- * camera); it is saved on the phone. Tap again to pick another.
+ * A photo frame: a built-in dusk picture until you choose your own (hold
+ * the widget > Edit). A tap opens Photos.
  */
 export function PhotoWidget() {
   const [url, setUrl] = useState<string | null>(null);
@@ -43,6 +64,8 @@ export function PhotoWidget() {
     };
   }, []);
 
+  useWidgetEdit(() => input.current?.click());
+
   const choose = async (file: File) => {
     const blob = await shrink(file).catch(() => file);
     await dbPut<StoredFile>('files', { id: PHOTO_ID, blob }).catch(() => undefined);
@@ -53,15 +76,12 @@ export function PhotoWidget() {
   };
 
   return (
-    <button type="button" className={styles.photo} onClick={() => input.current?.click()} aria-label={url ? 'Photo. Tap to change' : 'Choose a photo'}>
-      {url ? (
-        <img className={styles.image} src={url} alt="" />
-      ) : (
-        <span className={styles.empty}>
-          <PictureIcon />
-          <span className="label">Choose a photo</span>
-        </span>
-      )}
+    <div className={styles.photo} role="img" aria-label={url ? 'Your photo' : 'Dusk over hills'}>
+      {url ? <img className={styles.image} src={url} alt="" /> : <DefaultPicture />}
+      {/* A quiet hint that this can be your own photo */}
+      <span className={styles.hint} aria-hidden="true">
+        <EditIcon />
+      </span>
       <input
         ref={input}
         type="file"
@@ -73,6 +93,6 @@ export function PhotoWidget() {
           if (file) void choose(file);
         }}
       />
-    </button>
+    </div>
   );
 }

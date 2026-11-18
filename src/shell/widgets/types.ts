@@ -28,6 +28,10 @@ export interface WidgetDefinition {
   component: ComponentType<WidgetProps>;
   /** Sizes this widget can be shown at. Resizing cycles through them. */
   sizes: WidgetSize[];
+  /** Has an "Edit" in its long-press menu (the widget reacts with useWidgetEdit) */
+  editable?: boolean;
+  /** The app a tap opens (growing out of the widget), unless onTap says otherwise */
+  appId?: string;
   /** Optional: what happens when the whole widget is tapped */
   onTap?: (context: WidgetTapContext) => void;
 }

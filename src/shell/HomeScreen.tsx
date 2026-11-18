@@ -1,4 +1,11 @@
-import { motion, useMotionValue } from 'motion/react';
+import { AnimatePresence, motion, useMotionValue } from 'motion/react';
+import { EditIcon, GridIcon, ShareIcon, TrashIcon } from '../components/glyphs';
+import { getApp } from '../system/appRegistry';
+import { QUICK_ACTIONS } from '../system/quickActions';
+import { SPRING } from '../theme/tokens';
+import { shapeOf, type ScreenRect } from './AppView';
+import { FolderView } from './home/FolderView';
+import { ItemMenu, type ItemMenuAction } from './home/ItemMenu';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable } from '../components/Pressable';
 import { getWidget } from './widgets/widgetRegistry';
@@ -8,7 +15,7 @@ import { PageDots } from './home/PageDots';
 import { WidgetGallery } from './home/WidgetGallery';
 import { runAction } from '../system/actions';
 import { LivePill, useHasLiveActivity } from './LivePill';
-import { useSetting } from '../system/settingsStore';
+import { getSettings, useSetting } from '../system/settingsStore';
 import {
   COLS,
   MAX_PAGES,
@@ -26,7 +33,7 @@ import styles from './HomeScreen.module.css';
 
 interface HomeScreenProps {
   /** An app icon was tapped. `from` is where the icon is on screen. */
-  onOpenApp?: (appId: string, from: DOMRect) => void;
+  onOpenApp?: (appId: string, from: ScreenRect) => void;
   /** Swipe down in the middle of the screen */
   onSwipeDown?: () => void;
   /** Swipe down starting at the very top */
@@ -122,21 +129,73 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
     }
   };
 
+  /** The exact shape of an item on screen (an app grows out of it). */
+  const shapeOfItem = (id: string) => {
+    const element = surfaceRef.current?.querySelector(`[data-item-id="${id}"]`);
+    if (!element) return null;
+    // App icons: the circle, not the label under it
+    const icon = element.querySelector('[data-app-icon]');
+    return shapeOf(icon ?? element.firstElementChild ?? element);
+  };
+
   const tapItem = (id: string) => {
     const item = layoutRef.current.find((i) => i.id === id);
-    const element = surfaceRef.current?.querySelector(`[data-item-id="${id}"]`);
-    if (!item || !element) return;
-    const rect = element.getBoundingClientRect();
+    const shape = shapeOfItem(id);
+    if (!item || !shape) return;
     if (item.kind === 'app') {
-      onOpenApp?.(item.ref, rect);
+      onOpenApp?.(item.ref, shape);
+    } else if (item.kind === 'folder') {
+      setOpenFolder(item.folder ?? null);
     } else {
-      // Some widgets do something when tapped (see widgetRegistry).
-      getWidget(item.ref)?.onTap?.({
-        openSearch: () => onSwipeDown?.(),
-        openApp: (appId) => onOpenApp?.(appId, rect),
-      });
+      // A widget does its own thing when tapped, or opens its app
+      const widget = getWidget(item.ref);
+      const context = { openSearch: () => onSwipeDown?.(), openApp: (appId: string) => onOpenApp?.(appId, shape) };
+      if (widget?.onTap) widget.onTap(context);
+      else if (widget?.appId) context.openApp(widget.appId);
     }
   };
+
+  // ---- Long-press menu
+  const [menu, setMenu] = useState<{ id: string; shape: ScreenRect } | null>(null);
+  const [editTicks, setEditTicks] = useState<Record<string, number>>({});
+  const [toast, setToast] = useState<string | null>(null);
+  const [openFolder, setOpenFolder] = useState<{ name: string; apps: string[] } | null>(null);
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 2600);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+
+  const menuItem = menu ? layoutRef.current.find((item) => item.id === menu.id) : undefined;
+  const menuWidget = menuItem?.kind === 'widget' ? getWidget(menuItem.ref) : undefined;
+  const menuApp = menuItem?.kind === 'app' ? getApp(menuItem.ref) : undefined;
+  const menuActions: ItemMenuAction[] = [];
+  if (menuItem && menuWidget) {
+    if (menuWidget.appId) menuActions.push({ label: `Open ${getApp(menuWidget.appId)?.name ?? ''}`.trim(), icon: ShareIcon, onSelect: () => tapItem(menuItem.id) });
+    if (menuWidget.editable) menuActions.push({ label: 'Edit', icon: EditIcon, onSelect: () => setEditTicks((ticks) => ({ ...ticks, [menuItem.id]: (ticks[menuItem.id] ?? 0) + 1 })) });
+    if (menuWidget.sizes.length > 1) menuActions.push({ label: 'Resize', icon: GridIcon, onSelect: () => resizeItem(menuItem.id) });
+    menuActions.push({
+      label: 'Style',
+      choices: (['solid', 'glass', 'outline', 'tinted'] as const).map((style) => ({ id: style, label: style[0].toUpperCase() + style.slice(1), selected: (menuItem.style ?? '') === style })),
+      onSelect: (style) => commit(layoutRef.current.map((item) => (item.id === menuItem.id ? { ...item, style: style as HomeItem['style'] } : item))),
+    });
+    menuActions.push({ label: 'Remove', icon: TrashIcon, destructive: true, onSelect: () => void runAction('home.removeWidget', { itemId: menuItem.id }) });
+  }
+  if (menuItem && menuApp) {
+    for (const action of QUICK_ACTIONS[menuApp.id] ?? []) {
+      menuActions.push({
+        label: action.label,
+        onSelect: () => {
+          const message = action.run();
+          if (message) setToast(message);
+          else onOpenApp?.(menuApp.id, menu!.shape);
+        },
+      });
+    }
+    menuActions.push({ label: 'Hide from home screen', onSelect: () => void runAction('settings.set', { key: 'hiddenApps', value: [...getSettings().hiddenApps, menuApp.id] }) });
+  }
+  if (menuItem?.kind === 'folder') menuActions.push({ label: 'Open', onSelect: () => setOpenFolder(menuItem.folder ?? null) });
+  menuActions.push({ label: 'Edit home screen', icon: GridIcon, onSelect: () => setEditing(true) });
 
   const { drag, dropTarget } = useHomeGestures(surfaceRef, {
     metrics,
@@ -152,6 +211,10 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
     stopEditing,
     onMoveItem: moveItem,
     onTapItem: tapItem,
+    onLongPressItem: (id) => {
+      const shape = shapeOfItem(id);
+      if (shape) setMenu({ id, shape });
+    },
     onSwipeDown,
     onSwipeDownFromTop,
   });
@@ -175,6 +238,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
                 index={index}
                 onResize={resizeItem}
                 onRemove={(id) => void runAction('home.removeWidget', { itemId: id })}
+                editTick={editTicks[item.id]}
               />
             ))}
           {dropRect && (
@@ -221,6 +285,21 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
         </motion.div>
       )}
       <WidgetGallery open={galleryOpen} page={page} onClose={() => setGalleryOpen(false)} />
+      <ItemMenu
+        open={menu !== null}
+        rect={menu?.shape ?? null}
+        title={menuWidget?.name ?? menuApp?.name ?? menuItem?.folder?.name ?? ''}
+        actions={menuActions}
+        onClose={() => setMenu(null)}
+      />
+      <FolderView folder={openFolder} onOpenApp={(appId, from) => onOpenApp?.(appId, from)} onClose={() => setOpenFolder(null)} />
+      <AnimatePresence>
+        {toast && (
+          <motion.div key="toast" className={`label ${styles.toast}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={SPRING.ui}>
+            {toast}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
