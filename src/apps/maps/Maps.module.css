@@ -85,3 +85,8 @@
   font-size: var(--text-13);
   color: var(--text-secondary);
 }
+
+/* Retro themes: the map in plain grey, like an old screen */
+:root[data-retro] .map :global(.maplibregl-canvas) {
+  filter: grayscale(1) contrast(1.1);
+}
