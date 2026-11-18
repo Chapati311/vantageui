@@ -1,6 +1,6 @@
 # Vantage OS feature roadmap
 
-Work top to bottom, one phase at a time (see PROMPT.md). Tick items off as
+Work top to bottom (see FINAL_PROMPT.md, which replaces PROMPT.md). Tick items off as
 they are finished. Details for every item are in SPECS.md.
 [PWA] = possible now as a web app. [BRIDGE] = needs the jailbreak tweak.
 
@@ -57,12 +57,17 @@ they are finished. Details for every item are in SPECS.md.
       export/import file) [PWA]
 - [x] Sections: Themes (gallery of all 21 as mini phones, edit any color,
       own themes, schedule), Widgets, Wallpapers (blur/dim/parallax, separate
-      home and lock, daily shuffle, by time of day or weather), Home screen,
-      Lock screen (8 clock styles), Icons, Fonts, Colors, Status bar, Control
-      center, Notifications, Live pill, Motion and feel, Sounds, Boot and
-      unlock, Modes, App styles, Accessibility, Setups (export/import, QR) [PWA]
+      home and lock, daily shuffle), Home screen, Lock screen (8 clock
+      styles), Icons (shape, style, labels), Fonts, Colors, Status bar,
+      Control center, Notifications, Live pill, Motion and feel, Sounds, Boot
+      and unlock, Modes, App styles, Accessibility, Setups (export/import,
+      replay first-boot setup) [PWA]
+- [ ] Customise extras from SPECS 5: wallpaper by time of day or weather,
+      icon packs, control center tile order, UI sound packs, setup QR code,
+      lock widgets and bottom shortcuts [PWA]
 - [x] Widget system: sizes 1x1, 2x1, 2x2, 4x2; styles solid, glass, outline,
-      tinted; smart stacks; widget gallery [PWA]
+      tinted (also per widget); widget gallery; folders [PWA]
+- [ ] Smart stacks that rotate by time of day [PWA]
 - [x] Time widgets: dot clock, vertical clock, thin analog, flip, binary, word
       clock, world clocks, sunrise/sunset arc, moon phase [PWA]
 - [x] Space and beauty widgets: live solar system, orbit, starfield, aurora
@@ -110,7 +115,7 @@ Original per app.
 - [x] Settings [PWA]
 - [x] App styles setting: Vantage or Original per app and for all apps [PWA]
 
-## Phase 6: Lock In
+## Phase 6: Lock In (moves into the Vantage app in FINAL_PROMPT Part 3)
 - [x] Round 1: app shell, first-launch setup (student / working, country,
       school type, distraction apps), Focus tab (ring, session types, tags,
       goals, ambient sounds, break screen, strict session, streaks, widget,
@@ -133,7 +138,47 @@ Original per app.
       Nokia LCD; home and Clock in all 21)
 - [ ] Offline mode and performance checked on the real phone [PWA] (offline
       checked in a browser: works; the real phone is for you to test)
-- [ ] Deployed to Vercel [PWA] (needs a push to GitHub: waiting for your OK)
+- [x] Deployed to Vercel: https://vantageui.vercel.app (auto-deploys on push) [PWA]
+
+## Polish round (POLISH_PROMPT.md)
+- [x] Part 1: all 13 found problems fixed [PWA]
+- [x] Part 2 motion: boot assembles and dissolves, unlock (clock lifts, home
+      pops in staggered), dot-by-dot digit morphing, page parallax and
+      stretching dots, apps open from icon or widget with home scaling
+      behind, press highlight, toggle fill, slider and dial ticks, staggered
+      sheets and lists, smooth delete, theme spreads in a circle from the tap,
+      dot shimmer loading, check-mark success toast, charging wave on the
+      battery widget, floating dots in empty states, live pill morph and
+      long-press controls, Reduce motion [PWA]
+      (iOS 16 Safari has no view transitions, so on the phone the theme
+      change is a 300 ms crossfade instead of the circle)
+- [x] First-boot setup, replayable from Customise > Setups [PWA]
+- [x] Live pill: timer, stopwatch, focus, recording, music; long press for
+      controls [PWA]
+- [x] App quick actions on long press [PWA]
+- [x] Gestures: double-tap empty home to lock, pinch to edit, hold the
+      wallpaper to change it, two-finger swipe down for search [PWA]
+- [ ] Today view (swipe right from page 1) [PWA]
+- [ ] Lock screen: lock widgets, now playing, notification stack, flashlight
+      and camera shortcuts, charging animation, tap clock to change style [PWA]
+- [ ] Bigger control center: music, volume dial, modes, quick timers, Lock In
+      start, calculator, voice note, dark/light, keep awake, edit mode [PWA]
+- [ ] Smart stacks, weather-reactive wallpaper [PWA]
+- [ ] Notification grouping and actions [PWA]
+- [ ] Apps: stopwatch laps chart; weather hourly dot graph, rain dots, sun
+      arc, wind compass, animated illustrations; calculator history, unit and
+      currency converter, scientific sheet; notes pin, folders, markdown, undo
+      delete; recorder live waveform, trim, rename; "Surprise me" slot
+      machine [PWA]
+- [ ] Konami / 7-tap easter egg (Game Boy mode) [PWA]
+- [ ] Part 4 perfection loop [PWA]
+
+## Final prompt (FINAL_PROMPT.md)
+- [ ] Part 2: 10 signature theme packs (SPECS 1b), generated wallpapers, new
+      widget styles, icon packs and clock styles [PWA]
+- [ ] Part 3: Vantage replaces Lock In (VANTAGE.md section 6) [PWA]
+- [ ] Part 4: real iPhone SE pass [PWA]
+- [ ] Part 5: perfection loop, 5+ passes [PWA]
 
 ## Later: after the jailbreak
 - [ ] Vantage OS replaces the iOS home screen [BRIDGE]
