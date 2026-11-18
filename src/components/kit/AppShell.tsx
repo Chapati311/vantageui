@@ -37,6 +37,9 @@ export function AppShell({ title, leading, trailing, header, tabBar, fixed, chil
   const scrollY = useMotionValue(0);
   const compactOpacity = useTransform(scrollY, [COMPACT_AT - 12, COMPACT_AT], [0, 1]);
   const hasBar = Boolean(leading || trailing || title);
+  // Without buttons the bar only holds the small title: it floats over the
+  // content instead of pushing the big title down (no empty strip on top)
+  const floating = !leading && !trailing;
 
   const onScroll = (event: UIEvent<HTMLDivElement>) => scrollY.set(event.currentTarget.scrollTop);
 
@@ -44,7 +47,8 @@ export function AppShell({ title, leading, trailing, header, tabBar, fixed, chil
     <ScrollContext.Provider value={scrollY}>
       <div className={`${styles.shell} ${tabBar ? styles.withTabs : ''}`}>
         {hasBar && (
-          <div className={styles.bar}>
+          <div className={`${styles.bar} ${floating ? styles.floating : ''}`}>
+            {floating && <motion.span className={styles.barBg} style={{ opacity: compactOpacity }} />}
             <div className={styles.side}>{leading}</div>
             {title && (
               <motion.span className={styles.compactTitle} style={{ opacity: compactOpacity }} aria-hidden="true">

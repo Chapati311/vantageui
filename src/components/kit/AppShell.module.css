@@ -120,3 +120,23 @@
   line-height: 1;
   transform-origin: left center;
 }
+
+/* A bar with only the small title floats over the content */
+.floating {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  margin-bottom: 0;
+  pointer-events: none;
+}
+
+/* While it floats it needs its own background once the content scrolls under it */
+.barBg {
+  position: absolute;
+  left: calc(var(--grid-margin) * -1);
+  right: calc(var(--grid-margin) * -1);
+  top: calc(var(--top-inset) * -1);
+  bottom: calc(var(--space-8) * -1);
+  background: var(--app-bg);
+}

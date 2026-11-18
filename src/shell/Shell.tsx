@@ -10,6 +10,7 @@ import { canOpenApp, openApp as openNativeApp } from '../system/nativeBridge';
 import { AlarmRinging } from './AlarmRinging';
 import { LockedApp } from './LockedApp';
 import { ModeHome } from './ModeHome';
+import { StatusStrip } from './StatusStrip';
 import { useDailyShuffle } from './dailyShuffle';
 import { useCustomModeSchedule } from '../system/customModes';
 import { morningSummary, useWindDownSchedule } from './windDownSchedule';
@@ -267,6 +268,8 @@ export function Shell() {
         onCancel={() => setPasscodeOpen(false)}
       />
       <LockedApp appId={lockedApp} onClose={() => setLockedApp(null)} />
+      {/* Time and battery along the top, above home and apps (the lock screen has its own) */}
+      <StatusStrip hidden={retro || locked} />
       <AlarmRinging />
       <TimerBanner />
       {/* Wind Down: a warm layer and slow dimming over everything (touches go through) */}

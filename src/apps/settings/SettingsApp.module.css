@@ -237,3 +237,8 @@
 .input::placeholder {
   color: var(--text-tertiary);
 }
+
+/* Theme gallery: two big mini phones per row */
+.tilesTwo {
+  grid-template-columns: 1fr 1fr;
+}

@@ -43,8 +43,9 @@ interface AppViewProps {
 
 /** Without a flick, swipe up further than this (px) from the bottom edge to go home. */
 const CLOSE_DISTANCE = 80;
-/** Dragged up further than this (px) and let go slowly: show the recent apps instead. */
-const HOLD_DISTANCE = 220;
+/** Dragged up at least this far (px) and held still for PAUSE_MS: the app switcher. */
+const HOLD_DISTANCE = 90;
+const PAUSE_MS = 260;
 /** Used when the icon is not on screen: shrink into the middle. */
 const FALLBACK_SIZE = 72;
 
@@ -57,6 +58,11 @@ const FALLBACK_SIZE = 72;
 export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, onSwitchApp, onSwipeDownFromTop }: AppViewProps) {
   const ref = useRef<HTMLDivElement>(null);
   const closing = useRef(false);
+  const holdTimer = useRef(0);
+  /** How far up the finger was when the pause timer started */
+  const holdFrom = useRef(0);
+  /** The pause opened the switcher: the rest of this swipe does nothing */
+  const switched = useRef(false);
 
   // Motion values: the view's position, size and visibility.
   const x = useMotionValue(0);
@@ -167,19 +173,40 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
 
       const up = Math.max(0, -moved);
       const scale = 1 - Math.min(1, up / (height * 0.6)) * 0.5;
+      if (switched.current) {
+        if (last) switched.current = false;
+        return axis;
+      }
       if (!last) {
         scaleX.set(scale);
         scaleY.set(scale);
         x.set((width * (1 - scale)) / 2);
         y.set((height * (1 - scale)) / 2 - up * 0.3);
+        // Swipe up and PAUSE: if the finger stays (almost) still for a moment,
+        // the recent apps. Every real movement starts the wait again.
+        if (up > HOLD_DISTANCE && onOpenSwitcher) {
+          if (Math.abs(up - holdFrom.current) > 6 || !holdTimer.current) {
+            holdFrom.current = up;
+            window.clearTimeout(holdTimer.current);
+            holdTimer.current = window.setTimeout(() => {
+              holdTimer.current = 0;
+              switched.current = true;
+              navigator.vibrate?.(10);
+              onOpenSwitcher();
+              void springTo(squeezedInto(null), 0);
+            }, PAUSE_MS);
+          }
+        } else if (holdTimer.current) {
+          window.clearTimeout(holdTimer.current);
+          holdTimer.current = 0;
+        }
         return axis;
       }
+      window.clearTimeout(holdTimer.current);
+      holdTimer.current = 0;
+      // A quick swipe up (or far enough) goes home
       const flick = speed > MOTION.flickVelocity && direction < 0;
-      if (!flick && up > HOLD_DISTANCE && onOpenSwitcher) {
-        // Held high up without flicking: the recent apps
-        onOpenSwitcher();
-        void springTo(squeezedInto(null), 0);
-      } else if (flick || up > CLOSE_DISTANCE) {
+      if (flick || up > CLOSE_DISTANCE) {
         close();
       } else {
         void springTo({ x: 0, y: 0, scaleX: 1, scaleY: 1 }, 1); // not far enough: back to full-screen

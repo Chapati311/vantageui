@@ -34,7 +34,7 @@ export function ThemesPage({ onBack }: { onBack: () => void }) {
     <SettingsPage title="Themes" onBack={onBack}>
       {GROUPS.map(({ group, label, note }) => (
         <Section key={group} label={label} note={note}>
-          <div className={styles.tiles}>
+          <div className={`${styles.tiles} ${styles.tilesTwo}`}>
             {presetsIn(group).map((preset) => (
               <Pressable
                 key={preset.id}
