@@ -1,0 +1,111 @@
+.art {
+  width: calc(1.6 * var(--grid-cell));
+  height: calc(1.6 * var(--grid-cell));
+  align-self: center;
+}
+
+.line {
+  fill: none;
+  stroke: var(--color-hairline);
+  stroke-width: 1;
+}
+
+.dot {
+  fill: var(--text-primary);
+  animation: blink 1.6s ease-in-out infinite;
+}
+
+.dotFaint {
+  fill: var(--text-primary);
+  opacity: 0.45;
+}
+
+.accent {
+  fill: var(--color-accent);
+  filter: var(--glow-accent-filter);
+}
+
+.orbit {
+  transform-origin: 60px 60px;
+  animation: spin 4s linear infinite;
+}
+
+.orbit .dot {
+  animation: none;
+}
+
+.spinSlow {
+  transform-origin: 60px 60px;
+  animation: drift 6s ease-in-out infinite alternate;
+}
+
+.app,
+.lockedApp {
+  fill: none;
+  stroke: var(--text-primary);
+  stroke-width: 1.5;
+}
+
+.lockedApp {
+  animation: grey 3s ease-in-out infinite;
+}
+
+.lock {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.fill {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 264;
+  animation: fillUp 3s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes drift {
+  to {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes grey {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes fillUp {
+  0% {
+    stroke-dashoffset: 264;
+  }
+  70%,
+  100% {
+    stroke-dashoffset: 66;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art * {
+    animation: none !important;
+  }
+}
+
+:root[data-reduce-motion] .art * {
+  animation: none !important;
+}
