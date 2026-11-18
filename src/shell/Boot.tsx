@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { DotLogo } from '../components/DotLogo';
-import { DURATION_NORMAL_MS } from '../theme/motion';
 import styles from './Boot.module.css';
 
 const OS_NAME = 'VANTAGE OS';
@@ -20,7 +19,7 @@ export function Boot({ onDone }: BootProps) {
 
   useEffect(() => {
     const fade = window.setTimeout(() => setFading(true), BOOT_MS);
-    const done = window.setTimeout(onDone, BOOT_MS + DURATION_NORMAL_MS);
+    const done = window.setTimeout(onDone, BOOT_MS + 460);
     return () => {
       window.clearTimeout(fade);
       window.clearTimeout(done);
@@ -31,7 +30,7 @@ export function Boot({ onDone }: BootProps) {
   return (
     <div className={`${styles.boot} ${fading ? styles.fading : ''}`}>
       <div className={styles.logo}>
-        <DotLogo animated />
+        <DotLogo animated dissolve={fading} />
       </div>
       <div className={styles.name} aria-label={OS_NAME}>
         {[...OS_NAME].map((letter, index) => (

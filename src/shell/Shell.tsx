@@ -1,4 +1,6 @@
+import { motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { SPRING } from '../theme/tokens';
 import { BellIcon, GridIcon, LockIcon, SoundIcon, WifiIcon } from '../components/glyphs';
 import { registerShell, runAction } from '../system/actions';
 import { getApp, type AppDefinition } from '../system/appRegistry';
@@ -57,6 +59,8 @@ export function Shell() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [switcherOpen, setSwitcherOpen] = useState(false);
   const [passcodeOpen, setPasscodeOpen] = useState(false);
+  /** Counts unlocks: the home screen items pop in each time */
+  const [unlockCount, setUnlockCount] = useState(0);
   /** A Lock In-locked app someone tried to open */
   const [lockedApp, setLockedApp] = useState<string | null>(null);
   /** Recently opened apps, most recent first (for the app switcher) */
@@ -109,6 +113,7 @@ export function Shell() {
       if (hasPasscode()) setPasscodeOpen(true);
       else {
         setLocked(false);
+        setUnlockCount((count) => count + 1);
         morningSummary();
       }
     },
@@ -214,15 +219,19 @@ export function Shell() {
             picture every frame would be too slow on the A13).
           */}
           <Wallpaper place="home" paused={locked || openApp !== null || homeBlur > 0} />
-          {mode === 'focus' || mode === 'winddown' ? (
-            <ModeHome mode={mode} onOpenApp={openAppFrom} />
-          ) : (
-          <HomeScreen
-            onOpenApp={openAppFrom}
-            onSwipeDown={openSearch}
-            onSwipeDownFromTop={swipeDownFromTop}
-          />
-          )}
+          {/* The home screen sinks back a little while an app is open */}
+          <motion.div
+            className={styles.homeLayer}
+            initial={false}
+            animate={{ scale: openApp ? 0.94 : 1, opacity: openApp ? 0.6 : 1 }}
+            transition={SPRING.app}
+          >
+            {mode === 'focus' || mode === 'winddown' ? (
+              <ModeHome mode={mode} onOpenApp={openAppFrom} />
+            ) : (
+              <HomeScreen onOpenApp={openAppFrom} onSwipeDown={openSearch} onSwipeDownFromTop={swipeDownFromTop} enterKey={unlockCount} />
+            )}
+          </motion.div>
         </>
       )}
       <Search
@@ -264,6 +273,7 @@ export function Shell() {
         onSuccess={() => {
           setPasscodeOpen(false);
           setLocked(false);
+          setUnlockCount((count) => count + 1);
           morningSummary();
         }}
         onCancel={() => setPasscodeOpen(false)}

@@ -33,6 +33,9 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
   // changing it moves the screen without re-rendering React.
   const progress = useMotionValue(locked ? 0 : 1);
   const y = useTransform(progress, (value) => `${-value * 100}%`);
+  // The clock lifts away a little faster than the screen, and fades
+  const clockY = useTransform(progress, [0, 1], [0, -80]);
+  const clockOpacity = useTransform(progress, [0, 0.6], [1, 0]);
   const target = useRef(locked ? 0 : 1);
 
   const settle = (open: boolean, velocity: number) => {
@@ -86,9 +89,9 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
         {lockNotifications === 'count' ? <NotificationCount count={notificationCount} /> : <span />}
         <BatteryIndicator />
       </div>
-      <div className={`${styles.clock} ${clockPosition === 'center' ? styles.centered : ''}`}>
+      <motion.div className={`${styles.clock} ${clockPosition === 'center' ? styles.centered : ''}`} style={{ y: clockY, opacity: clockOpacity }}>
         <LockClock />
-      </div>
+      </motion.div>
       <div className={styles.live}>
         <LivePill unlockFirst />
       </div>

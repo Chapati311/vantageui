@@ -16,3 +16,9 @@
     linear-gradient(rgb(0 0 0 / var(--winddown-dim)), rgb(0 0 0 / var(--winddown-dim)));
   transition: background 60s linear;
 }
+
+/* Holds the home screen so it can sink back behind an open app */
+.homeLayer {
+  position: absolute;
+  inset: 0;
+}

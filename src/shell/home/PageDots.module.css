@@ -1,4 +1,5 @@
 .dots {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-8);
@@ -12,7 +13,13 @@
   transition: background-color var(--fade-fast) linear;
 }
 
+/* The bright dot: it stretches between dots while the pages move */
 .active {
+  position: absolute;
+  top: 50%;
+  height: var(--space-4);
+  margin-top: -2px;
+  border-radius: var(--radius-pill);
   background: var(--text-primary);
 }
 

@@ -23,10 +23,16 @@
   color: var(--color-accent);
 }
 
-/* A dot fades on or off; each dot starts a moment after the one before it */
+/* A dot fades on or off; each dot starts a moment after the one before it.
+   A dot that lights up also pops: it grows from a little smaller, with a
+   tiny overshoot. Old dots shrink back as they fade. */
 .on,
 .off {
-  transition: opacity var(--fade-fast) linear;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity var(--fade-fast) linear,
+    transform var(--fade-normal) cubic-bezier(0.3, 1.6, 0.5, 1);
 }
 
 .instant .on,
@@ -36,12 +42,14 @@
 
 .on {
   opacity: 1;
+  transform: scale(1);
 }
 
 /* Unlit "ghost" dots: the same grid for every part, faintly visible like an LED panel */
 .off {
   fill: var(--text-primary);
   opacity: var(--ghost, 0.07);
+  transform: scale(0.7);
 }
 
 /* The colon dims and comes back once per second. It never switches off hard. */

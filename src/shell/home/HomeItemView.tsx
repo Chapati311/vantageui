@@ -1,4 +1,5 @@
-import { motion } from 'motion/react';
+import { motion, useAnimate } from 'motion/react';
+import { useEffect } from 'react';
 import { AppTile, FolderTile } from '../../components/AppTile';
 import { WidgetEditContext } from './widgetEdit';
 import { Icon } from '../../components/Icon';
@@ -50,13 +51,22 @@ interface HomeItemViewProps {
   onRemove: (id: string) => void;
   /** Bumped when "Edit" is chosen in the item's menu */
   editTick?: number;
+  /** Bumped on every unlock: the item pops in, `enterOrder` x 30 ms after the first */
+  enterKey?: number;
+  enterOrder?: number;
 }
 
 /**
  * One home screen item at its place on the grid. When its place changes
  * (something was rearranged) it springs there.
  */
-export function HomeItemView({ item, x, y, width, height, editing, hidden, index, onResize, onRemove, editTick }: HomeItemViewProps) {
+export function HomeItemView({ item, x, y, width, height, editing, hidden, index, onResize, onRemove, editTick, enterKey = 0, enterOrder = 0 }: HomeItemViewProps) {
+  const [scope, animateItem] = useAnimate();
+  useEffect(() => {
+    if (!enterKey || !scope.current) return;
+    void animateItem(scope.current, { opacity: [0, 1], scale: [0.86, 1] }, { ...SPRING.ui, delay: enterOrder * 0.03 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enterKey]);
   const widget = item.kind === 'widget' ? getWidget(item.ref) : undefined;
   if (!widget && !getApp(item.ref) && item.kind !== 'folder') return null;
 
@@ -74,7 +84,7 @@ export function HomeItemView({ item, x, y, width, height, editing, hidden, index
       // A hidden item (its copy is being dragged) jumps instead of springing.
       transition={hidden ? { duration: 0 } : SPRING.ui}
     >
-      <motion.div className={styles.press} {...(tappable ? pressState : {})}>
+      <motion.div ref={scope} className={styles.press} {...(tappable ? pressState : {})}>
         <div
           className={[
             styles.content,

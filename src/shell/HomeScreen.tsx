@@ -1,4 +1,5 @@
-import { AnimatePresence, motion, useMotionValue } from 'motion/react';
+import { AnimatePresence, motion, useMotionValue, useMotionValueEvent } from 'motion/react';
+import { homePageProgress } from './home/homeMotion';
 import { EditIcon, GridIcon, ShareIcon, TrashIcon } from '../components/glyphs';
 import { getApp } from '../system/appRegistry';
 import { QUICK_ACTIONS } from '../system/quickActions';
@@ -39,6 +40,8 @@ interface HomeScreenProps {
   /** Swipe down starting at the very top */
   /** Gets where along the top edge the swipe started (px from the left) */
   onSwipeDownFromTop?: (x: number) => void;
+  /** Goes up on every unlock: the items pop in, one after the other */
+  enterKey?: number;
 }
 
 /**
@@ -47,7 +50,7 @@ interface HomeScreenProps {
  * Every size and position comes from the design system grid (tokens.css).
  * Long-press to rearrange and resize.
  */
-export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeScreenProps) {
+export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKey = 0 }: HomeScreenProps) {
   const live = useHasLiveActivity();
   const surfaceRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -55,6 +58,11 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
 
   // Motion values: moving these moves things on screen without re-rendering React.
   const trackX = useMotionValue(0); // the row of pages
+  // Share where the pages are (wallpaper parallax, stretching page dots)
+  useMotionValueEvent(trackX, 'change', (value) => {
+    const width = surfaceRef.current?.offsetWidth || window.innerWidth;
+    homePageProgress.set(-value / width);
+  });
   const ghostX = useMotionValue(0); // the copy of an item that follows the finger
   const ghostY = useMotionValue(0);
 
@@ -239,6 +247,8 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop }: HomeS
                 onResize={resizeItem}
                 onRemove={(id) => void runAction('home.removeWidget', { itemId: id })}
                 editTick={editTicks[item.id]}
+                enterKey={item.page === page ? enterKey : 0}
+                enterOrder={item.row * 4 + item.col}
               />
             ))}
           {dropRect && (

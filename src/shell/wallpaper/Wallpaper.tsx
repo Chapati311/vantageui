@@ -5,6 +5,7 @@ import { useTheme } from '../../system/theme';
 import { useWallpaperPhoto } from '../../system/wallpaperPhoto';
 import { gradientCss, gradientStops, type WallpaperConfig } from '../../theme/wallpapers';
 import { LockOrbit } from '../LockOrbit';
+import { homePageProgress } from '../home/homeMotion';
 import { LiveAurora } from './LiveAurora';
 import { LivePixel } from './LivePixel';
 import { LiveStarfield } from './LiveStarfield';
@@ -40,6 +41,8 @@ export function Wallpaper({ place, config, paused = false, progress }: Wallpaper
   const y = useTransform(swipe, (value) => `${value * 12}vh`);
   const scale = useTransform(swipe, [0, 1], [1, 1.15]);
   const opacity = useTransform(swipe, [0, 1], [1, 0.4]);
+  // Home: the wallpaper moves a little slower than the pages (depth)
+  const homeX = useTransform(homePageProgress, (page) => -page * 10);
 
   const wallpaper = config?.kind === 'theme' || !config ? theme.wallpaper : config;
   const blurred = place === 'home';
@@ -97,7 +100,7 @@ export function Wallpaper({ place, config, paused = false, progress }: Wallpaper
     >
       <motion.div
         className={`${styles.layer} ${blurred ? styles.blurred : ''}`}
-        style={place === 'lock' && !ownSwipe ? (parallax ? { y, scale, opacity } : { opacity }) : undefined}
+        style={place === 'lock' && !ownSwipe ? (parallax ? { y, scale, opacity } : { opacity }) : place === 'home' && parallax ? { x: homeX, scale: 1.06 } : undefined}
       >
         {layer}
       </motion.div>

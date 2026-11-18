@@ -8,12 +8,19 @@
   gap: var(--space-32);
   background: var(--color-bg);
   touch-action: none;
-  transition: opacity var(--fade-normal) linear;
+  transition: opacity 0.45s ease-out;
 }
 
+/* Dissolving into the lock screen: the dots scatter, the name fades, the
+   background gives way (the lock screen is already drawn underneath) */
 .fading {
   opacity: 0;
   pointer-events: none;
+}
+
+.fading .name {
+  transition: opacity 0.2s linear;
+  opacity: 0;
 }
 
 /* The logo is one grid cell: the one accent on this screen */
