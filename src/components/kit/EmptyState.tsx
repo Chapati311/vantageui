@@ -25,15 +25,24 @@ export function EmptyState({ kind = 'empty', title, message, icon, action }: Emp
   return (
     <div className={styles.state} role={kind === 'error' ? 'alert' : 'status'} aria-busy={kind === 'loading'}>
       {kind === 'loading' ? (
-        <span className={styles.dots} aria-hidden="true">
-          <span />
-          <span />
-          <span />
+        // A small dot-matrix that shimmers in a diagonal wave
+        <span className={styles.matrix} aria-hidden="true">
+          {Array.from({ length: 21 }, (_, i) => (
+            <span key={i} style={{ animationDelay: `${((i % 7) + Math.floor(i / 7)) * 70}ms` }} />
+          ))}
         </span>
       ) : (
         Glyph && (
           <span className={`${styles.icon} ${kind === 'error' ? styles.error : ''}`}>
             <Glyph />
+            {/* Three dots drift slowly around the ring */}
+            {kind === 'empty' && (
+              <span className={styles.orbit} aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </span>
+            )}
           </span>
         )
       )}

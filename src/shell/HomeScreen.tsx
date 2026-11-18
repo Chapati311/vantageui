@@ -1,13 +1,13 @@
-import { AnimatePresence, motion, useMotionValue, useMotionValueEvent } from 'motion/react';
+import { Toast } from '../components/kit/Toast';
+import { motion, useMotionValue, useMotionValueEvent } from 'motion/react';
 import { homePageProgress } from './home/homeMotion';
 import { EditIcon, GridIcon, ShareIcon, TrashIcon } from '../components/glyphs';
 import { getApp } from '../system/appRegistry';
 import { QUICK_ACTIONS } from '../system/quickActions';
-import { SPRING } from '../theme/tokens';
 import { shapeOf, type ScreenRect } from './AppView';
 import { FolderView } from './home/FolderView';
 import { ItemMenu, type ItemMenuAction } from './home/ItemMenu';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable } from '../components/Pressable';
 import { getWidget } from './widgets/widgetRegistry';
 import { Dock } from './home/Dock';
@@ -167,12 +167,8 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
   const [menu, setMenu] = useState<{ id: string; shape: ScreenRect } | null>(null);
   const [editTicks, setEditTicks] = useState<Record<string, number>>({});
   const [toast, setToast] = useState<string | null>(null);
+  const clearToast = useCallback(() => setToast(null), []);
   const [openFolder, setOpenFolder] = useState<{ name: string; apps: string[] } | null>(null);
-  useEffect(() => {
-    if (!toast) return;
-    const timer = window.setTimeout(() => setToast(null), 2600);
-    return () => window.clearTimeout(timer);
-  }, [toast]);
 
   const menuItem = menu ? layoutRef.current.find((item) => item.id === menu.id) : undefined;
   const menuWidget = menuItem?.kind === 'widget' ? getWidget(menuItem.ref) : undefined;
@@ -303,13 +299,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
         onClose={() => setMenu(null)}
       />
       <FolderView folder={openFolder} onOpenApp={(appId, from) => onOpenApp?.(appId, from)} onClose={() => setOpenFolder(null)} />
-      <AnimatePresence>
-        {toast && (
-          <motion.div key="toast" className={`label ${styles.toast}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={SPRING.ui}>
-            {toast}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast message={toast} kind="success" onDone={clearToast} />
     </div>
   );
 }

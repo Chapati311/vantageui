@@ -69,9 +69,11 @@
 /* ---- Switching theme: a 300ms crossfade ---------------------------------------
    Browsers that support "view transitions" crossfade the whole screen.
    The others (like iOS 16) fade the colors of every element instead. */
+/* The new theme grows in a circle from the tap (set in theme.ts); the old one stays put underneath */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 300ms;
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 .theme-fading,

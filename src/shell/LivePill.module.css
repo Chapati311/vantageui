@@ -2,9 +2,9 @@
 .pill {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-8);
+  gap: var(--space-4);
   height: var(--space-32);
-  padding: 0 var(--space-12) 0 var(--space-4);
+  padding: 0 var(--space-4);
   border: var(--border-widget);
   border-radius: var(--radius-pill);
   background: var(--glass-bg);
@@ -30,12 +30,54 @@
   color: var(--text-secondary);
 }
 
+.main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  height: 100%;
+  max-width: calc(3 * var(--grid-cell));
+  padding: 0 var(--space-8) 0 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+}
+
+/* Long-pressed: taller, with round control buttons */
+.expanded {
+  height: calc(var(--space-32) + var(--space-12));
+  padding: 0 var(--space-8);
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-32);
+  height: var(--space-32);
+  border: 0;
+  border-radius: var(--radius-circle);
+  background: var(--color-hairline);
+  color: var(--text-primary);
+}
+
+.control svg {
+  width: var(--space-16);
+  height: var(--space-16);
+}
+
 .ring svg {
   width: var(--space-12);
   height: var(--space-12);
 }
 
 .time {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: var(--text-13);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -52,6 +94,10 @@
   padding-left: 2px;
 }
 
+.ring {
+  flex-shrink: 0;
+}
+
 .compact .ring {
   width: calc(var(--space-16) + var(--space-4));
   height: calc(var(--space-16) + var(--space-4));
@@ -63,5 +109,9 @@
 }
 
 .compact .time {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: var(--text-11);
 }

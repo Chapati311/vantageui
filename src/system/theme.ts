@@ -426,9 +426,20 @@ function apply() {
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next.bg);
   };
 
-  const doc = document as Document & { startViewTransition?: (callback: () => void) => unknown };
+  const doc = document as Document & { startViewTransition?: (callback: () => void) => { ready: Promise<void> } };
   if (major && !reduce && doc.startViewTransition) {
-    doc.startViewTransition(update);
+    // The new theme spreads out in a circle from the last tap
+    const transition = doc.startViewTransition(update);
+    const { x, y } = lastTap;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    transition.ready
+      .then(() => {
+        root.animate(
+          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+          { duration: 520, easing: 'cubic-bezier(0.2, 0.9, 0.3, 1)', pseudoElement: '::view-transition-new(root)' },
+        );
+      })
+      .catch(() => {});
   } else if (major && !reduce) {
     root.classList.add('theme-fading');
     update();
@@ -449,8 +460,19 @@ function scheduleApply() {
   if (!frame) frame = requestAnimationFrame(apply);
 }
 
+/** Where the finger last touched, so a theme change can grow from there. */
+const lastTap = { x: innerWidth / 2, y: innerHeight / 2 };
+
 /** Call once at startup. */
 export function initTheme(): void {
+  window.addEventListener(
+    'pointerdown',
+    (event) => {
+      lastTap.x = event.clientX;
+      lastTap.y = event.clientY;
+    },
+    { capture: true, passive: true },
+  );
   apply();
   subscribeToSettings(scheduleApply);
   subscribeToWallpaperPhoto(scheduleApply);

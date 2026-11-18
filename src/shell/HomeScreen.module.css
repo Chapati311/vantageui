@@ -97,18 +97,3 @@
 }
 
 /* Short messages from quick actions ("Timer started") */
-.toast {
-  position: absolute;
-  left: 50%;
-  bottom: calc(var(--dock-bottom) + var(--dock-height) + var(--space-32));
-  z-index: 16;
-  translate: -50% 0;
-  max-width: calc(100% - 2 * var(--grid-margin));
-  padding: var(--space-12) var(--space-24);
-  border-radius: var(--radius-pill);
-  background: var(--text-primary);
-  color: var(--color-bg);
-  text-align: center;
-  text-transform: none;
-  letter-spacing: 0;
-}

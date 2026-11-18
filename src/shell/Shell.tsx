@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { MotionConfig, motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SPRING } from '../theme/tokens';
 import { BellIcon, GridIcon, LockIcon, SoundIcon, WifiIcon } from '../components/glyphs';
@@ -52,6 +52,7 @@ function findIconRect(appId: string): ScreenRect | null {
  */
 export function Shell() {
   const [booting, setBooting] = useState(() => getSettings().bootAnimation);
+  const [reduceMotion] = useSetting('reduceMotion');
   const [locked, setLocked] = useState(true);
   const [openApp, setOpenApp] = useState<OpenApp | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -159,8 +160,7 @@ export function Shell() {
   useCustomModeSchedule();
   useDailyShuffle();
 
-  const openAppFrom = (appId: string, from: ScreenRect | null) =>
-    void runAction('app.open', { appId, from: from as DOMRect | null });
+  const openAppFrom = (appId: string, from: ScreenRect | null) => void runAction('app.open', { appId, from: from as DOMRect | null });
 
   // Things search can do besides opening apps.
   const actions = useMemo<SearchAction[]>(
@@ -208,84 +208,87 @@ export function Shell() {
   const retro = theme.retro !== null;
 
   return (
-    <div className={styles.shell}>
-      {retro ? (
-        <RetroHome onOpenApp={(appId) => openAppFrom(appId, null)} onOpenSearch={openSearch} />
-      ) : (
-        <>
-          {/*
+    // Reduce motion (in Settings): springs become instant fades everywhere
+    <MotionConfig reducedMotion={reduceMotion ? 'always' : 'user'}>
+      <div className={styles.shell}>
+        {retro ? (
+          <RetroHome onOpenApp={(appId) => openAppFrom(appId, null)} onOpenSearch={openSearch} />
+        ) : (
+          <>
+            {/*
             The home screen's wallpaper. It stops moving while nobody can see it
             (locked, or an app is open) and when it is blurred (re-blurring a moving
             picture every frame would be too slow on the A13).
           */}
-          <Wallpaper place="home" paused={locked || openApp !== null || homeBlur > 0} />
-          {/* The home screen sinks back a little while an app is open */}
-          <motion.div
-            className={styles.homeLayer}
-            initial={false}
-            animate={{ scale: openApp ? 0.94 : 1, opacity: openApp ? 0.6 : 1 }}
-            transition={SPRING.app}
-          >
-            {mode === 'focus' || mode === 'winddown' ? (
-              <ModeHome mode={mode} onOpenApp={openAppFrom} />
-            ) : (
-              <HomeScreen onOpenApp={openAppFrom} onSwipeDown={openSearch} onSwipeDownFromTop={swipeDownFromTop} enterKey={unlockCount} />
-            )}
-          </motion.div>
-        </>
-      )}
-      <Search
-        open={searchOpen}
-        inputRef={searchInput}
-        actions={actions}
-        recents={recents}
-        onClose={closeSearch}
-        onOpenApp={openAppFrom}
-      />
-      {openApp && (
-        <AppView
-          key={openApp.app.id}
-          app={openApp.app}
-          from={openApp.from}
-          // Back into what it came out of (a widget), or its icon
-          getReturnRect={() => openApp.from ?? findIconRect(openApp.app.id)}
-          onClosed={() => setOpenApp(null)}
-          onOpenSwitcher={() => void runAction('shell.openAppSwitcher', {})}
-          onSwipeDownFromTop={swipeDownFromTop}
-          onSwitchApp={(direction) => {
-            const next = recents[direction === 1 ? 1 : recents.length - 1];
-            if (next && next !== openApp.app.id) void runAction('app.open', { appId: next });
-          }}
+            <Wallpaper place="home" paused={locked || openApp !== null || homeBlur > 0} />
+            {/* The home screen sinks back a little while an app is open */}
+            <motion.div
+              className={styles.homeLayer}
+              initial={false}
+              animate={{ scale: openApp ? 0.94 : 1, opacity: openApp ? 0.6 : 1 }}
+              transition={SPRING.app}
+            >
+              {mode === 'focus' || mode === 'winddown' ? (
+                <ModeHome mode={mode} onOpenApp={openAppFrom} />
+              ) : (
+                <HomeScreen onOpenApp={openAppFrom} onSwipeDown={openSearch} onSwipeDownFromTop={swipeDownFromTop} enterKey={unlockCount} />
+              )}
+            </motion.div>
+          </>
+        )}
+        <Search
+          open={searchOpen}
+          inputRef={searchInput}
+          actions={actions}
+          recents={recents}
+          onClose={closeSearch}
+          onOpenApp={openAppFrom}
         />
-      )}
-      <AppSwitcher
-        open={switcherOpen}
-        recents={recents}
-        onOpen={(appId, from) => void runAction('app.open', { appId, from: from as DOMRect })}
-        onRemove={(appId) => setRecents((list) => list.filter((id) => id !== appId))}
-        onClose={() => setSwitcherOpen(false)}
-      />
-      <QuickSettings open={quickSettingsOpen} onClose={() => setQuickSettingsOpen(false)} />
-      <NotificationCenter open={notificationsOpen} onClose={() => setNotificationsOpen(false)} />
-      {retro ? <RetroLock locked={locked} onUnlock={unlock} /> : <LockScreen locked={locked} onUnlock={unlock} />}
-      <PasscodeScreen
-        open={passcodeOpen}
-        onSuccess={() => {
-          setPasscodeOpen(false);
-          setLocked(false);
-          setUnlockCount((count) => count + 1);
-          morningSummary();
-        }}
-        onCancel={() => setPasscodeOpen(false)}
-      />
-      <LockedApp appId={lockedApp} onClose={() => setLockedApp(null)} />
-      {/* Time and battery along the top, above home and apps (the lock screen has its own) */}
-      <StatusStrip hidden={retro || locked} />
-      <AlarmRinging />
-      <TimerBanner />
-      {/* Wind Down: a warm layer and slow dimming over everything (touches go through) */}
-      <div className={styles.windDown} aria-hidden="true" />
-      {booting && <Boot onDone={() => setBooting(false)} />}
-    </div>
+        {openApp && (
+          <AppView
+            key={openApp.app.id}
+            app={openApp.app}
+            from={openApp.from}
+            // Back into what it came out of (a widget), or its icon
+            getReturnRect={() => openApp.from ?? findIconRect(openApp.app.id)}
+            onClosed={() => setOpenApp(null)}
+            onOpenSwitcher={() => void runAction('shell.openAppSwitcher', {})}
+            onSwipeDownFromTop={swipeDownFromTop}
+            onSwitchApp={(direction) => {
+              const next = recents[direction === 1 ? 1 : recents.length - 1];
+              if (next && next !== openApp.app.id) void runAction('app.open', { appId: next });
+            }}
+          />
+        )}
+        <AppSwitcher
+          open={switcherOpen}
+          recents={recents}
+          onOpen={(appId, from) => void runAction('app.open', { appId, from: from as DOMRect })}
+          onRemove={(appId) => setRecents((list) => list.filter((id) => id !== appId))}
+          onClose={() => setSwitcherOpen(false)}
+        />
+        <QuickSettings open={quickSettingsOpen} onClose={() => setQuickSettingsOpen(false)} />
+        <NotificationCenter open={notificationsOpen} onClose={() => setNotificationsOpen(false)} />
+        {retro ? <RetroLock locked={locked} onUnlock={unlock} /> : <LockScreen locked={locked} onUnlock={unlock} />}
+        <PasscodeScreen
+          open={passcodeOpen}
+          onSuccess={() => {
+            setPasscodeOpen(false);
+            setLocked(false);
+            setUnlockCount((count) => count + 1);
+            morningSummary();
+          }}
+          onCancel={() => setPasscodeOpen(false)}
+        />
+        <LockedApp appId={lockedApp} onClose={() => setLockedApp(null)} />
+        {/* Time and battery along the top, above home and apps (the lock screen has its own) */}
+        <StatusStrip hidden={retro || locked} />
+        <AlarmRinging />
+        <TimerBanner />
+        {/* Wind Down: a warm layer and slow dimming over everything (touches go through) */}
+        <div className={styles.windDown} aria-hidden="true" />
+        {booting && <Boot onDone={() => setBooting(false)} />}
+      </div>
+    </MotionConfig>
   );
 }

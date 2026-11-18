@@ -160,16 +160,3 @@
   flex: 1;
 }
 
-.toast {
-  position: absolute;
-  left: 50%;
-  bottom: calc(var(--dock-bottom) + var(--space-32));
-  translate: -50% 0;
-  padding: var(--space-12) var(--space-24);
-  border-radius: var(--radius-pill);
-  background: var(--text-primary);
-  color: var(--color-bg);
-  text-transform: none;
-  letter-spacing: 0;
-  white-space: nowrap;
-}

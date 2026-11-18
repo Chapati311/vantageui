@@ -1,5 +1,6 @@
+import { Toast } from '../components/kit/Toast';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useMemo, useRef, useState, type ComponentType, type RefObject } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType, type RefObject } from 'react';
 import { setCustomiseSection } from '../apps/customise/customiseNav';
 import { SESSION_TYPES, startSession } from '../apps/lockin/focusStore';
 import { newAlarm } from '../apps/clock/alarmStore';
@@ -132,17 +133,13 @@ const CLOSE_SWIPE = 50;
 export function Search({ open, inputRef, actions, recents, onClose, onOpenApp }: SearchProps) {
   const [query, setQuery] = useState('');
   const [toast, setToast] = useState<string | null>(null);
+  const clearToast = useCallback(() => setToast(null), []);
   const swipeStartY = useRef<number | null>(null);
 
   useEffect(() => {
     if (open) setQuery('');
   }, [open]);
 
-  useEffect(() => {
-    if (!toast) return;
-    const timer = window.setTimeout(() => setToast(null), 2200);
-    return () => window.clearTimeout(timer);
-  }, [toast]);
 
   const q = query.trim();
   const math = useMemo(() => calculate(q), [q]);
@@ -343,13 +340,7 @@ export function Search({ open, inputRef, actions, recents, onClose, onOpenApp }:
         </AnimatePresence>
       </div>
 
-      <AnimatePresence>
-        {toast && (
-          <motion.div key="toast" className={`label ${styles.toast}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={SPRING.ui}>
-            {toast}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast message={toast} kind="success" onDone={clearToast} />
     </motion.div>
   );
 }

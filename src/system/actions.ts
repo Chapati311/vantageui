@@ -11,6 +11,7 @@ import {
   type ClockTab,
 } from '../apps/clock/clockStore';
 import { openGame, type GameId } from '../apps/arcade/arcadeStore';
+import { next as nextTrack, previous as previousTrack, togglePlay } from './musicPlayer';
 import { deleteAlarm, saveAlarm, setAlarmEnabled, snooze, stopRinging, updateAlarmSettings, type Alarm, type AlarmSettings } from '../apps/clock/alarmStore';
 import { addWidget, removeHomeItem } from '../shell/home/layoutStore';
 import type { WidgetSize } from '../shell/widgets/types';
@@ -259,6 +260,11 @@ const ACTIONS = {
     setReminderDone(id, done),
   ),
   'reminders.delete': define<{ id: string }>('Delete a reminder.', ({ id }) => deleteReminder(id)),
+
+  // ---- Music (your own songs)
+  'music.togglePlay': define<Record<string, never>>('Play or pause the current song.', () => togglePlay()),
+  'music.next': define<Record<string, never>>('Skip to the next song.', () => nextTrack()),
+  'music.previous': define<Record<string, never>>('Go back to the previous song.', () => previousTrack()),
 
   // ---- Weather
   'weather.refresh': define<Record<string, never>>('Download the latest weather.', () => refreshWeather(true)),

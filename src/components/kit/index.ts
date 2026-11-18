@@ -8,6 +8,7 @@ export { Button } from './Button';
 export { ContextMenu, type MenuItem } from './ContextMenu';
 export { Dial } from './Dial';
 export { EmptyState } from './EmptyState';
+export { Toast } from './Toast';
 export { Overlay, OverlayLayer } from './OverlayLayer';
 export { Row } from './Row';
 export { ScrollWheel } from './ScrollWheel';

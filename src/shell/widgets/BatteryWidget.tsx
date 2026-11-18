@@ -28,6 +28,8 @@ export function BatteryWidget() {
           strokeDasharray={CIRCUMFERENCE}
           strokeDashoffset={CIRCUMFERENCE * (1 - level)}
         />
+        {/* Charging: a wave of dots runs around the ring */}
+        {battery?.charging && <circle className={styles.charge} cx="50" cy="50" r={RADIUS} pathLength={100} />}
       </svg>
       <div className={styles.percent} aria-label="Battery">
         {/* narrowOne: lets "100" fit inside a one-cell circle */}
