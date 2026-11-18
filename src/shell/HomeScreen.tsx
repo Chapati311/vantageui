@@ -1,6 +1,7 @@
 import { Toast } from '../components/kit/Toast';
 import { motion, useMotionValue, useMotionValueEvent } from 'motion/react';
 import { homePageProgress } from './home/homeMotion';
+import { setCustomiseSection } from '../apps/customise/customiseNav';
 import { EditIcon, GridIcon, ShareIcon, TrashIcon } from '../components/glyphs';
 import { getApp } from '../system/appRegistry';
 import { QUICK_ACTIONS } from '../system/quickActions';
@@ -34,7 +35,7 @@ import styles from './HomeScreen.module.css';
 
 interface HomeScreenProps {
   /** An app icon was tapped. `from` is where the icon is on screen. */
-  onOpenApp?: (appId: string, from: ScreenRect) => void;
+  onOpenApp?: (appId: string, from: ScreenRect | null) => void;
   /** Swipe down in the middle of the screen */
   onSwipeDown?: () => void;
   /** Swipe down starting at the very top */
@@ -221,6 +222,12 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
     },
     onSwipeDown,
     onSwipeDownFromTop,
+    // Hold the wallpaper: Customise > Wallpapers. Double-tap empty space: lock.
+    onLongPressEmpty: () => {
+      setCustomiseSection('wallpapers');
+      onOpenApp?.('customise', null);
+    },
+    onDoubleTapEmpty: () => void runAction('shell.lock', {}),
   });
 
   const draggedItem = drag ? layout.find((item) => item.id === drag.id) : undefined;

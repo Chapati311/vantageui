@@ -38,6 +38,8 @@ interface Options {
   layout: HomeItem[];
   page: number;
   pageCount: number;
+  /** The leftmost page: -1 when the Today view sits left of page 1, else 0 */
+  minPage?: number;
   editing: boolean;
   /** Where the row of pages is: 0 = page 1, -screenWidth = page 2, ... */
   trackX: MotionValue<number>;
@@ -53,6 +55,10 @@ interface Options {
   /** Long-press on an item outside edit mode: its menu */
   onLongPressItem?: (id: string) => void;
   onSwipeDown?: () => void;
+  /** Long-press on empty space (the wallpaper) outside edit mode */
+  onLongPressEmpty?: () => void;
+  /** Two quick taps on empty space */
+  onDoubleTapEmpty?: () => void;
   /** Gets where along the top edge the swipe started (px from the left) */
   onSwipeDownFromTop?: (x: number) => void;
 }
@@ -64,7 +70,10 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
  *  - swipe left/right      -> change page. The pages follow the finger 1:1,
  *                             rubber-band at the ends, and a spring finishes
  *                             the move. A quick flick is enough.
- *  - long-press            -> edit mode (and pick up the item under the finger)
+ *  - long-press an item    -> its menu; long-press the wallpaper -> wallpaper picker
+ *  - pinch in              -> edit mode (and in edit mode, hold an item to drag it)
+ *  - double-tap empty      -> lock
+ *  - two fingers down      -> search
  *  - drag in edit mode     -> move an item, hold at a screen edge to change page
  *  - swipe down            -> search (or quick settings, from the top edge)
  *  - tap                   -> open an app / leave edit mode
@@ -151,14 +160,14 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
     };
 
     const movePaging = () => {
-      const { pageCount, metrics, trackX } = latest.current;
+      const { pageCount, metrics, trackX, minPage = 0 } = latest.current;
       if (!metrics) return;
       const furthest = -(pageCount - 1) * metrics.pitch;
-      trackX.set(rubberBand(trackStart + (pointerX - startX), furthest, 0));
+      trackX.set(rubberBand(trackStart + (pointerX - startX), furthest, -minPage * metrics.pitch));
     };
 
     const endPaging = (cancelled: boolean) => {
-      const { page, pageCount, metrics, trackX, setPage } = latest.current;
+      const { page, pageCount, metrics, trackX, setPage, minPage = 0 } = latest.current;
       mode = 'idle';
       paging.current = false;
       if (!metrics) return;
@@ -174,7 +183,7 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
           next = Math.round(position);
         }
       }
-      next = clamp(next, 0, pageCount - 1);
+      next = clamp(next, minPage, pageCount - 1);
       animate(trackX, -next * metrics.pitch, { ...SPRING.ui, velocity: velocityX * 1000 });
       if (next !== page) setPage(next);
     };
@@ -275,7 +284,7 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
 
     const onLongPress = () => {
       if (mode !== 'pressed') return;
-      const { editing, startEditing, onLongPressItem } = latest.current;
+      const { editing, startEditing, onLongPressItem, onLongPressEmpty, page } = latest.current;
       // Outside edit mode, holding an item shows its menu (Edit home screen is in there)
       if (!editing && pressedItemId && onLongPressItem) {
         mode = 'ignored';
@@ -283,10 +292,65 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
         onLongPressItem(pressedItemId);
         return;
       }
+      // Holding the wallpaper (not on the Today view): change the wallpaper
+      if (!editing && !pressedItemId) {
+        mode = 'ignored';
+        if (page >= 0 && onLongPressEmpty) {
+          navigator.vibrate?.(10);
+          onLongPressEmpty();
+        }
+        return;
+      }
       if (!editing) startEditing();
       if (pressedItemId) beginDrag(pressedItemId);
       else mode = 'ignored';
     };
+
+    // ---- Two fingers: pinch in = edit mode, swipe down = search ------------
+
+    const touches = new Map<number, { x: number; y: number; startX: number; startY: number }>();
+    let twoFingerDone = false;
+    const spread = () => {
+      const [a, b] = [...touches.values()];
+      return { now: Math.hypot(a.x - b.x, a.y - b.y), start: Math.hypot(a.startX - b.startX, a.startY - b.startY) };
+    };
+    const onAnyDown = (event: PointerEvent) => {
+      if (event.pointerType === 'mouse') return;
+      touches.set(event.pointerId, { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY });
+      if (touches.size === 2) {
+        twoFingerDone = false;
+        // A second finger cancels whatever the first one started
+        window.clearTimeout(longPressTimer);
+        if (mode === 'paging') endPaging(true);
+        if (mode === 'pressed' || mode === 'vertical') mode = 'ignored';
+      }
+    };
+    const onAnyMove = (event: PointerEvent) => {
+      const touch = touches.get(event.pointerId);
+      if (!touch) return;
+      touch.x = event.clientX;
+      touch.y = event.clientY;
+      if (touches.size !== 2 || twoFingerDone) return;
+      const { now, start } = spread();
+      const { editing, startEditing, onSwipeDown } = latest.current;
+      const down = Math.min(...[...touches.values()].map((t) => t.y - t.startY));
+      if (!editing && start > 0 && now < start * 0.7) {
+        twoFingerDone = true;
+        navigator.vibrate?.(10);
+        startEditing();
+      } else if (down > SWIPE_DOWN_MIN) {
+        twoFingerDone = true;
+        onSwipeDown?.();
+      }
+    };
+    const onAnyUp = (event: PointerEvent) => {
+      touches.delete(event.pointerId);
+    };
+
+    // ---- Double tap on empty space --------------------------------------------
+    let lastEmptyTap = 0;
+    let lastEmptyX = 0;
+    let lastEmptyY = 0;
 
     const onDown = (event: PointerEvent) => {
       if (mode !== 'idle' || !event.isPrimary) return;
@@ -351,6 +415,16 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
           if (!pressedItemId) stopEditing(); // tap empty space = done
         } else if (pressedItemId && !pressedControl) {
           onTapItem(pressedItemId);
+        } else if (!pressedItemId && latest.current.page >= 0 && !(event.target as Element).closest('button, a, input')) {
+          const now = event.timeStamp;
+          if (now - lastEmptyTap < 320 && Math.hypot(pointerX - lastEmptyX, pointerY - lastEmptyY) < 40) {
+            lastEmptyTap = 0;
+            latest.current.onDoubleTapEmpty?.();
+          } else {
+            lastEmptyTap = now;
+            lastEmptyX = pointerX;
+            lastEmptyY = pointerY;
+          }
         }
       } else if (mode === 'vertical') {
         mode = 'idle';
@@ -368,12 +442,20 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
     const onCancel = (event: PointerEvent) => finish(event, true);
     const onContextMenu = (event: Event) => event.preventDefault();
 
+    surface.addEventListener('pointerdown', onAnyDown, true);
+    surface.addEventListener('pointermove', onAnyMove, true);
+    surface.addEventListener('pointerup', onAnyUp, true);
+    surface.addEventListener('pointercancel', onAnyUp, true);
     surface.addEventListener('pointerdown', onDown);
     surface.addEventListener('pointermove', onMove);
     surface.addEventListener('pointerup', onUp);
     surface.addEventListener('pointercancel', onCancel);
     surface.addEventListener('contextmenu', onContextMenu);
     return () => {
+      surface.removeEventListener('pointerdown', onAnyDown, true);
+      surface.removeEventListener('pointermove', onAnyMove, true);
+      surface.removeEventListener('pointerup', onAnyUp, true);
+      surface.removeEventListener('pointercancel', onAnyUp, true);
       surface.removeEventListener('pointerdown', onDown);
       surface.removeEventListener('pointermove', onMove);
       surface.removeEventListener('pointerup', onUp);
