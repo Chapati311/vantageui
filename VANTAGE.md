@@ -1,5 +1,10 @@
 # Vantage inside Vantage OS (spec + build prompt for THIS repo)
 
+CHANGE: Vantage replaces the Lock In app. Focus, grades, school, work
+and stats live in Vantage. The OS keeps app blocking, Wind Down mode,
+live pill, widgets and silencing, all exposed as os.* actions for Vantage.
+The Vantage app icon gets the main spot in the dock.
+
 Vantage already exists as its own app in `C:\Users\Aaryan\Creations\vantage`
 (React + Vite + Tailwind, Supabase auth and edge functions `chat`, `speak`,
 `listen`, `gmail`, the shader orb, voice, grades, study, habits, journal,

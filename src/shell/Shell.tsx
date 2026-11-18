@@ -229,6 +229,7 @@ export function Shell() {
         open={searchOpen}
         inputRef={searchInput}
         actions={actions}
+        recents={recents}
         onClose={closeSearch}
         onOpenApp={openAppFrom}
       />

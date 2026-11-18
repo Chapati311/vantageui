@@ -143,6 +143,13 @@ Tabs (floating pill tab bar): Alarm, World, Stopwatch, Timer.
 
 ## 4. Lock In app
 
+> CHANGE: there is no separate Lock In app anymore. All of these features
+> live inside the Vantage app (built in the Vantage repo, see VANTAGE.md).
+> The OS only builds the phone-level parts: app blocking, Wind Down mode,
+> live pill, home widgets and notification silencing, which Vantage
+> controls through os.* actions. Remove the Lock In app and point its
+> home-screen spot, widgets and search results to Vantage.
+
 Preinstalled focus app for school and work. Tabs: Focus, School/Work,
 Wind Down, Stats. First-launch setup: student or working, country and
 school type, distraction apps. Connects to a home widget, the live pill
