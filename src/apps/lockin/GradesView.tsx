@@ -56,7 +56,7 @@ export function GradesView() {
               <span className={`${styles.badge} ${promotion.status === 'promoted' ? styles.good : promotion.status === 'edge' ? styles.close : styles.bad}`}>
                 {promotion.status === 'promoted' ? 'Promoted' : promotion.status === 'edge' ? 'On the edge' : 'At risk'}
               </span>
-              <span className={styles.small}>{promotion.reasons[0]}</span>
+              <span className={styles.small}>{promotion.status === 'promoted' ? `${rounded.length} subjects, all fine.` : promotion.reasons[0]}</span>
             </>
           ) : (
             <span className={styles.small}>Add subjects and grades to see your average.</span>

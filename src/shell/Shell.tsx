@@ -10,6 +10,7 @@ import { canOpenApp, openApp as openNativeApp } from '../system/nativeBridge';
 import { AlarmRinging } from './AlarmRinging';
 import { LockedApp } from './LockedApp';
 import { ModeHome } from './ModeHome';
+import { useCustomModeSchedule } from '../system/customModes';
 import { morningSummary, useWindDownSchedule } from './windDownSchedule';
 import { AppSwitcher } from './AppSwitcher';
 import { AppView, type ScreenRect } from './AppView';
@@ -144,8 +145,9 @@ export function Shell() {
     return () => window.clearInterval(id);
   }, [openAppId, locked]);
 
-  // Wind Down switches on and off by itself on its schedule
+  // Wind Down and your own scheduled modes switch on and off by themselves
   useWindDownSchedule();
+  useCustomModeSchedule();
 
   const openAppFrom = (appId: string, from: ScreenRect | null) =>
     void runAction('app.open', { appId, from: from as DOMRect | null });
