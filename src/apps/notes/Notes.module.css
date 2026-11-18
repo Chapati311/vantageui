@@ -1,0 +1,73 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-16) var(--space-24);
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  background: var(--color-surface);
+  box-shadow: var(--highlight-top);
+  color: var(--text-primary);
+  touch-action: pan-y;
+}
+
+/* The signature: titles in the editorial serif */
+.cardTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-serif);
+  font-size: var(--text-22);
+  line-height: 1.1;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+.cardPreview {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-13);
+  color: var(--text-secondary);
+}
+
+.saved {
+  color: var(--text-tertiary);
+}
+
+/* Writing in the serif, big and calm, like a page of a magazine */
+.text {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: none;
+  color: var(--text-primary);
+  caret-color: var(--color-accent);
+  font-family: var(--font-serif);
+  font-size: var(--text-22);
+  line-height: 1.35;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.text::placeholder {
+  color: var(--text-tertiary);
+}

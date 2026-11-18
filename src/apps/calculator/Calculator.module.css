@@ -1,0 +1,79 @@
+.calculator {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--space-24);
+}
+
+/* The hero: big dot numbers, right-aligned */
+.display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-12);
+  padding: 0 var(--space-8);
+  min-height: calc(var(--dot-64) + var(--space-32));
+  justify-content: flex-end;
+  touch-action: pan-y;
+}
+
+/* 4 columns of one-cell round keys on the grid */
+.keys {
+  display: grid;
+  grid-template-columns: repeat(4, var(--grid-cell));
+  grid-auto-rows: var(--grid-cell);
+  gap: var(--grid-gap);
+}
+
+.key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
+  background: var(--surface-widget);
+  box-shadow: var(--highlight-top);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--text-22);
+  font-weight: 500;
+  touch-action: manipulation;
+}
+
+.digit {
+  font-variant-numeric: tabular-nums;
+}
+
+.fn {
+  background: var(--color-surface-3);
+  font-size: var(--text-17);
+}
+
+.op {
+  color: var(--text-primary);
+  font-size: calc(var(--text-22) * 1.2);
+}
+
+/* The operator waiting for its second number */
+.active {
+  background: var(--text-primary);
+  color: var(--color-bg);
+}
+
+/* The one accent: equals */
+.equals {
+  border-color: transparent;
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
+  color: var(--color-on-accent);
+  font-size: calc(var(--text-22) * 1.2);
+}
+
+.wide {
+  grid-column: span 2;
+  justify-content: flex-start;
+  padding-left: calc((var(--grid-cell) - var(--text-22)) / 2 + 4px);
+}

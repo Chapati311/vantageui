@@ -1,0 +1,68 @@
+.home {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(var(--top-inset) + var(--space-32)) var(--grid-margin) var(--dock-bottom);
+}
+
+.clock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.note {
+  font-size: var(--text-15);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.apps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--grid-gap);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  width: var(--grid-cell);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.app > div {
+  height: var(--grid-cell);
+}
+
+.appName {
+  font-size: var(--text-11);
+  color: var(--text-secondary);
+}
+
+.footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-8);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.row > * {
+  flex: 1;
+}

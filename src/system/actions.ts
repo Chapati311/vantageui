@@ -28,6 +28,8 @@ import {
   type ModeId,
   type Settings,
 } from './settingsStore';
+import { deleteEvent, saveEvent, type CalendarEvent } from './events';
+import { deleteReminder, saveReminder, setReminderDone, type Reminder } from './reminders';
 import { clearNotifications, dismissNotification, pushNotification } from './notifications';
 import { hasPasscode, removePasscode, setPasscode } from './passcode';
 import { applySetup, deleteSetup, getSavedSetups, readSetupFile, saveSetup, surpriseMe } from './setups';
@@ -245,6 +247,15 @@ const ACTIONS = {
     const note = getNote(id);
     if (note) convertNote(note);
   }),
+
+  // ---- Calendar and reminders
+  'calendar.save': define<{ event: CalendarEvent }>('Add or change a calendar event.', ({ event }) => saveEvent(event)),
+  'calendar.delete': define<{ id: string }>('Delete a calendar event.', ({ id }) => deleteEvent(id)),
+  'reminders.save': define<{ reminder: Reminder }>('Add or change a reminder.', ({ reminder }) => saveReminder(reminder)),
+  'reminders.setDone': define<{ id: string; done: boolean }>('Tick a reminder off (or back on).', ({ id, done }) =>
+    setReminderDone(id, done),
+  ),
+  'reminders.delete': define<{ id: string }>('Delete a reminder.', ({ id }) => deleteReminder(id)),
 
   // ---- Weather
   'weather.refresh': define<Record<string, never>>('Download the latest weather.', () => refreshWeather(true)),

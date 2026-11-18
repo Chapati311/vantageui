@@ -1,0 +1,24 @@
+.frame {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  border: var(--border-widget);
+  border-radius: calc(var(--radius-widget) * 0.6);
+  background: Canvas;
+}
+
+.host {
+  text-align: center;
+}
+
+.hint {
+  font-size: var(--text-11);
+  line-height: 1.4;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.saved {
+  display: flex;
+  color: var(--color-accent);
+}

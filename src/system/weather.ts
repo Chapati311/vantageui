@@ -217,3 +217,8 @@ window.addEventListener('online', () => {
 export function useWeather(): WeatherState {
   return useSyncExternalStore(subscribe, () => state);
 }
+
+/** The weather as last saved (or null), without subscribing. */
+export function getWeather(): Weather | null {
+  return state.data;
+}

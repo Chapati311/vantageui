@@ -1,7 +1,6 @@
 import { useDrag } from '@use-gesture/react';
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { useEffect } from 'react';
-import { PlaceholderApp } from '../apps/PlaceholderApp';
 import { ScaledPreview } from '../components/ScaledPreview';
 import { EmptyState } from '../components/kit';
 import { getApp } from '../system/appRegistry';
@@ -119,7 +118,9 @@ function Card({ appId, onOpen, onRemove }: { appId: string; onOpen: AppSwitcherP
         {...(bind() as object)}
       >
         <ScaledPreview>
-          <div className={styles.app}>{Content ? <Content /> : <PlaceholderApp app={app} />}</div>
+          <div className={styles.app}>
+            <Content />
+          </div>
         </ScaledPreview>
       </motion.div>
     </motion.div>

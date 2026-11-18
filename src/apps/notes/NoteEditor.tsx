@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
 import { CircleButton } from '../../components/CircleButton';
 import { BackIcon, CheckIcon, ChecklistIcon, TextIcon, TrashIcon } from '../../components/glyphs';
+import { useEffect, useState } from 'react';
+import { AppShell } from '../../components/kit';
+import { runAction } from '../../system/actions';
 import { Checklist } from './Checklist';
 import { updateNote, type Note } from './notesStore';
-import styles from './NoteEditor.module.css';
-import { runAction } from '../../system/actions';
+import styles from './Notes.module.css';
 
 interface NoteEditorProps {
   note: Note;
@@ -12,55 +13,50 @@ interface NoteEditorProps {
   onDelete: () => void;
 }
 
-/** How long the delete button waits for a second tap to confirm. */
-const CONFIRM_MS = 3000;
+const savedFormat = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
 
-/** Edits one note. Everything is saved automatically as you type. */
+/** One note, written in a big editorial serif. Saved as you type. */
 export function NoteEditor({ note, onBack, onDelete }: NoteEditorProps) {
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
-
-  // The "are you sure" state goes away by itself.
+  // Delete asks for a second tap; the question goes away by itself after 3 seconds
+  const [confirming, setConfirming] = useState(false);
   useEffect(() => {
-    if (!confirmingDelete) return;
-    const timer = window.setTimeout(() => setConfirmingDelete(false), CONFIRM_MS);
+    if (!confirming) return;
+    const timer = window.setTimeout(() => setConfirming(false), 3000);
     return () => window.clearTimeout(timer);
-  }, [confirmingDelete]);
+  }, [confirming]);
 
   return (
-    <div className={styles.editor}>
-      <header className={styles.bar}>
+    <AppShell
+      fixed
+      leading={
         <CircleButton small label="Back to all notes" onClick={onBack}>
           <BackIcon />
         </CircleButton>
-        <span className={styles.spacer} />
-        <CircleButton
-          small
-          label={note.kind === 'text' ? 'Turn into a checklist' : 'Turn into plain text'}
-          onClick={() => void runAction('notes.convert', { id: note.id })}
-        >
-          {note.kind === 'text' ? <ChecklistIcon /> : <TextIcon />}
-        </CircleButton>
-        <CircleButton
-          small
-          primary={confirmingDelete}
-          label={confirmingDelete ? 'Tap again to delete' : 'Delete note'}
-          onClick={() => (confirmingDelete ? onDelete() : setConfirmingDelete(true))}
-        >
-          {confirmingDelete ? <CheckIcon /> : <TrashIcon />}
-        </CircleButton>
-      </header>
-
+      }
+      trailing={
+        <>
+          <CircleButton small label={note.kind === 'text' ? 'Turn into a checklist' : 'Turn into plain text'} onClick={() => void runAction('notes.convert', { id: note.id })}>
+            {note.kind === 'text' ? <ChecklistIcon /> : <TextIcon />}
+          </CircleButton>
+          <CircleButton small label={confirming ? 'Tap again to delete' : 'Delete note'} onClick={() => (confirming ? onDelete() : setConfirming(true))}>
+            {confirming ? <CheckIcon /> : <TrashIcon />}
+          </CircleButton>
+        </>
+      }
+    >
+      <span className={`label ${styles.saved}`}>{savedFormat.format(note.updatedAt)}</span>
       {note.kind === 'text' ? (
         <textarea
           className={styles.text}
-          placeholder="Write something"
+          placeholder="Start writing"
           aria-label="Note text"
           value={note.text}
+          autoFocus={!note.text}
           onChange={(event) => updateNote(note.id, { text: event.target.value })}
         />
       ) : (
         <Checklist note={note} />
       )}
-    </div>
+    </AppShell>
   );
 }

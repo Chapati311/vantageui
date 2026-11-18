@@ -67,6 +67,15 @@
   padding-bottom: var(--space-32);
 }
 
+/* In a scrolling page nothing may be squeezed: the page scrolls instead */
+.body > * {
+  flex-shrink: 0;
+}
+
+.fixed > * {
+  flex-shrink: 1;
+}
+
 .body::-webkit-scrollbar {
   display: none;
 }

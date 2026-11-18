@@ -116,3 +116,108 @@ export function ArcadeIcon() {
     </Icon>
   );
 }
+
+export function CalendarIcon() {
+  return (
+    <Icon>
+      <rect x="4" y="5.500" width="16" height="14" rx="2.500" />
+      <path d="M4 10h16M8.500 3.500v4M15.500 3.500v4" />
+      <circle cx="9" cy="14.500" r="0.900" />
+      <circle cx="12" cy="14.500" r="0.900" />
+      <circle cx="15" cy="14.500" r="0.900" />
+    </Icon>
+  );
+}
+
+export function RemindersIcon() {
+  return (
+    <Icon>
+      <circle cx="6.500" cy="7" r="1.600" />
+      <circle cx="6.500" cy="12" r="1.600" />
+      <circle cx="6.500" cy="17" r="1.600" />
+      <path d="M10.500 7h9M10.500 12h9M10.500 17h9" />
+    </Icon>
+  );
+}
+
+export function RecorderIcon() {
+  return (
+    <Icon>
+      <path d="M4 12h1.500M7.500 9v6M10.500 6v12M13.500 9v6M16.500 7.500v9M19.500 12H20" />
+    </Icon>
+  );
+}
+
+export function CompassIcon() {
+  return (
+    <Icon>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M15 9l-1.800 4.200L9 15l1.800-4.200L15 9z" />
+    </Icon>
+  );
+}
+
+export function FilesIcon() {
+  return (
+    <Icon>
+      <path d="M4 7.500A1.500 1.500 0 0 1 5.500 6H10l2 2h6.500A1.500 1.500 0 0 1 20 9.500v8A1.500 1.500 0 0 1 18.500 19h-13A1.500 1.500 0 0 1 4 17.500v-10z" />
+    </Icon>
+  );
+}
+
+export function CameraIcon() {
+  return (
+    <Icon>
+      <path d="M4 8.500A1.500 1.500 0 0 1 5.500 7h2.200l1.500-2h5.600l1.500 2h2.200A1.500 1.500 0 0 1 20 8.500v9a1.500 1.500 0 0 1-1.500 1.500h-13A1.500 1.500 0 0 1 4 17.500v-9z" />
+      <circle cx="12" cy="13" r="3.500" />
+    </Icon>
+  );
+}
+
+export function PhotosIcon() {
+  return (
+    <Icon>
+      <circle cx="12" cy="7.500" r="3" />
+      <circle cx="16.500" cy="12" r="3" />
+      <circle cx="12" cy="16.500" r="3" />
+      <circle cx="7.500" cy="12" r="3" />
+    </Icon>
+  );
+}
+
+export function ContactsIcon() {
+  return (
+    <Icon>
+      <circle cx="12" cy="9" r="3.500" />
+      <path d="M5.500 19c.800-3.300 3.300-5 6.500-5s5.700 1.700 6.500 5" />
+    </Icon>
+  );
+}
+
+export function MailIcon() {
+  return (
+    <Icon>
+      <rect x="4" y="6" width="16" height="12" rx="2" />
+      <path d="M4.500 7l7.500 6 7.500-6" />
+    </Icon>
+  );
+}
+
+export function BrowserIcon() {
+  return (
+    <Icon>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M4 12h16M12 4c2.200 2.300 3.200 5 3.200 8s-1 5.700-3.200 8c-2.200-2.300-3.200-5-3.200-8s1-5.700 3.200-8z" />
+    </Icon>
+  );
+}
+
+export function LockInIcon() {
+  return (
+    <Icon>
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="4.500" />
+      <circle cx="12" cy="12" r="1" />
+    </Icon>
+  );
+}

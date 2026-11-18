@@ -5,7 +5,12 @@ import { getApp, type AppDefinition } from '../system/appRegistry';
 import { hasPasscode } from '../system/passcode';
 import { getSettings, useSetting } from '../system/settingsStore';
 import { useTheme } from '../system/theme';
+import { blockState, countUsage } from '../apps/lockin/blocking';
+import { canOpenApp, openApp as openNativeApp } from '../system/nativeBridge';
 import { AlarmRinging } from './AlarmRinging';
+import { LockedApp } from './LockedApp';
+import { ModeHome } from './ModeHome';
+import { morningSummary, useWindDownSchedule } from './windDownSchedule';
 import { AppSwitcher } from './AppSwitcher';
 import { AppView, type ScreenRect } from './AppView';
 import { Boot } from './Boot';
@@ -47,10 +52,13 @@ export function Shell() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [switcherOpen, setSwitcherOpen] = useState(false);
   const [passcodeOpen, setPasscodeOpen] = useState(false);
+  /** A Lock In-locked app someone tried to open */
+  const [lockedApp, setLockedApp] = useState<string | null>(null);
   /** Recently opened apps, most recent first (for the app switcher) */
   const [recents, setRecents] = useState<string[]>([]);
   const [soundsEnabled] = useSetting('soundsEnabled');
   const [homeBlur] = useSetting('homeBlur');
+  const [mode] = useSetting('mode');
   const theme = useTheme();
   const searchInput = useRef<HTMLInputElement>(null);
 
@@ -71,6 +79,16 @@ export function Shell() {
       const app = getApp(appId);
       if (!app) return;
       closeAllOverlays();
+      // App styles: "Original" opens the real iPhone app instead
+      if (getSettings().appStyles[appId] === 'original' && app.bundleId && canOpenApp(app.bundleId)) {
+        void openNativeApp(app.bundleId);
+        return;
+      }
+      // Lock In: a locked distraction shows the calm lock screen instead
+      if (blockState(appId).locked) {
+        setLockedApp(appId);
+        return;
+      }
       setRecents((list) => [appId, ...list.filter((id) => id !== appId)].slice(0, 8));
       setOpenApp({ app, from: from ?? findIconRect(appId) });
     },
@@ -82,7 +100,13 @@ export function Shell() {
       setLocked(true);
     },
     // With a passcode set, unlocking asks for it first
-    unlock: () => (hasPasscode() ? setPasscodeOpen(true) : setLocked(false)),
+    unlock: () => {
+      if (hasPasscode()) setPasscodeOpen(true);
+      else {
+        setLocked(false);
+        morningSummary();
+      }
+    },
     openSearch,
     openControlCenter: () => {
       setNotificationsOpen(false);
@@ -111,6 +135,17 @@ export function Shell() {
   const swipeDownFromTop = (x: number) =>
     void runAction(x < window.innerWidth / 2 ? 'shell.openNotifications' : 'shell.openControlCenter', {});
   useEffect(() => registerShell(controls.current), []);
+
+  // Lock In: count a minute of use for the open app (for daily limits)
+  const openAppId = openApp?.app.id;
+  useEffect(() => {
+    if (!openAppId || locked) return;
+    const id = window.setInterval(() => document.visibilityState === 'visible' && countUsage(openAppId), 60_000);
+    return () => window.clearInterval(id);
+  }, [openAppId, locked]);
+
+  // Wind Down switches on and off by itself on its schedule
+  useWindDownSchedule();
 
   const openAppFrom = (appId: string, from: ScreenRect | null) =>
     void runAction('app.open', { appId, from: from as DOMRect | null });
@@ -172,11 +207,15 @@ export function Shell() {
             picture every frame would be too slow on the A13).
           */}
           <Wallpaper place="home" paused={locked || openApp !== null || homeBlur > 0} />
+          {mode === 'focus' || mode === 'winddown' ? (
+            <ModeHome mode={mode} onOpenApp={openAppFrom} />
+          ) : (
           <HomeScreen
             onOpenApp={openAppFrom}
             onSwipeDown={openSearch}
             onSwipeDownFromTop={swipeDownFromTop}
           />
+          )}
         </>
       )}
       <Search
@@ -216,9 +255,11 @@ export function Shell() {
         onSuccess={() => {
           setPasscodeOpen(false);
           setLocked(false);
+          morningSummary();
         }}
         onCancel={() => setPasscodeOpen(false)}
       />
+      <LockedApp appId={lockedApp} onClose={() => setLockedApp(null)} />
       <AlarmRinging />
       <TimerBanner />
       {/* Wind Down: a warm layer and slow dimming over everything (touches go through) */}

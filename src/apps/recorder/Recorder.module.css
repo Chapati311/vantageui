@@ -1,0 +1,44 @@
+.top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-24);
+  padding: var(--space-16) 0;
+}
+
+/* One grid cell, the one accent */
+.record {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--grid-cell);
+  height: var(--grid-cell);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-circle);
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
+  color: var(--color-on-accent);
+}
+
+.record svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.recording {
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(0.92);
+  }
+}
+
+.stopSquare {
+  width: var(--space-16);
+  height: var(--space-16);
+  border-radius: 3px;
+  background: var(--color-on-accent);
+}

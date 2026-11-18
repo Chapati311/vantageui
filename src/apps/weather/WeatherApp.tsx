@@ -1,6 +1,6 @@
 import { CircleButton } from '../../components/CircleButton';
 import { DotNumber } from '../../components/DotNumber';
-import { ScrollArea } from '../../components/ScrollArea';
+import { AppShell, EmptyState } from '../../components/kit';
 import { Temperature } from '../../components/Temperature';
 import { ResetIcon } from '../../components/glyphs';
 import { WeatherArt } from '../../shell/widgets/WeatherArt';
@@ -18,17 +18,13 @@ export function WeatherApp() {
   // Nothing saved and nothing downloaded yet
   if (!data) {
     return (
-      <div className={styles.empty}>
-        <h1 className={styles.place}>{status === 'error' ? 'No connection' : 'One moment'}</h1>
-        <p className="label">
-          {status === 'error' ? 'The weather could not be loaded' : 'Loading the weather'}
-        </p>
-        {status === 'error' && (
-          <CircleButton small label="Try again" onClick={() => void runAction('weather.refresh', {})}>
-            <ResetIcon />
-          </CircleButton>
+      <AppShell title="Weather" fixed>
+        {status === 'error' ? (
+          <EmptyState kind="error" title="No connection" message="The weather couldn't be loaded." action={{ label: 'Try again', onPress: () => void runAction('weather.refresh', {}) }} />
+        ) : (
+          <EmptyState kind="loading" title="One moment" message={`Getting the weather for ${WEATHER_PLACE.name}.`} />
         )}
-      </div>
+      </AppShell>
     );
   }
 
@@ -39,16 +35,15 @@ export function WeatherApp() {
       : `${status === 'error' ? 'Offline · saved' : 'Updated'} ${formatTime(new Date(data.fetchedAt))}`;
 
   return (
-    <ScrollArea className={styles.app}>
-      <header className={styles.header}>
-        <div className={styles.heading}>
-          <h1 className={styles.place}>{WEATHER_PLACE.name}</h1>
-          <p className="label">{updated}</p>
-        </div>
+    <AppShell
+      title={WEATHER_PLACE.name}
+      trailing={
         <CircleButton small label="Refresh" onClick={() => void runAction('weather.refresh', {})}>
           <ResetIcon />
         </CircleButton>
-      </header>
+      }
+    >
+      <p className="label">{updated}</p>
 
       {/* The hero: a huge temperature with the drawing beside it */}
       <section className={styles.now}>
@@ -78,7 +73,7 @@ export function WeatherApp() {
 
       <h2 className={`label ${styles.section}`}>7 days</h2>
       <DailyList days={data.daily} />
-    </ScrollArea>
+    </AppShell>
   );
 }
 

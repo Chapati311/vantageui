@@ -17,6 +17,8 @@ export interface FocusSession {
   type: string;
   /** Finished the planned time (not given up early) */
   completed: boolean;
+  /** Your answer after the session: did you reach the goal? */
+  result?: 'done' | 'partly' | 'not';
 }
 
 const STORAGE_KEY = 'vantage.lockin.sessions.v1';
@@ -45,6 +47,12 @@ function store(next: FocusSession[]): void {
 
 export function recordSession(session: Omit<FocusSession, 'id'>): void {
   store([...sessions, { ...session, id: `s-${session.startedAt}` }]);
+}
+
+/** Saves your answer ("done / partly / not") on the latest session. */
+export function rateLastSession(result: 'done' | 'partly' | 'not'): void {
+  if (!sessions.length) return;
+  store(sessions.map((session, index) => (index === sessions.length - 1 ? { ...session, result } : session)));
 }
 
 export function deleteSession(id: string): void {

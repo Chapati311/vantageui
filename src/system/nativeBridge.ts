@@ -95,7 +95,23 @@ const APP_URLS: Record<string, string> = {
   'com.apple.camera': '',
   'com.spotify.client': 'spotify:',
   'com.apple.shortcuts': 'shortcuts://',
+  'com.apple.mobilecal': 'calshow://',
+  'com.apple.reminders': 'x-apple-reminderkit://',
+  'com.apple.mobilenotes': 'mobilenotes://',
+  'com.apple.Music': 'music://',
+  'com.apple.mobileslideshow': 'photos-redirect://',
+  'com.apple.weather': 'weather://',
+  'com.apple.DocumentsApp': 'shareddocuments://',
+  'com.apple.mobilesafari': 'x-web-search://',
+  'com.apple.Preferences': 'App-prefs:',
+  'com.apple.VoiceMemos': 'voicememos://',
+  'com.apple.MobileAddressBook': 'contacts://',
 };
+
+/** True when this app can be opened from Vantage (a link exists, or the bridge is there). */
+export function canOpenApp(bundleId: string): boolean {
+  return Boolean(native()?.openApp) || Boolean(APP_URLS[bundleId]);
+}
 
 /** Opens a real iOS app. */
 export async function openApp(bundleId: string): Promise<BridgeResult> {
@@ -117,9 +133,18 @@ export function call(number: string): BridgeResult {
   return openUrl(`tel:${number.replace(/[^\d+*#]/g, '')}`);
 }
 
-/** Opens Messages to a number. */
-export function message(number: string): BridgeResult {
-  return openUrl(`sms:${number.replace(/[^\d+]/g, '')}`);
+/** Opens Messages to a number, optionally with the text already written. */
+export function message(number: string, body?: string): BridgeResult {
+  const to = number.replace(/[^\d+]/g, '');
+  // iOS wants "&body=", other systems "?body="
+  const separator = /iP(hone|ad|od)/.test(navigator.userAgent) ? '&' : '?';
+  return openUrl(`sms:${to}${body ? `${separator}body=${encodeURIComponent(body)}` : ''}`);
+}
+
+/** Opens Mail with a message ready to send. */
+export function email(to: string, subject: string, body: string): BridgeResult {
+  const params = new URLSearchParams({ subject, body }).toString().replace(/\+/g, '%20');
+  return openUrl(`mailto:${encodeURIComponent(to)}?${params}`);
 }
 
 /** Opens Apple Maps searching for a place. */

@@ -1,0 +1,87 @@
+.mapBox {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+}
+
+/* Dark themes: the bright map tiles are turned dark (inverted, hue kept) */
+:root[data-theme='dark'] .map :global(.maplibregl-canvas) {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.6);
+}
+
+:global(.maplibregl-ctrl-attrib) {
+  font-size: 10px;
+}
+
+.results {
+  position: absolute;
+  left: var(--space-8);
+  right: var(--space-8);
+  top: var(--space-8);
+  max-height: 70%;
+  overflow-y: auto;
+}
+
+.status {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-16);
+  translate: -50% 0;
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-pill);
+  background: var(--glass-bg);
+}
+
+/* The place pin: the one accent */
+.pin {
+  width: var(--space-16);
+  height: var(--space-16);
+  border: 3px solid var(--color-bg);
+  border-radius: var(--radius-circle);
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
+}
+
+.card {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-12) var(--space-12) var(--space-24);
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  background: var(--color-surface);
+}
+
+.cardText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.cardName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-17);
+  font-weight: 600;
+}
+
+.cardDetail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-13);
+  color: var(--text-secondary);
+}

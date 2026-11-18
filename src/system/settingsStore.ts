@@ -95,6 +95,8 @@ export interface Settings {
   springBounce: number;
   /** Lock screen wallpaper lags behind the swipe a little */
   parallax: boolean;
+  /** Per app: open the Vantage version, or the original iPhone app */
+  appStyles: Record<string, 'vantage' | 'original'>;
 
   // ---- Widgets
   widgetStyle: WidgetStyle;
@@ -162,6 +164,7 @@ export const DEFAULT_SETTINGS: Settings = {
   controlStyle: 'dial',
   springBounce: 0,
   parallax: true,
+  appStyles: {},
   widgetStyle: 'solid',
   widgetOpacity: 1,
   cornerRadius: 28,
@@ -275,6 +278,12 @@ export function sanitizeSettings(input: unknown): Settings {
     controlStyle: oneOf(raw.controlStyle, ['dial', 'slider'] as const, d.controlStyle),
     springBounce: between(raw.springBounce, 0, 1, d.springBounce),
     parallax: bool(raw.parallax, d.parallax),
+    appStyles:
+      raw.appStyles && typeof raw.appStyles === 'object'
+        ? Object.fromEntries(
+            Object.entries(raw.appStyles as Record<string, unknown>).filter(([, value]) => value === 'vantage' || value === 'original'),
+          ) as Record<string, 'vantage' | 'original'>
+        : {},
     widgetStyle: oneOf(raw.widgetStyle, ['solid', 'glass', 'outline', 'tinted'] as const, d.widgetStyle),
     widgetOpacity: between(raw.widgetOpacity, 0.4, 1, d.widgetOpacity),
     cornerRadius: between(raw.cornerRadius, 12, 36, d.cornerRadius),
@@ -372,6 +381,8 @@ export function applyPreset(id: string): void {
 
 /** Switches mode. Wind Down remembers when it started, for the slow dimming. */
 export function setMode(mode: ModeId): void {
+  // Focus mode can lock itself for a while (Focus home > Lock 30 min)
+  if (settings.mode === 'focus' && mode !== 'focus' && Number(localStorage.getItem('vantage.focusLock.v1')) > Date.now()) return;
   updateSettings({ mode, windDownSince: mode === 'winddown' ? Date.now() : null });
 }
 

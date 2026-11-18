@@ -1,90 +1,88 @@
-import { useState, type ComponentType } from 'react';
-import { Pressable } from '../../components/Pressable';
-import { BackIcon } from '../../components/glyphs';
+import { useEffect, useState, type ComponentType } from 'react';
+import { BoltIcon, LockIcon, TrashIcon } from '../../components/glyphs';
+import { AppShell, Button, Row, Section } from '../../components/kit';
+import { runAction } from '../../system/actions';
+import { CustomiseIcon, SettingsIcon } from '../../system/appIcons';
+import { hasBridge } from '../../system/nativeBridge';
 import { useHasPasscode } from '../../system/passcode';
 import { useSettings } from '../../system/settingsStore';
 import { useTheme } from '../../system/theme';
-import { getPreset } from '../../theme/presets';
-import { wallpaperName } from '../../theme/wallpapers';
-import { AccentPage } from './AccentPage';
-import { AccessibilityPage } from './AccessibilityPage';
-import { AppearancePage } from './AppearancePage';
-import { ModePage } from './ModePage';
+import { AppStylesPage } from './AppStylesPage';
 import { PasscodePage } from './PasscodePage';
-import { Section, SettingsPage } from './SettingsPage';
 import { SoundPage } from './SoundPage';
-import { ThemesPage } from './ThemesPage';
-import { WallpaperPage } from './WallpaperPage';
-import { WidgetsPage } from './WidgetsPage';
-import styles from './SettingsApp.module.css';
+import { AccessibilityPage } from './AccessibilityPage';
 
-type PageId = 'themes' | 'appearance' | 'accent' | 'wallpaper' | 'mode' | 'widgets' | 'access' | 'sound' | 'passcode';
+type PageId = 'passcode' | 'appstyles' | 'sound' | 'access';
 
 const PAGES: Record<PageId, ComponentType<{ onBack: () => void }>> = {
-  themes: ThemesPage,
-  appearance: AppearancePage,
-  accent: AccentPage,
-  wallpaper: WallpaperPage,
-  mode: ModePage,
-  widgets: WidgetsPage,
-  access: AccessibilityPage,
-  sound: SoundPage,
   passcode: PasscodePage,
+  appstyles: AppStylesPage,
+  sound: SoundPage,
+  access: AccessibilityPage,
 };
 
-const MODE_NAMES = { clean: 'Clean', focus: 'Focus', retro: 'Retro', winddown: 'Wind Down' } as const;
-const STYLE_NAMES = { solid: 'Solid', glass: 'Glass', outline: 'Outline', tinted: 'Tinted' } as const;
-const APPEARANCE_NAMES = { dark: 'Dark', light: 'Light', auto: 'Automatic' } as const;
-
-/** The main Settings list. Each row opens a page. */
+/** Settings: the system side. Everything about the look lives in Customise. */
 export function SettingsApp() {
   const [page, setPage] = useState<PageId | null>(null);
-  const s = useSettings();
+  const settings = useSettings();
   const theme = useTheme();
-  const passcodeOn = useHasPasscode();
+  const passcode = useHasPasscode();
+  const [storage, setStorage] = useState<string>('--');
+  const [confirmErase, setConfirmErase] = useState(false);
+
+  useEffect(() => {
+    void navigator.storage?.estimate?.().then(({ usage = 0 }) => setStorage(`${(usage / 1e6).toFixed(1)} MB`));
+  }, []);
+
+  useEffect(() => {
+    if (!confirmErase) return;
+    const timer = window.setTimeout(() => setConfirmErase(false), 4000);
+    return () => window.clearTimeout(timer);
+  }, [confirmErase]);
 
   if (page) {
     const Page = PAGES[page];
     return <Page onBack={() => setPage(null)} />;
   }
 
-  const row = (id: PageId, name: string, value: string) => (
-    <Pressable key={id} className={styles.menuRow} onClick={() => setPage(id)}>
-      <span className={styles.menuName}>{name}</span>
-      <span className={styles.menuValue}>{value}</span>
-      <span className={styles.chevron}>
-        <BackIcon />
-      </span>
-    </Pressable>
-  );
-
-  const accent = theme.retro
-    ? 'Ink'
-    : s.matchWallpaper
-      ? 'From wallpaper'
-      : s.accent
-        ? s.accent.toUpperCase()
-        : `${getPreset(theme.presetId).accentName}`;
+  const originals = Object.values(settings.appStyles).filter((style) => style === 'original').length;
 
   return (
-    <SettingsPage title="Settings">
+    <AppShell title="Settings">
       <Section label="Look">
-        <div className={styles.menu}>
-          {row('themes', 'Themes', theme.presetName)}
-          {row('appearance', 'Appearance', APPEARANCE_NAMES[s.appearance])}
-          {row('accent', 'Accent', accent)}
-          {row('wallpaper', 'Wallpaper', theme.retro ? 'Theme' : wallpaperName(s.wallpaper))}
-          {row('widgets', 'Widgets', theme.retro ? 'Retro' : STYLE_NAMES[s.widgetStyle])}
-        </div>
+        <Row icon={<CustomiseIcon />} title="Customise" detail="Themes, wallpapers, widgets, fonts, sounds" value={theme.presetName} onPress={() => void runAction('app.open', { appId: 'customise' })} />
       </Section>
       <Section label="System">
-        <div className={styles.menu}>
-          {row('mode', 'Mode', MODE_NAMES[s.mode])}
-          {row('access', 'Text and motion', s.reduceMotion ? 'Reduced motion' : `${Math.round(s.textScale * 100)}% text`)}
-          {row('sound', 'Sound', s.soundsEnabled ? `${Math.round(s.soundVolume * 100)}%` : 'Off')}
-          {row('passcode', 'Passcode', passcodeOn ? 'On' : 'Off')}
-        </div>
+        <Row icon={<LockIcon />} title="Passcode" value={passcode ? 'On' : 'Off'} onPress={() => setPage('passcode')} />
+        <Row icon={<SettingsIcon />} title="App styles" detail="Vantage or the original iPhone app" value={originals ? `${originals} original` : 'All Vantage'} onPress={() => setPage('appstyles')} />
+        <Row icon={<BoltIcon />} title="Sound" value={settings.soundsEnabled ? `${Math.round(settings.soundVolume * 100)}%` : 'Off'} onPress={() => setPage('sound')} />
+        <Row title="Accessibility" value={`${Math.round(settings.textScale * 100)}% text`} onPress={() => setPage('access')} />
+        <Row title="Lock In and app blocking" onPress={() => void runAction('app.open', { appId: 'lockin' })} />
       </Section>
-    </SettingsPage>
+      <Section label="About">
+        <Row title="Vantage OS" value="1.0" />
+        <Row title="Native bridge" value={hasBridge() ? 'Connected' : 'Available after unlock'} />
+        <Row title="Stored on this phone" value={storage} />
+        <Row title="Connection" value={navigator.onLine ? 'Online' : 'Offline'} />
+      </Section>
+      <Section label="Start over" note="Erases every setting, note, photo, recording, grade and layout on this phone. Export a setup in Customise first if you want to keep your look.">
+        <span />
+      </Section>
+      <Button
+        kind="destructive"
+        icon={TrashIcon}
+        onPress={async () => {
+          if (!confirmErase) return setConfirmErase(true);
+          localStorage.clear();
+          await new Promise<void>((resolve) => {
+            const request = indexedDB.deleteDatabase('vantage');
+            request.onsuccess = request.onerror = request.onblocked = () => resolve();
+          });
+          location.reload();
+        }}
+      >
+        {confirmErase ? 'Tap again to erase everything' : 'Erase all data'}
+      </Button>
+    </AppShell>
   );
 }

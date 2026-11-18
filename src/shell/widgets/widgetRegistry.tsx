@@ -16,6 +16,7 @@ import { AppleMusicWidget, SpotifyWidget, VinylWidget, VisualizerWidget } from '
 import { MusicWidget } from './MusicWidget';
 import { NotesWidget } from './NotesWidget';
 import { PhotoWidget } from './PhotoWidget';
+import { GradeAverageWidget, HomeworkWidget, LockInRingWidget, NextLessonWidget, PlantWidget, RemindersWidget } from './productivity/LockInWidgets';
 import { CountdownWidget, DotCalendarWidget } from './productivity/ProductivityWidgets';
 import { SolarSystemWidget } from './space/SolarSystemWidget';
 import { VoiceNoteWidget } from './VoiceNoteWidget';
@@ -104,6 +105,12 @@ export const WIDGETS: WidgetDefinition[] = [
   { id: 'pet', name: 'Vanta Pet', category: 'games', description: 'A pixel pet. It loves when you focus.', component: PetWidget, sizes: ['1x1', '2x2'], onTap: openArcade('pet') },
 
   // ---- Productivity
+  { id: 'lockin', name: 'Lock In', category: 'productivity', description: "Today's focus ring and streak. One tap to start.", component: LockInRingWidget, sizes: ['2x2'], onTap: ({ openApp }) => openApp('lockin') },
+  { id: 'plant', name: 'Lock In plant', category: 'productivity', description: 'Grows with your focus streak.', component: PlantWidget, sizes: ['1x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
+  { id: 'next-lesson', name: 'Next lesson', category: 'productivity', description: 'From your timetable.', component: NextLessonWidget, sizes: ['2x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
+  { id: 'homework', name: 'Homework due', category: 'productivity', description: 'What is due soonest.', component: HomeworkWidget, sizes: ['2x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
+  { id: 'grades', name: 'Grade average', category: 'productivity', description: 'Your average, green to red.', component: GradeAverageWidget, sizes: ['1x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
+  { id: 'reminders', name: 'Reminders', category: 'productivity', description: "Today's reminders.", component: RemindersWidget, sizes: ['2x1', '2x2'], onTap: ({ openApp }) => openApp('reminders') },
   { id: 'dot-calendar', name: 'Dot calendar', category: 'productivity', description: 'This month as dots.', component: DotCalendarWidget, sizes: ['2x2'] },
   { id: 'calendar', name: 'Up next', category: 'productivity', description: 'Date and your next event.', component: CalendarWidget, sizes: ['2x2'] },
   { id: 'countdown', name: 'Countdown', category: 'productivity', description: 'Days until something good.', component: CountdownWidget, sizes: ['2x2', '2x1', '1x1'] },
