@@ -127,6 +127,12 @@ export interface Settings {
   /** 0-1 */
   soundVolume: number;
 
+  // ---- You
+  /** Your first name, for greetings */
+  userName: string;
+  /** The first-boot setup has been finished (or skipped) */
+  setupDone: boolean;
+
   // ---- Other
   /** Clean (normal), Focus (grayscale), Retro (old phone) or Wind Down (warm, dimmer) */
   mode: ModeId;
@@ -187,6 +193,8 @@ export const DEFAULT_SETTINGS: Settings = {
   animationSpeed: 1,
   soundsEnabled: true,
   soundVolume: 0.5,
+  userName: '',
+  setupDone: false,
   mode: 'clean',
   windDownSince: null,
   wifi: true,
@@ -279,6 +287,9 @@ export function sanitizeSettings(input: unknown): Settings {
     batteryStyle: oneOf(raw.batteryStyle, ['percent', 'ring', 'bar', 'pixel'] as const, d.batteryStyle),
     pageDots: oneOf(raw.pageDots, ['dots', 'numbers', 'hidden'] as const, d.pageDots),
     iconLabels: bool(raw.iconLabels, d.iconLabels),
+    userName: typeof raw.userName === 'string' ? raw.userName.trim().slice(0, 24) : d.userName,
+    // Phones that already had settings, and automated test browsers, skip the first-boot setup
+    setupDone: bool(raw.setupDone, Object.keys(raw).length > 0 || (typeof navigator !== 'undefined' && navigator.webdriver === true)),
     iconShape: oneOf(raw.iconShape, ['circle', 'squircle', 'square'] as const, d.iconShape),
     iconStyle: oneOf(raw.iconStyle, ['outline', 'filled', 'tinted'] as const, d.iconStyle),
     uiFont: oneOf(raw.uiFont, ['inter', 'system', 'serif', 'mono'] as const, d.uiFont),

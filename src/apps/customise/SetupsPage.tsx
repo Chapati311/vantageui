@@ -16,6 +16,14 @@ export function SetupsPage({ onBack }: { onBack: () => void }) {
 
   return (
     <SettingsPage title="Setups" onBack={onBack}>
+      <Section label="First-boot setup" note="Walk through name, theme, wallpaper, clock and focus goal again.">
+        <div className={styles.buttons}>
+          <Button kind="primary" onPress={() => void runAction('setup.replay', {})}>
+            Replay setup
+          </Button>
+        </div>
+      </Section>
+
       <Section label="Save this look" note="Saves the theme, wallpaper, every setting and the home screen layout.">
         <div className={styles.buttons}>
           <input

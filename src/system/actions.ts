@@ -11,6 +11,7 @@ import {
   type ClockTab,
 } from '../apps/clock/clockStore';
 import { openGame, type GameId } from '../apps/arcade/arcadeStore';
+import { updateLockIn } from '../apps/lockin/lockInStore';
 import { next as nextTrack, previous as previousTrack, togglePlay } from './musicPlayer';
 import { deleteAlarm, saveAlarm, setAlarmEnabled, snooze, stopRinging, updateAlarmSettings, type Alarm, type AlarmSettings } from '../apps/clock/alarmStore';
 import { addWidget, removeHomeItem } from '../shell/home/layoutStore';
@@ -260,6 +261,15 @@ const ACTIONS = {
     setReminderDone(id, done),
   ),
   'reminders.delete': define<{ id: string }>('Delete a reminder.', ({ id }) => deleteReminder(id)),
+
+  // ---- First-boot setup
+  'setup.replay': define<Record<string, never>>('Show the first-boot setup again.', () => updateSettings({ setupDone: false })),
+  'setup.finish': define<{ name?: string }>('Finish the first-boot setup (optionally saving your name).', ({ name }) =>
+    updateSettings(name === undefined ? { setupDone: true } : { setupDone: true, userName: name.trim().slice(0, 24) }),
+  ),
+  'lockin.setDailyGoal': define<{ minutes: number }>('Set how many minutes of focus you aim for each day.', ({ minutes }) =>
+    updateLockIn({ dailyGoal: Math.max(15, Math.min(600, Math.round(minutes))) }),
+  ),
 
   // ---- Music (your own songs)
   'music.togglePlay': define<Record<string, never>>('Play or pause the current song.', () => togglePlay()),

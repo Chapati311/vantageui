@@ -1,4 +1,4 @@
-import { MotionConfig, motion } from 'motion/react';
+import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SPRING } from '../theme/tokens';
 import { BellIcon, GridIcon, LockIcon, SoundIcon, WifiIcon } from '../components/glyphs';
@@ -19,6 +19,7 @@ import { morningSummary, useWindDownSchedule } from './windDownSchedule';
 import { AppSwitcher } from './AppSwitcher';
 import { AppView, shapeOf, type ScreenRect } from './AppView';
 import { Boot } from './Boot';
+import { FirstSetup } from './setup/FirstSetup';
 import { HomeScreen } from './HomeScreen';
 import { LockScreen } from './LockScreen';
 import { NotificationCenter } from './NotificationCenter';
@@ -53,6 +54,7 @@ function findIconRect(appId: string): ScreenRect | null {
 export function Shell() {
   const [booting, setBooting] = useState(() => getSettings().bootAnimation);
   const [reduceMotion] = useSetting('reduceMotion');
+  const [setupDone] = useSetting('setupDone');
   const [locked, setLocked] = useState(true);
   const [openApp, setOpenApp] = useState<OpenApp | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -287,7 +289,9 @@ export function Shell() {
         <TimerBanner />
         {/* Wind Down: a warm layer and slow dimming over everything (touches go through) */}
         <div className={styles.windDown} aria-hidden="true" />
-        {booting && <Boot onDone={() => setBooting(false)} />}
+        {/* A new phone: the first-boot setup, after the boot animation */}
+      <AnimatePresence>{!setupDone && !booting && <FirstSetup key="setup" />}</AnimatePresence>
+      {booting && <Boot onDone={() => setBooting(false)} />}
       </div>
     </MotionConfig>
   );
