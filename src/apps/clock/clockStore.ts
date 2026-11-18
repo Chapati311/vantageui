@@ -37,6 +37,8 @@ export interface ClockState {
   presets: number[];
   /** Running timer: numbers turned on their side (true) or flat */
   vertical: boolean;
+  /** The one-time switch to flat numbers has been done (see load) */
+  flatDefault?: boolean;
   timer: TimerState;
   stopwatch: StopwatchState;
 }
@@ -49,7 +51,8 @@ const STORAGE_KEY = 'vantage.clock.v1';
 const DEFAULTS: ClockState = {
   tab: 'alarm',
   presets: [1, 3, 5, 10, 25],
-  vertical: true,
+  vertical: false,
+  flatDefault: true,
   timer: { durationMs: 5 * 60_000, status: 'idle', endsAt: 0, remainingMs: 5 * 60_000 },
   stopwatch: { running: false, startedAt: 0, elapsedMs: 0, laps: [] },
 };
@@ -59,7 +62,10 @@ function load(): ClockState {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
     if (saved?.timer && saved?.stopwatch) {
       const tab = ['alarm', 'world', 'stopwatch', 'timer'].includes(saved.tab) ? saved.tab : DEFAULTS.tab;
-      return { ...DEFAULTS, ...saved, tab, presets: Array.isArray(saved.presets) ? saved.presets : DEFAULTS.presets };
+      // Flat (horizontal) timer numbers became the default: switch saved data
+      // over once, then respect whatever you choose afterwards.
+      const vertical = saved.flatDefault ? Boolean(saved.vertical) : false;
+      return { ...DEFAULTS, ...saved, tab, vertical, flatDefault: true, presets: Array.isArray(saved.presets) ? saved.presets : DEFAULTS.presets };
     }
   } catch {
     // Broken or blocked storage: start fresh.
