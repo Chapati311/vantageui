@@ -443,3 +443,18 @@
   right: var(--grid-margin);
   top: 35%;
 }
+
+/* Pixel icons: lit pixels in ink, the rest as faint LCD ghosts */
+.pixelOn {
+  fill: currentColor;
+}
+
+.pixelOff {
+  fill: currentColor;
+  opacity: var(--ghost, 0.1);
+}
+
+.menuIcon svg {
+  width: var(--space-32);
+  height: var(--space-32);
+}

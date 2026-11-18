@@ -4,6 +4,7 @@ import { openGame } from '../../apps/arcade/arcadeStore';
 import { Pressable } from '../../components/Pressable';
 import { HOME_APPS } from '../../system/appRegistry';
 import type { RetroStyle } from '../../theme/presets';
+import { PixelIcon } from './PixelIcon';
 import { SoftKeys } from './SoftKeys';
 import styles from './Retro.module.css';
 
@@ -59,11 +60,10 @@ export function RetroMenu({ style, onOpenApp, onBack }: RetroMenuProps) {
       ) : (
         <div className={styles.menuGrid}>
           {shown.map((entry) => {
-            const Glyph = entry.icon;
             return (
               <Pressable key={entry.id} className={styles.menuItem} onClick={entry.open}>
                 <span className={styles.menuIcon}>
-                  <Glyph />
+                  <PixelIcon id={entry.id} />
                 </span>
                 <span className={styles.menuName}>{entry.name}</span>
               </Pressable>

@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { ScaledPreview } from '../components/ScaledPreview';
 import { EmptyState } from '../components/kit';
 import { getApp } from '../system/appRegistry';
+import { useTheme } from '../system/theme';
 import { MOTION, SPRING } from '../theme/tokens';
 import type { ScreenRect } from './AppView';
 import styles from './AppSwitcher.module.css';
@@ -24,6 +25,7 @@ interface AppSwitcherProps {
  * swipe one up to remove it. Tap the empty space to go home.
  */
 export function AppSwitcher({ open, recents, onOpen, onRemove, onClose }: AppSwitcherProps) {
+  const retro = useTheme().retro !== null;
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => event.key === 'Escape' && onClose();
@@ -47,6 +49,28 @@ export function AppSwitcher({ open, recents, onOpen, onRemove, onClose }: AppSwi
         >
           {recents.length === 0 ? (
             <EmptyState title="No recent apps" message="Apps you open show up here." />
+          ) : retro ? (
+            // Retro themes: a plain numbered list, like an old phone's "recent" menu
+            <div className={styles.retroList} onClick={(event) => event.stopPropagation()}>
+              <p className={styles.retroTitle}>Recent</p>
+              {recents.map((appId, index) => {
+                const app = getApp(appId);
+                if (!app) return null;
+                return (
+                  <div key={appId} className={styles.retroRow}>
+                    <button type="button" className={styles.retroOpen} onClick={(event) => onOpen(appId, event.currentTarget.getBoundingClientRect())}>
+                      {index + 1} {app.name.toUpperCase()}
+                    </button>
+                    <button type="button" className={styles.retroClose} aria-label={`Close ${app.name}`} onClick={() => onRemove(appId)}>
+                      X
+                    </button>
+                  </div>
+                );
+              })}
+              <button type="button" className={styles.retroBack} onClick={onClose}>
+                Back
+              </button>
+            </div>
           ) : (
             <motion.div
               className={styles.row}

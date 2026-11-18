@@ -1,0 +1,13 @@
+.ring {
+  width: 100%;
+  height: 100%;
+}
+
+.on {
+  fill: var(--color-accent);
+}
+
+.off {
+  fill: var(--text-primary);
+  opacity: var(--ghost, 0.1);
+}

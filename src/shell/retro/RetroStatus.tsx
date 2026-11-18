@@ -1,5 +1,6 @@
 import { useBattery } from '../../system/useBattery';
 import { useOnline } from '../../system/useOnline';
+import { useLiveText } from './useLiveText';
 import styles from './Retro.module.css';
 
 /**
@@ -13,6 +14,7 @@ export function RetroStatus() {
   const online = useOnline();
   const battery = useBattery();
   const batteryBars = battery ? Math.max(1, Math.round(battery.level * 4)) : 0;
+  const live = useLiveText();
 
   return (
     <div className={styles.status}>
@@ -21,7 +23,7 @@ export function RetroStatus() {
           <span key={bar} className={`${styles.bar} ${online ? styles.lit : ''}`} style={{ height: bar * 4 }} />
         ))}
       </span>
-      <span className={styles.operator}>VANTAGE</span>
+      <span className={styles.operator}>{live ?? 'VANTAGE'}</span>
       <span
         className={styles.battery}
         aria-label={battery ? `Battery ${Math.round(battery.level * 100)}%` : 'Battery unknown'}

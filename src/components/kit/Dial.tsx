@@ -1,6 +1,7 @@
 import { useRef, useState, type ComponentType, type PointerEvent, type ReactNode } from 'react';
 import { playSound } from '../../system/sounds';
 import { DotNumber } from '../DotNumber';
+import { useTheme } from '../../system/theme';
 import styles from './Dial.module.css';
 
 interface DialProps {
@@ -66,6 +67,7 @@ export function Dial({ label, value, onChange, onInput, steps, dots, icon: Glyph
   };
 
   const knob = pointAt(shown);
+  const retro = useTheme().retro !== null;
 
   return (
     <div
@@ -101,7 +103,11 @@ export function Dial({ label, value, onChange, onInput, steps, dots, icon: Glyph
             const fraction = index / (dots - 1);
             const point = pointAt(fraction);
             const lit = fraction <= shown + 0.0001 && shown > 0;
-            return <circle key={index} className={lit ? styles.dotLit : styles.dotOff} cx={point.x} cy={point.y} r="1.4" />;
+            return retro ? (
+              <rect key={index} className={lit ? styles.dotLit : styles.dotOff} x={Math.round(point.x / 2) * 2 - 1.3} y={Math.round(point.y / 2) * 2 - 1.3} width="2.6" height="2.6" />
+            ) : (
+              <circle key={index} className={lit ? styles.dotLit : styles.dotOff} cx={point.x} cy={point.y} r="1.4" />
+            );
           })
         ) : (
           <g transform={`rotate(${START_ANGLE} 50 50)`}>

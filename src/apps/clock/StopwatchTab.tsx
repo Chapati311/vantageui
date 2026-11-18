@@ -5,6 +5,8 @@ import { FlagIcon, PauseIcon, PlayIcon, ResetIcon } from '../../components/glyph
 import { runAction } from '../../system/actions';
 import { stopwatchElapsed, useClockState } from './clockStore';
 import { formatStopwatch } from './format';
+import { PixelRing } from '../../components/PixelRing';
+import { useTheme } from '../../system/theme';
 import styles from './Clock.module.css';
 
 const RADIUS = 46;
@@ -15,6 +17,7 @@ const RADIUS = 46;
  * The numbers and the dot are updated directly each frame (no re-render).
  */
 export function StopwatchTab() {
+  const retro = useTheme().retro !== null;
   const { stopwatch } = useClockState();
   const dotRef = useRef<SVGCircleElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
@@ -49,7 +52,8 @@ export function StopwatchTab() {
   return (
     <div className={styles.stopwatch}>
       <div className={styles.ringBox}>
-        <svg className={styles.ring} viewBox="0 0 100 100" aria-hidden="true">
+        {retro && <PixelRing className={styles.ring} fraction={(stopwatchElapsed(stopwatch) % 60_000) / 60_000} count={60} />}
+        <svg className={styles.ring} viewBox="0 0 100 100" aria-hidden="true" style={retro ? { display: 'none' } : undefined}>
           <circle className={styles.ringTrack} cx="50" cy="50" r={RADIUS} />
           {Array.from({ length: 60 }, (_, i) => (
             <line key={i} className={i % 5 === 0 ? styles.tickMajor : styles.tick} x1="50" y1="9" x2="50" y2={i % 5 === 0 ? 12 : 10.5} transform={`rotate(${i * 6} 50 50)`} />
