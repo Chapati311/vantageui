@@ -1,3 +1,4 @@
+import { useTheme } from '../system/theme';
 import styles from './DotLogo.module.css';
 
 /** The Vantage "V" on a 7x7 dot grid. 1 = lit dot. (Same as the app icon.) */
@@ -33,6 +34,8 @@ const jitter = (seed: number) => {
 /** The logo: a bold "V" drawn in dots, in the accent colors. */
 export function DotLogo({ animated = false, mono = false, dissolve = false }: DotLogoProps) {
   let litCount = 0;
+  // Retro themes draw square pixels, like everything else in them
+  const square = useTheme().retro !== null;
 
   return (
     <svg className={`${styles.logo} ${dissolve ? styles.dissolve : ''}`} viewBox={`0 0 ${GRID} ${GRID}`} role="img" aria-label="Vantage logo">
@@ -46,12 +49,12 @@ export function DotLogo({ animated = false, mono = false, dissolve = false }: Do
         [...row].map((cell, x) => {
           const lit = cell === '1';
           const delay = lit ? litCount++ * STAGGER_MS : 0;
+          const Shape = square ? 'rect' : 'circle';
+          const geometry = square ? { x: x + 0.12, y: y + 0.12, width: 0.76, height: 0.76 } : { cx: x + 0.5, cy: y + 0.5, r: 0.36 };
           return (
-            <circle
+            <Shape
               key={`${x}-${y}`}
-              cx={x + 0.5}
-              cy={y + 0.5}
-              r={0.36}
+              {...geometry}
               className={lit ? `${mono ? styles.litMono : styles.lit} ${animated ? styles.appear : ''}` : styles.unlit}
               style={
                 lit
