@@ -71,3 +71,206 @@
 .text::placeholder {
   color: var(--text-tertiary);
 }
+
+/* ---- Search and folder chips ---------------------------------------- */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.folders {
+  display: flex;
+  gap: var(--space-8);
+  overflow-x: auto;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.folders::-webkit-scrollbar {
+  display: none;
+}
+
+.folder {
+  flex-shrink: 0;
+  min-height: var(--space-32);
+  padding: 0 var(--space-12);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--text-13);
+  font-weight: 600;
+}
+
+.folderOn {
+  border-color: transparent;
+  background: var(--text-primary);
+  color: var(--color-bg);
+}
+
+.pin {
+  display: inline-flex;
+  width: var(--space-16);
+  height: var(--space-16);
+  margin-right: var(--space-8);
+  vertical-align: -1px;
+  color: var(--text-secondary);
+}
+
+.pin svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Folder sheet -------------------------------------------------- */
+.newFolder {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.folderInput {
+  flex: 1;
+  min-width: 0;
+  height: calc(var(--space-32) + var(--space-16));
+  padding: 0 var(--space-24);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
+  outline: none;
+  background: var(--surface-widget);
+  color: var(--text-primary);
+  caret-color: var(--color-accent);
+  font: inherit;
+  font-size: var(--text-17);
+}
+
+/* ---- Undo bar -------------------------------------------------------- */
+.undo {
+  position: absolute;
+  left: var(--grid-margin);
+  right: var(--grid-margin);
+  bottom: calc(var(--safe-bottom) + var(--space-32));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: calc(var(--space-32) + var(--space-16));
+  padding: 0 var(--space-8) 0 var(--space-24);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  box-shadow: var(--highlight-top);
+  color: var(--text-primary);
+  font-size: var(--text-15);
+}
+
+.undoButton {
+  min-height: calc(var(--space-32) + var(--space-8));
+  padding: 0 var(--space-16);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--text-primary);
+  color: var(--color-bg);
+}
+
+/* ---- Formatted view (markdown) ----------------------------------------- */
+.previewArea {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+
+.markdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  font-family: var(--font-serif);
+  font-size: var(--text-22);
+  line-height: 1.35;
+  color: var(--text-primary);
+}
+
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown p,
+.markdown ul,
+.markdown ol,
+.markdown blockquote {
+  margin: 0;
+}
+
+.markdown h2 {
+  font-size: var(--serif-34);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.markdown h3 {
+  font-size: calc(var(--text-22) * 1.2);
+  font-weight: 400;
+}
+
+.markdown h4 {
+  font-family: var(--font-body);
+  font-size: var(--text-11);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.markdown ul,
+.markdown ol {
+  padding-left: var(--space-24);
+}
+
+.markdown blockquote {
+  padding-left: var(--space-16);
+  border-left: 2px solid var(--text-tertiary);
+  color: var(--text-secondary);
+}
+
+.markdown code {
+  padding: 0 var(--space-4);
+  border-radius: var(--space-4);
+  background: var(--color-hairline);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 0.8em;
+}
+
+.markdown hr {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.mdTodo {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-12);
+}
+
+.mdBox {
+  flex-shrink: 0;
+  width: var(--space-16);
+  height: var(--space-16);
+  border: 1.5px solid var(--text-secondary);
+  border-radius: var(--radius-circle);
+  transform: translateY(2px);
+}
+
+.mdBoxDone {
+  border-color: var(--text-secondary);
+  background: var(--text-secondary);
+}
+
+.mdDone {
+  color: var(--text-tertiary);
+  text-decoration: line-through;
+}
+
+.mdEmpty {
+  color: var(--text-tertiary);
+}

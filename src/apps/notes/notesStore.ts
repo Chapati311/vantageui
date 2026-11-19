@@ -22,6 +22,10 @@ export interface Note {
   items: ChecklistItem[];
   createdAt: number;
   updatedAt: number;
+  /** Pinned notes stay at the top */
+  pinned?: boolean;
+  /** The folder it's in ('' or missing = no folder) */
+  folder?: string;
 }
 
 export interface NotesState {
@@ -43,7 +47,11 @@ const listeners = new Set<() => void>();
 const pendingSaves = new Map<string, number>();
 
 function setNotes(notes: Note[]): void {
-  state = { notes: [...notes].sort((a, b) => b.updatedAt - a.updatedAt), loaded: true };
+  // Pinned first, then newest first
+  state = {
+    notes: [...notes].sort((a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || b.updatedAt - a.updatedAt),
+    loaded: true,
+  };
   listeners.forEach((notify) => notify());
 }
 
@@ -95,7 +103,7 @@ export function createNote(kind: Note['kind']): Note {
   return note;
 }
 
-export function updateNote(id: string, patch: Partial<Pick<Note, 'kind' | 'text' | 'items'>>): void {
+export function updateNote(id: string, patch: Partial<Pick<Note, 'kind' | 'text' | 'items' | 'pinned' | 'folder'>>): void {
   setNotes(
     state.notes.map((note) => (note.id === id ? { ...note, ...patch, updatedAt: Date.now() } : note)),
   );
@@ -107,6 +115,30 @@ export function deleteNote(id: string): void {
   pendingSaves.delete(id);
   setNotes(state.notes.filter((note) => note.id !== id));
   dbDelete('notes', id).catch(() => {});
+}
+
+/** Pins a note to the top (or unpins it). Doesn't count as an edit. */
+export function setPinned(id: string, pinned: boolean): void {
+  setNotes(state.notes.map((note) => (note.id === id ? { ...note, pinned } : note)));
+  saveSoon(id);
+}
+
+/** Moves a note into a folder ('' = out of any folder). */
+export function moveToFolder(id: string, folder: string): void {
+  setNotes(state.notes.map((note) => (note.id === id ? { ...note, folder: folder.trim().slice(0, 24) } : note)));
+  saveSoon(id);
+}
+
+/** Puts a deleted note back exactly as it was (Undo). */
+export function restoreNote(note: Note): void {
+  if (state.notes.some((existing) => existing.id === note.id)) return;
+  setNotes([...state.notes, note]);
+  saveNow(note.id);
+}
+
+/** Every folder name in use, A to Z. */
+export function noteFolders(notes: Note[]): string[] {
+  return [...new Set(notes.map((note) => note.folder ?? '').filter(Boolean))].sort((a, b) => a.localeCompare(b));
 }
 
 /** Switches a note between text and checklist, keeping what was written. */

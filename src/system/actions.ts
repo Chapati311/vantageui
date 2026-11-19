@@ -26,7 +26,7 @@ import {
 import { addWidget, removeHomeItem } from '../shell/home/layoutStore';
 import type { WidgetSize } from '../shell/widgets/types';
 import type { ScreenRect } from '../shell/AppView';
-import { convertNote, createNote, deleteNote, getNote, type Note } from '../apps/notes/notesStore';
+import { convertNote, createNote, deleteNote, getNote, moveToFolder, restoreNote, setPinned, type Note } from '../apps/notes/notesStore';
 import type { WallpaperConfig } from '../theme/wallpapers';
 import {
   applyCustomPreset,
@@ -292,6 +292,13 @@ const ACTIONS = {
     ({ kind, onCreated }) => onCreated?.(createNote(kind).id),
   ),
   'notes.delete': define<{ id: string }>('Delete a note.', ({ id }) => deleteNote(id)),
+  'notes.pin': define<{ id: string; pinned: boolean }>('Pin a note to the top of the list, or unpin it.', ({ id, pinned }) =>
+    setPinned(id, pinned),
+  ),
+  'notes.move': define<{ id: string; folder: string }>('Move a note into a folder ("" = no folder).', ({ id, folder }) =>
+    moveToFolder(id, folder),
+  ),
+  'notes.restore': define<{ note: Note }>('Bring back a note that was just deleted (Undo).', ({ note }) => restoreNote(note)),
   'notes.convert': define<{ id: string }>('Switch a note between text and checklist.', ({ id }) => {
     const note = getNote(id);
     if (note) convertNote(note);
