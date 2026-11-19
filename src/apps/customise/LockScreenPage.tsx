@@ -1,6 +1,7 @@
 import { Pressable } from '../../components/Pressable';
 import { ScaledPreview } from '../../components/ScaledPreview';
-import { SegmentedControl } from '../../components/kit';
+import { Row, Section as KitSection, SegmentedControl, Toggle } from '../../components/kit';
+import { LOCK_WIDGETS } from '../../shell/lock/LockWidgets';
 import { runAction } from '../../system/actions';
 import { LOCK_CLOCK_STYLES, useSettings, type LockClockStyle } from '../../system/settingsStore';
 import { LockClock } from '../../shell/LockClock';
@@ -18,7 +19,7 @@ const NAMES: Record<LockClockStyle, string> = {
   word: 'Words',
 };
 
-/** Lock screen clock: eight styles, two sizes, two positions. */
+/** Lock screen: eight clock styles, size, position, round widgets and the two shortcuts. */
 export function LockScreenPage({ onBack }: { onBack: () => void }) {
   const settings = useSettings();
 
@@ -68,6 +69,42 @@ export function LockScreenPage({ onBack }: { onBack: () => void }) {
             { id: 'center', label: 'Middle' },
           ]}
         />
+      </Section>
+
+      <Section label="Widgets" note="Up to four round widgets under the clock. Tap to add or remove; they show in the order you pick them.">
+        <div className={styles.chips}>
+          {LOCK_WIDGETS.map((widget) => {
+            const on = settings.lockWidgets.includes(widget.id);
+            return (
+              <Pressable
+                key={widget.id}
+                className={`${styles.chip} ${on ? styles.chipOn : ''}`}
+                aria-pressed={on}
+                onClick={() => {
+                  const next = on ? settings.lockWidgets.filter((id) => id !== widget.id) : [...settings.lockWidgets, widget.id].slice(-4);
+                  void runAction('settings.set', { key: 'lockWidgets', value: next });
+                }}
+              >
+                {widget.name}
+              </Pressable>
+            );
+          })}
+        </div>
+      </Section>
+
+      <Section label="Shortcuts" note="Flashlight and camera at the bottom. Hold one for half a second to use it.">
+        <KitSection>
+          <Row
+            title="Flashlight and camera"
+            trailing={
+              <Toggle
+                label="Lock screen shortcuts"
+                on={settings.lockShortcuts}
+                onChange={(on) => void runAction('settings.set', { key: 'lockShortcuts', value: on })}
+              />
+            }
+          />
+        </KitSection>
       </Section>
     </SettingsPage>
   );

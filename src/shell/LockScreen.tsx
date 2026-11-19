@@ -9,6 +9,13 @@ import { NotificationCount } from './NotificationCount';
 import { useNotifications } from '../system/notifications';
 import { useSetting } from '../system/settingsStore';
 import { Wallpaper } from './wallpaper/Wallpaper';
+import { runAction } from '../system/actions';
+import { countSecretTap } from '../system/easterEgg';
+import { ChargingOverlay } from './lock/ChargingOverlay';
+import { LockNotifications } from './lock/LockNotifications';
+import { LockNowPlaying } from './lock/LockNowPlaying';
+import { LockShortcuts } from './lock/LockShortcuts';
+import { LockWidgets } from './lock/LockWidgets';
 import styles from './LockScreen.module.css';
 
 interface LockScreenProps {
@@ -89,13 +96,34 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
         {lockNotifications === 'count' ? <NotificationCount count={notificationCount} /> : <span />}
         <BatteryIndicator />
       </div>
-      <motion.div className={`${styles.clock} ${clockPosition === 'center' ? styles.centered : ''}`} style={{ y: clockY, opacity: clockOpacity }}>
-        <LockClock />
+      {/* Clock, widgets, music and notifications in one column */}
+      <motion.div
+        className={`${styles.column} ${clockPosition === 'center' ? styles.centered : ''}`}
+        style={{ y: clockY, opacity: clockOpacity }}
+      >
+        {/* Tap the clock: the next clock style. Seven quick taps: a secret. */}
+        <div
+          className={styles.clock}
+          role="button"
+          aria-label="Change clock style"
+          onClick={() => {
+            void runAction('lock.nextClockStyle', {});
+            // The 8th step brings the clock back to the style it had before the 7 taps
+            if (countSecretTap()) void runAction('lock.nextClockStyle', {});
+          }}
+        >
+          <LockClock />
+        </div>
+        <LockWidgets />
+        <LockNowPlaying />
+        {lockNotifications !== 'hidden' && <LockNotifications />}
       </motion.div>
       <div className={styles.live}>
         <LivePill unlockFirst />
       </div>
       <div className={`label ${styles.hint}`}>Swipe up to unlock</div>
+      <LockShortcuts />
+      <ChargingOverlay active={locked} />
     </motion.div>
   );
 }

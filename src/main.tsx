@@ -7,10 +7,12 @@ import { preventZoom } from './system/preventZoom';
 import { initSounds } from './system/sounds';
 import { handleSpotifyRedirect } from './system/spotify';
 import { initTheme } from './system/theme';
+import { onEasterEgg } from './system/easterEgg';
 
 preventZoom();
 initSounds();
 initTheme();
+onEasterEgg(() => void runAction('easter.gameboy', {}));
 // Coming back from the Spotify sign-in page: finish connecting
 void handleSpotifyRedirect();
 

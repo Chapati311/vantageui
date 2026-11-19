@@ -1,0 +1,60 @@
+/* Game Boy colors are fixed here on purpose: this is the moment BEFORE the
+   theme switches, so it can't read them from the theme yet. */
+.layer {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  overflow: hidden;
+  pointer-events: none;
+  animation: out 0.3s 1.9s steps(3) forwards;
+}
+
+.pixels {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  grid-auto-rows: calc(100% / 27);
+}
+
+.pixels span {
+  background: #9bbc0f;
+  opacity: 0;
+  animation: pixel 0.12s steps(2) forwards;
+}
+
+.pixels span:nth-child(3n) {
+  background: #8bac0f;
+}
+
+@keyframes pixel {
+  to {
+    opacity: 1;
+  }
+}
+
+.logo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40%;
+  color: #0f380f;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 22px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  transform: translateY(-120px);
+  animation: drop 0.9s 0.5s steps(8) forwards;
+}
+
+@keyframes drop {
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes out {
+  to {
+    opacity: 0;
+  }
+}

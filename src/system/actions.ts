@@ -24,6 +24,7 @@ import {
   applyPreset,
   deleteCustomPreset,
   getSettings,
+  LOCK_CLOCK_STYLES,
   saveCustomPreset,
   setMode,
   updateSettings,
@@ -31,6 +32,7 @@ import {
   type ModeId,
   type Settings,
 } from './settingsStore';
+import { setFlashlight } from './nativeBridge';
 import { deleteEvent, saveEvent, type CalendarEvent } from './events';
 import { deleteReminder, saveReminder, setReminderDone, type Reminder } from './reminders';
 import { clearNotifications, dismissNotification, pushNotification } from './notifications';
@@ -213,6 +215,23 @@ const ACTIONS = {
       // toggleDoNotDisturb) once that is wanted.
     },
   ),
+  'device.flashlight': define<{ on?: boolean }>(
+    'Really turn the phone flashlight on or off (bridge, else the "Flashlight" Shortcut).',
+    async ({ on }) => {
+      const next = on ?? !getSettings().flashlight;
+      updateSettings({ flashlight: next });
+      await setFlashlight(next);
+    },
+  ),
+  'easter.gameboy': define<Record<string, never>>('The secret: switch to Retro mode in Game Boy colors.', () => {
+    updateSettings({ retroTheme: 'gameboy' });
+    setMode('retro');
+  }),
+  'lock.nextClockStyle': define<Record<string, never>>('Switch the lock screen clock to the next style.', () => {
+    const styles = LOCK_CLOCK_STYLES;
+    const index = styles.indexOf(getSettings().lockClockStyle);
+    updateSettings({ lockClockStyle: styles[(index + 1) % styles.length] });
+  }),
   'controls.setBrightness': define<{ level: number }>('Set the brightness from 0 to 1.', ({ level }) =>
     updateSettings({ brightness: level }),
   ),

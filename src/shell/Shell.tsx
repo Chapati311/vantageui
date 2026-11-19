@@ -20,6 +20,7 @@ import { AppSwitcher } from './AppSwitcher';
 import { AppView, shapeOf, type ScreenRect } from './AppView';
 import { Boot } from './Boot';
 import { FirstSetup } from './setup/FirstSetup';
+import { GameBoyBoot } from './GameBoyBoot';
 import { HomeScreen } from './HomeScreen';
 import { LockScreen } from './LockScreen';
 import { NotificationCenter } from './NotificationCenter';
@@ -291,6 +292,7 @@ export function Shell() {
         <div className={styles.windDown} aria-hidden="true" />
         {/* A new phone: the first-boot setup, after the boot animation */}
       <AnimatePresence>{!setupDone && !booting && <FirstSetup key="setup" />}</AnimatePresence>
+      <GameBoyBoot />
       {booting && <Boot onDone={() => setBooting(false)} />}
       </div>
     </MotionConfig>

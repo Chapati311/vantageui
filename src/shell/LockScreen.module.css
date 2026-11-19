@@ -23,12 +23,23 @@
   justify-content: space-between;
 }
 
-/* The hero of this screen: the clock, in the upper part */
-.clock {
+/* The hero of this screen: the clock, in the upper part, then widgets,
+   music and notifications under it. Stops above the live pill. */
+.column {
   position: absolute;
   left: var(--grid-margin);
   right: var(--grid-margin);
   top: calc(var(--top-inset) + var(--space-32) + var(--space-24));
+  bottom: calc(var(--dock-bottom) + var(--space-32) * 2 + var(--space-8));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  overflow: hidden;
+}
+
+.clock {
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
 .hint {
@@ -66,8 +77,7 @@
   justify-content: center;
 }
 
-/* Customise > Lock screen > Position: in the middle of the screen */
+/* Customise > Lock screen > Position: lower, around the middle of the screen */
 .centered {
-  top: 40%;
-  transform: translateY(-50%);
+  top: 26%;
 }

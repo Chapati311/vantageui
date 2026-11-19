@@ -87,6 +87,10 @@ export interface Settings {
   keypadStyle: 'dots' | 'plain';
   /** Lock screen notifications: show the count, or nothing */
   lockNotifications: 'count' | 'hidden';
+  /** Small round widgets under the lock clock, up to 4 (ids from LOCK_WIDGETS) */
+  lockWidgets: string[];
+  /** The two hold-to-use buttons at the bottom of the lock screen */
+  lockShortcuts: boolean;
   /** What the live pill may show */
   pillTimer: boolean;
   pillStopwatch: boolean;
@@ -173,6 +177,8 @@ export const DEFAULT_SETTINGS: Settings = {
   bootAnimation: true,
   keypadStyle: 'dots',
   lockNotifications: 'count',
+  lockWidgets: ['weather', 'battery', 'focus', 'alarm'],
+  lockShortcuts: true,
   pillTimer: true,
   pillStopwatch: true,
   pillRecording: true,
@@ -296,6 +302,8 @@ export function sanitizeSettings(input: unknown): Settings {
     bootAnimation: bool(raw.bootAnimation, d.bootAnimation),
     keypadStyle: oneOf(raw.keypadStyle, ['dots', 'plain'] as const, d.keypadStyle),
     lockNotifications: oneOf(raw.lockNotifications, ['count', 'hidden'] as const, d.lockNotifications),
+    lockWidgets: Array.isArray(raw.lockWidgets) ? raw.lockWidgets.filter((id): id is string => typeof id === 'string').slice(0, 4) : d.lockWidgets,
+    lockShortcuts: bool(raw.lockShortcuts, d.lockShortcuts),
     pillTimer: bool(raw.pillTimer, d.pillTimer),
     pillStopwatch: bool(raw.pillStopwatch, d.pillStopwatch),
     pillRecording: bool(raw.pillRecording, d.pillRecording),
