@@ -73,3 +73,9 @@
   opacity: 0.35;
   pointer-events: none;
 }
+
+/* Plain: white (text color) ring, no glow */
+.plain .level {
+  stroke: var(--text-primary);
+  filter: none;
+}

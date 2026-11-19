@@ -23,7 +23,8 @@
   right: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-24);
+  gap: var(--space-16);
+  max-height: 100%;
   padding: var(--top-inset) var(--grid-margin) var(--space-12);
   border-bottom: var(--border-widget);
   border-radius: 0 0 var(--radius-widget) var(--radius-widget);
@@ -34,6 +35,26 @@
   will-change: transform;
 }
 
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: calc(-1 * var(--space-8));
+  color: var(--text-secondary);
+}
+
+.edit {
+  min-height: var(--space-32);
+  padding: 0 var(--space-8);
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+}
+
+.tile {
+  flex-shrink: 0;
+}
+
 /* Four toggles on the four grid columns */
 .toggles {
   display: grid;
@@ -41,21 +62,233 @@
   gap: var(--grid-gap);
 }
 
-.dial {
+/* ---- Music ----------------------------------------------------------------- */
+.music {
   display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: calc(var(--space-32) * 2);
+  padding: var(--space-8) var(--space-8) var(--space-8) var(--space-16);
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  background: var(--surface-widget);
+}
+
+.musicText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.musicTitle,
+.musicArtist {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.musicTitle {
+  font-size: var(--text-15);
+  font-weight: 600;
+}
+
+.musicArtist {
+  font-size: var(--text-13);
+  color: var(--text-secondary);
+}
+
+.musicButton {
+  display: flex;
+  align-items: center;
   justify-content: center;
+  width: calc(var(--space-32) + var(--space-12));
+  height: calc(var(--space-32) + var(--space-12));
+  border: 0;
+  border-radius: var(--radius-circle);
+  background: none;
+  color: var(--text-primary);
+}
+
+.musicButton:disabled {
+  opacity: 0.35;
+}
+
+.musicButton svg {
+  width: var(--space-24);
+  height: var(--space-24);
+}
+
+/* ---- Dials: brightness and volume side by side, two grid cells each ---- */
+.dials {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--grid-gap);
+  justify-items: center;
+}
+
+.sliders {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* ---- Modes and quick timers: four pills ------------------------------- */
+.modes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-8);
+}
+
+.chip {
+  min-height: calc(var(--space-32) + var(--space-12));
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--text-13);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chipOn {
+  border-color: transparent;
+  background: var(--text-primary);
+  color: var(--color-bg);
+}
+
+/* ---- Shortcuts: five small circles with names ------------------------- */
+.shortcuts {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-4);
+}
+
+.shortcut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.shortcutCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--space-32) + var(--space-16));
+  height: calc(var(--space-32) + var(--space-16));
+  border-radius: var(--radius-circle);
+  background: var(--color-hairline);
+}
+
+.shortcutCircle svg {
+  width: var(--space-24);
+  height: var(--space-24);
+}
+
+.shortcutOn .shortcutCircle {
+  background: var(--text-primary);
+  color: var(--color-bg);
+}
+
+.shortcutName {
+  font-size: var(--text-11);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ---- Edit mode ------------------------------------------------------ */
+.editList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.editRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: calc(var(--space-32) + var(--space-16));
+  padding: 0 var(--space-8) 0 var(--space-16);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
+  background: var(--surface-widget);
+  animation: wiggle 0.3s ease-in-out infinite alternate;
+}
+
+.editRow:nth-child(even) {
+  animation-direction: alternate-reverse;
+}
+
+@keyframes wiggle {
+  from {
+    transform: rotate(-0.4deg);
+  }
+  to {
+    transform: rotate(0.4deg);
+  }
+}
+
+.editHidden {
+  opacity: 0.45;
+  animation: none;
+}
+
+.editName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--text-15);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--space-32) + var(--space-12));
+  height: calc(var(--space-32) + var(--space-12));
+  border: 0;
+  border-radius: var(--radius-circle);
+  background: none;
+  color: var(--text-primary);
+}
+
+.editButton:disabled {
+  opacity: 0.25;
+}
+
+.editButton svg {
+  width: var(--space-24);
+  height: var(--space-24);
+}
+
+.editShow {
+  min-width: calc(var(--space-32) + var(--space-16));
+  min-height: calc(var(--space-32) + var(--space-12));
+  border: 0;
+  background: none;
+  color: var(--text-primary);
 }
 
 .handle {
+  flex-shrink: 0;
   align-self: center;
   width: calc(var(--space-32) + var(--space-12));
   height: var(--space-4);
   border-radius: var(--radius-pill);
   background: var(--text-tertiary);
-}
-
-.slider {
-  width: 100%;
 }
 
 /* Content arrives one piece after another (30 ms apart) */
@@ -66,48 +299,33 @@
   }
 }
 
-.open .panel > * {
+.open .tile {
   animation: rise 0.36s cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
 
-.open .panel > *:nth-child(2) {
+.open .tile:nth-child(3) {
   animation-delay: 30ms;
 }
 
-.open .panel > *:nth-child(3) {
+.open .tile:nth-child(4) {
   animation-delay: 60ms;
 }
 
-.open .panel > *:nth-child(4) {
+.open .tile:nth-child(5) {
   animation-delay: 90ms;
 }
 
-.open .panel > *:nth-child(5) {
+.open .tile:nth-child(6) {
   animation-delay: 120ms;
 }
 
-.open .panel > *:nth-child(6) {
+.open .tile:nth-child(7) {
   animation-delay: 150ms;
 }
 
-.open .panel > *:nth-child(7) {
-  animation-delay: 180ms;
-}
-
-.open .panel > *:nth-child(8) {
-  animation-delay: 210ms;
-}
-
-.open .panel > *:nth-child(9) {
-  animation-delay: 240ms;
-}
-
-.open .panel > *:nth-child(10) {
-  animation-delay: 270ms;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .open .panel > * {
+  .open .tile,
+  .editRow {
     animation: none;
   }
 }

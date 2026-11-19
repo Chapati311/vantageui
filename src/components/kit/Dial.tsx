@@ -22,6 +22,8 @@ interface DialProps {
   children?: ReactNode;
   /** 'small' = 2 grid cells wide (control center), 'large' = the full width (timer) */
   size?: 'small' | 'large';
+  /** Draw the ring in the text color instead of the accent (when another accent is on screen) */
+  plain?: boolean;
   disabled?: boolean;
 }
 
@@ -38,7 +40,7 @@ const pointAt = (fraction: number) => {
 };
 
 /** A thin circular dial you turn by dragging a finger around it. */
-export function Dial({ label, value, onChange, onInput, steps, dots, icon: Glyph, children, size = 'small', disabled }: DialProps) {
+export function Dial({ label, value, onChange, onInput, steps, dots, icon: Glyph, children, size = 'small', disabled, plain }: DialProps) {
   // While turning, the value lives here, so nothing is saved on every move.
   const [dragValue, setDragValue] = useState<number | null>(null);
   const lastStep = useRef<number | null>(null);
@@ -69,7 +71,7 @@ export function Dial({ label, value, onChange, onInput, steps, dots, icon: Glyph
 
   return (
     <div
-      className={`${styles.dial} ${size === 'large' ? styles.large : ''} ${disabled ? styles.disabled : ''}`}
+      className={`${styles.dial} ${size === 'large' ? styles.large : ''} ${disabled ? styles.disabled : ''} ${plain ? styles.plain : ''}`}
       role="slider"
       aria-label={label}
       aria-valuemin={0}

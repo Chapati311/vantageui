@@ -97,6 +97,8 @@ export interface Settings {
   pillRecording: boolean;
   /** Brightness in the control center: round dial or straight slider */
   controlStyle: 'dial' | 'slider';
+  /** Control center tiles, in order; tiles not listed are hidden */
+  controlTiles: string[];
   /** 0 = no bounce, 1 = bouncy springs */
   springBounce: number;
   /** Lock screen wallpaper lags behind the swipe a little */
@@ -183,6 +185,7 @@ export const DEFAULT_SETTINGS: Settings = {
   pillStopwatch: true,
   pillRecording: true,
   controlStyle: 'dial',
+  controlTiles: ['toggles', 'music', 'dials', 'modes', 'timers', 'shortcuts'],
   springBounce: 0,
   parallax: true,
   appStyles: {},
@@ -303,6 +306,7 @@ export function sanitizeSettings(input: unknown): Settings {
     keypadStyle: oneOf(raw.keypadStyle, ['dots', 'plain'] as const, d.keypadStyle),
     lockNotifications: oneOf(raw.lockNotifications, ['count', 'hidden'] as const, d.lockNotifications),
     lockWidgets: Array.isArray(raw.lockWidgets) ? raw.lockWidgets.filter((id): id is string => typeof id === 'string').slice(0, 4) : d.lockWidgets,
+    controlTiles: Array.isArray(raw.controlTiles) ? raw.controlTiles.filter((id): id is string => typeof id === 'string') : d.controlTiles,
     lockShortcuts: bool(raw.lockShortcuts, d.lockShortcuts),
     pillTimer: bool(raw.pillTimer, d.pillTimer),
     pillStopwatch: bool(raw.pillStopwatch, d.pillStopwatch),

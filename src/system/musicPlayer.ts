@@ -34,6 +34,19 @@ let audio: HTMLAudioElement | null = null;
 let objectUrl: string | null = null;
 let analyser: AnalyserNode | null = null;
 let context: AudioContext | null = null;
+let gain: GainNode | null = null;
+let musicVolume = 1;
+
+/** Music volume, 0-1 (Vantage's own player; the phone's volume needs the bridge). */
+export function setMusicVolume(level: number): void {
+  musicVolume = Math.max(0, Math.min(1, level));
+  if (gain) gain.gain.value = musicVolume;
+  else if (audio) audio.volume = musicVolume;
+}
+
+export function getMusicVolume(): number {
+  return musicVolume;
+}
 
 function update(patch: Partial<PlayerState>): void {
   state = { ...state, ...patch };
@@ -68,15 +81,18 @@ export function getAnalyser(): AnalyserNode | null {
 function connectAnalyser(media: HTMLAudioElement): void {
   if (analyser) return;
   try {
-    const AudioContextClass =
-      window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    const AudioContextClass = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!AudioContextClass) return;
     context = new AudioContextClass();
     const source = context.createMediaElementSource(media);
     analyser = context.createAnalyser();
     analyser.fftSize = 64;
+    // Volume goes through a gain node: iOS ignores the audio element's own volume
+    gain = context.createGain();
+    gain.gain.value = musicVolume;
     source.connect(analyser);
-    analyser.connect(context.destination);
+    analyser.connect(gain);
+    gain.connect(context.destination);
   } catch {
     analyser = null;
   }

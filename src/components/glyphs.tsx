@@ -273,3 +273,39 @@ export function ListIcon() {
     </Icon>
   );
 }
+
+/** An open eye: keep the screen awake. */
+export function EyeIcon() {
+  return (
+    <Icon>
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" />
+      <circle cx="12" cy="12" r="3" />
+    </Icon>
+  );
+}
+
+/** Half sun, half moon: dark or light appearance. */
+export function ContrastIcon() {
+  return (
+    <Icon>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor" stroke="none" />
+    </Icon>
+  );
+}
+
+export function ChevronUpIcon() {
+  return (
+    <Icon>
+      <path d="M6 14.5l6-6 6 6" />
+    </Icon>
+  );
+}
+
+export function ChevronDownIcon() {
+  return (
+    <Icon>
+      <path d="M6 9.5l6 6 6-6" />
+    </Icon>
+  );
+}

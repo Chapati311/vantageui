@@ -12,8 +12,17 @@ import {
 } from '../apps/clock/clockStore';
 import { openGame, type GameId } from '../apps/arcade/arcadeStore';
 import { updateLockIn } from '../apps/lockin/lockInStore';
-import { next as nextTrack, previous as previousTrack, togglePlay } from './musicPlayer';
-import { deleteAlarm, saveAlarm, setAlarmEnabled, snooze, stopRinging, updateAlarmSettings, type Alarm, type AlarmSettings } from '../apps/clock/alarmStore';
+import { next as nextTrack, previous as previousTrack, setMusicVolume, togglePlay } from './musicPlayer';
+import {
+  deleteAlarm,
+  saveAlarm,
+  setAlarmEnabled,
+  snooze,
+  stopRinging,
+  updateAlarmSettings,
+  type Alarm,
+  type AlarmSettings,
+} from '../apps/clock/alarmStore';
 import { addWidget, removeHomeItem } from '../shell/home/layoutStore';
 import type { WidgetSize } from '../shell/widgets/types';
 import type { ScreenRect } from '../shell/AppView';
@@ -33,6 +42,9 @@ import {
   type Settings,
 } from './settingsStore';
 import { setFlashlight } from './nativeBridge';
+import { setKeepAwake } from './keepAwake';
+import { startRecording } from './recordings';
+import { SESSION_TYPES, startSession } from '../apps/lockin/focusStore';
 import { deleteEvent, saveEvent, type CalendarEvent } from './events';
 import { deleteReminder, saveReminder, setReminderDone, type Reminder } from './reminders';
 import { clearNotifications, dismissNotification, pushNotification } from './notifications';
@@ -106,15 +118,9 @@ const ACTIONS = {
     if (!hasPasscode()) playSound('unlock');
   }),
   'shell.openSearch': define<Record<string, never>>('Open search.', () => shell?.openSearch()),
-  'shell.openControlCenter': define<Record<string, never>>('Open the control center (quick settings).', () =>
-    shell?.openControlCenter(),
-  ),
-  'shell.openNotifications': define<Record<string, never>>('Open the notification center.', () =>
-    shell?.openNotifications(),
-  ),
-  'shell.openAppSwitcher': define<Record<string, never>>('Show the recently used apps.', () =>
-    shell?.openAppSwitcher(),
-  ),
+  'shell.openControlCenter': define<Record<string, never>>('Open the control center (quick settings).', () => shell?.openControlCenter()),
+  'shell.openNotifications': define<Record<string, never>>('Open the notification center.', () => shell?.openNotifications()),
+  'shell.openAppSwitcher': define<Record<string, never>>('Show the recently used apps.', () => shell?.openAppSwitcher()),
   'shell.closeOverlays': define<Record<string, never>>(
     'Close search, the control center, the notification center and the app switcher.',
     () => shell?.closeOverlays(),
@@ -125,9 +131,7 @@ const ACTIONS = {
     'Put a widget on the home screen (first free spot, from the given page on).',
     ({ widgetId, size, page }) => void addWidget(widgetId, size, page ?? 0),
   ),
-  'home.removeWidget': define<{ itemId: string }>('Take a widget off the home screen.', ({ itemId }) =>
-    removeHomeItem(itemId),
-  ),
+  'home.removeWidget': define<{ itemId: string }>('Take a widget off the home screen.', ({ itemId }) => removeHomeItem(itemId)),
 
   // ---- Arcade
   'arcade.open': define<{ game?: GameId }>('Open the Arcade, optionally straight into one game.', ({ game }) => {
@@ -137,9 +141,8 @@ const ACTIONS = {
   }),
 
   // ---- Customise
-  'customise.surprise': define<Record<string, never>>(
-    'Surprise me: pick a random theme, wallpaper and sometimes accent.',
-    () => surpriseMe(),
+  'customise.surprise': define<Record<string, never>>('Surprise me: pick a random theme, wallpaper and sometimes accent.', () =>
+    surpriseMe(),
   ),
   'setups.save': define<{ name: string }>('Save the whole look (settings and home layout) as a named setup.', ({ name }) =>
     saveSetup(name),
@@ -149,14 +152,11 @@ const ACTIONS = {
     if (setup) applySetup(setup);
   }),
   'setups.delete': define<{ id: string }>('Delete a saved setup.', ({ id }) => deleteSetup(id)),
-  'setups.import': define<{ file: Blob }>('Load a setup from an exported file.', async ({ file }) =>
-    applySetup(await readSetupFile(file)),
-  ),
+  'setups.import': define<{ file: Blob }>('Load a setup from an exported file.', async ({ file }) => applySetup(await readSetupFile(file))),
 
   // ---- Notifications
-  'notifications.push': define<{ appId: string; title: string; body: string }>(
-    'Show a notification from a Vantage app.',
-    (notification) => pushNotification(notification),
+  'notifications.push': define<{ appId: string; title: string; body: string }>('Show a notification from a Vantage app.', (notification) =>
+    pushNotification(notification),
   ),
   'notifications.dismiss': define<{ id: string }>('Remove one notification.', ({ id }) => dismissNotification(id)),
   'notifications.clear': define<Record<string, never>>('Remove all notifications.', () => clearNotifications()),
@@ -166,29 +166,28 @@ const ACTIONS = {
   'passcode.remove': define<Record<string, never>>('Turn the passcode off.', () => removePasscode()),
 
   // ---- Look
-  'theme.apply': define<{ id: string }>(
-    'Switch to one of the 21 theme presets by id (e.g. midnight, ocean, paper, nokia).',
-    ({ id }) => applyPreset(id),
+  'theme.apply': define<{ id: string }>('Switch to one of the 21 theme presets by id (e.g. midnight, ocean, paper, nokia).', ({ id }) =>
+    applyPreset(id),
   ),
   'theme.setAppearance': define<{ appearance: Appearance }>('Use dark, light or automatic appearance.', ({ appearance }) =>
     updateSettings({ appearance }),
   ),
   'theme.setAccent': define<{ color: string | null }>(
-    'Set the accent color (a hex color like #2DD4BF), or null for the theme\'s own accent.',
+    "Set the accent color (a hex color like #2DD4BF), or null for the theme's own accent.",
     ({ color }) => updateSettings({ accent: color, matchWallpaper: false }),
   ),
   'theme.matchWallpaper': define<{ on: boolean }>('Take the accent and surface tint from the wallpaper.', ({ on }) =>
     updateSettings({ matchWallpaper: on }),
   ),
-  'theme.savePreset': define<{ name: string }>('Save the current look as a named preset.', ({ name }) =>
-    saveCustomPreset(name),
-  ),
+  'theme.savePreset': define<{ name: string }>('Save the current look as a named preset.', ({ name }) => saveCustomPreset(name)),
   'theme.applySavedPreset': define<{ id: string }>('Switch to a saved preset.', ({ id }) => applyCustomPreset(id)),
   'theme.deleteSavedPreset': define<{ id: string }>('Delete a saved preset.', ({ id }) => deleteCustomPreset(id)),
   'wallpaper.set': define<{ wallpaper: WallpaperConfig; screen?: 'home' | 'lock' | 'both' }>(
     'Change the wallpaper of the home screen, the lock screen, or both (default: both).',
     ({ wallpaper, screen = 'both' }) =>
-      updateSettings(screen === 'lock' ? { lockWallpaper: wallpaper } : screen === 'home' ? { wallpaper } : { wallpaper, lockWallpaper: null }),
+      updateSettings(
+        screen === 'lock' ? { lockWallpaper: wallpaper } : screen === 'home' ? { wallpaper } : { wallpaper, lockWallpaper: null },
+      ),
   ),
   'wallpaper.setPhoto': define<{ file: Blob }>('Use a photo as the wallpaper.', async ({ file }) => {
     await setWallpaperPhoto(file);
@@ -227,6 +226,34 @@ const ACTIONS = {
     updateSettings({ retroTheme: 'gameboy' });
     setMode('retro');
   }),
+  'music.setVolume': define<{ level: number }>('Set the volume of your music and of Vantage sounds (0 to 1).', ({ level }) => {
+    setMusicVolume(level);
+    updateSettings({ soundVolume: Math.max(0, Math.min(1, level)) });
+  }),
+  'device.keepAwake': define<{ on: boolean }>('Keep the screen on (needs iOS 16.4 or newer).', async ({ on }) => {
+    await setKeepAwake(on);
+  }),
+  'timer.quick': define<{ minutes: number }>('Start a timer right away for this many minutes.', ({ minutes }) => {
+    setTimerDuration(minutes * 60_000);
+    startTimer();
+  }),
+  'focus.start': define<{ minutes?: number }>(
+    'Start a Lock In focus session (a 25 minute Pomodoro unless told otherwise).',
+    ({ minutes }) => {
+      const pomodoro = SESSION_TYPES[0];
+      startSession({
+        type: 'pomodoro',
+        work: minutes ?? pomodoro.work,
+        rest: pomodoro.rest,
+        rounds: pomodoro.rounds,
+        longRest: pomodoro.longRest,
+        tag: '',
+        goal: '',
+        strict: false,
+      });
+    },
+  ),
+  'recorder.start': define<Record<string, never>>('Start a voice recording.', () => startRecording()),
   'lock.nextClockStyle': define<Record<string, never>>('Switch the lock screen clock to the next style.', () => {
     const styles = LOCK_CLOCK_STYLES;
     const index = styles.indexOf(getSettings().lockClockStyle);
@@ -237,10 +264,10 @@ const ACTIONS = {
   ),
 
   // ---- Clock
-  'clock.showTab': define<{ tab: ClockTab }>('Show the alarm, world clock, stopwatch or timer tab.', ({ tab }) =>
-    setClockTab(tab),
+  'clock.showTab': define<{ tab: ClockTab }>('Show the alarm, world clock, stopwatch or timer tab.', ({ tab }) => setClockTab(tab)),
+  'alarm.save': define<{ alarm: Alarm }>('Add or change an alarm (hour, minute, label, repeat days, sound).', ({ alarm }) =>
+    saveAlarm(alarm),
   ),
-  'alarm.save': define<{ alarm: Alarm }>('Add or change an alarm (hour, minute, label, repeat days, sound).', ({ alarm }) => saveAlarm(alarm)),
   'alarm.delete': define<{ id: string }>('Delete an alarm.', ({ id }) => deleteAlarm(id)),
   'alarm.setEnabled': define<{ id: string; enabled: boolean }>('Switch an alarm on or off.', ({ id, enabled }) =>
     setAlarmEnabled(id, enabled),
@@ -250,9 +277,7 @@ const ACTIONS = {
   ),
   'alarm.stop': define<Record<string, never>>('Stop the ringing alarm.', () => stopRinging()),
   'alarm.snooze': define<Record<string, never>>('Snooze the ringing alarm.', () => snooze()),
-  'timer.setDuration': define<{ minutes: number }>('Set the timer length in minutes.', ({ minutes }) =>
-    setTimerDuration(minutes * 60_000),
-  ),
+  'timer.setDuration': define<{ minutes: number }>('Set the timer length in minutes.', ({ minutes }) => setTimerDuration(minutes * 60_000)),
   'timer.start': define<Record<string, never>>('Start or resume the timer.', () => startTimer()),
   'timer.pause': define<Record<string, never>>('Pause the timer.', () => pauseTimer()),
   'timer.reset': define<Record<string, never>>('Reset the timer (also stops a finished timer).', () => resetTimer()),
