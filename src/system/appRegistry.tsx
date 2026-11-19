@@ -1,3 +1,4 @@
+import { VantageApp } from '../vantage/VantageApp';
 import { EarbudsApp } from '../apps/devices/EarbudsApp';
 import { SoundIcon } from '../components/glyphs';
 import { lazy, Suspense, type ComponentType } from 'react';
@@ -46,8 +47,7 @@ import {
   RecorderIcon,
   RemindersIcon,
   SettingsIcon,
-  WeatherIcon,
-} from './appIcons';
+  WeatherIcon, VantageIcon } from './appIcons';
 
 // Maps carries a big map library: it is only downloaded when Maps opens.
 const LazyMaps = lazy(() => import('../apps/maps/MapsApp').then((module) => ({ default: module.MapsApp })));
@@ -115,6 +115,13 @@ export const APPS: AppDefinition[] = [
     bundleId: 'com.apple.Preferences',
   },
   { id: 'kit', name: 'Kit', icon: KitIcon, keywords: ['components', 'design', 'test', 'ui'], component: KitApp, hidden: true },
+  {
+    id: 'vantage',
+    name: 'Vantage',
+    icon: VantageIcon,
+    keywords: ['assistant', 'ai', 'ask', 'chat', 'focus', 'grades', 'study', 'school', 'lock in'],
+    component: VantageApp,
+  },
   { id: 'earbuds', name: 'Earbuds', icon: SoundIcon, keywords: ['airpods', 'headphones', 'battery', 'bluetooth'], component: EarbudsApp, hidden: true },
 ];
 
@@ -122,7 +129,7 @@ export const APPS: AppDefinition[] = [
 export const HOME_APPS = APPS.filter((app) => !app.hidden);
 
 /** The 4 apps that sit in the dock at the bottom of every home page, left to right. */
-export const DOCK_APP_IDS = ['phone', 'messages', 'notes', 'clock'];
+export const DOCK_APP_IDS = ['vantage', 'phone', 'messages', 'clock'];
 
 export function getApp(id: string): AppDefinition | undefined {
   return APPS.find((app) => app.id === id);

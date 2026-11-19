@@ -1,3 +1,4 @@
+import { summon } from '../vantage/summon';
 import { useDrag } from '@use-gesture/react';
 import { animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { useEffect, useRef } from 'react';
@@ -35,6 +36,7 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
   const [lockNotifications] = useSetting('lockNotifications');
   const [lockWallpaper] = useSetting('lockWallpaper');
   const ref = useRef<HTMLDivElement>(null);
+  const hintHold = useRef(0);
 
   // 0 = covering the screen, 1 = slid away above it. A "motion value":
   // changing it moves the screen without re-rendering React.
@@ -121,7 +123,18 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
       <div className={styles.live}>
         <LivePill unlockFirst />
       </div>
-      <div className={`label ${styles.hint}`}>Swipe up to unlock</div>
+      <div
+        className={`label ${styles.hint}`}
+        // Hold the line to ask Vantage without unlocking
+        onPointerDownCapture={() => {
+          window.clearTimeout(hintHold.current);
+          hintHold.current = window.setTimeout(() => summon('lock-screen'), 600);
+        }}
+        onPointerMoveCapture={() => window.clearTimeout(hintHold.current)}
+        onPointerUpCapture={() => window.clearTimeout(hintHold.current)}
+      >
+        Swipe up to unlock
+      </div>
       <LockShortcuts />
       <ChargingOverlay active={locked} />
     </motion.div>

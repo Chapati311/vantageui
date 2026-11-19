@@ -21,6 +21,11 @@ import { AppView, shapeOf, type ScreenRect } from './AppView';
 import { Boot } from './Boot';
 import { FirstSetup } from './setup/FirstSetup';
 import { GameBoyBoot } from './GameBoyBoot';
+import { VantageOverlay } from '../vantage/VantageOverlay';
+import { isVantageConnected, provideContext } from '../vantage/bridge';
+import { summon } from '../vantage/summon';
+import { getNotifications } from '../system/notifications';
+import { getFocus } from '../apps/lockin/focusStore';
 import { HomeScreen } from './HomeScreen';
 import { LockScreen } from './LockScreen';
 import { NotificationCenter } from './NotificationCenter';
@@ -56,6 +61,33 @@ export function Shell() {
   const [booting, setBooting] = useState(() => getSettings().bootAnimation);
   const [reduceMotion] = useSetting('reduceMotion');
   const [setupDone] = useSetting('setupDone');
+  // What Vantage is told about the moment (VANTAGE.md: the "context" message)
+  provideContext(() => {
+    const focus = getFocus().session;
+    return {
+      app: openAppRef.current,
+      screen: lockedRef.current ? 'lock' : openAppRef.current ? 'app' : 'home',
+      focusState: focus ? { phase: focus.phase, paused: focus.pausedLeft !== null } : null,
+      recentNotifications: getNotifications()
+        .slice(0, 5)
+        .map((note) => ({ app: note.appId, title: note.title })),
+    };
+  });
+
+  // Double-tap the status bar (the top 24 px) to summon Vantage
+  useEffect(() => {
+    let last = 0;
+    const tap = (event: PointerEvent) => {
+      if (event.clientY > 24) return;
+      if (event.timeStamp - last < 320) {
+        last = 0;
+        summon('status-bar');
+      } else last = event.timeStamp;
+    };
+    window.addEventListener('pointerup', tap, true);
+    return () => window.removeEventListener('pointerup', tap, true);
+  }, []);
+
   // A signature pack was applied: the home screen pops in again in its new style
   useEffect(() => {
     const replay = () => setUnlockCount((count) => count + 1);
@@ -64,6 +96,10 @@ export function Shell() {
   }, []);
   const [locked, setLocked] = useState(true);
   const [openApp, setOpenApp] = useState<OpenApp | null>(null);
+  const openAppRef = useRef<string | null>(null);
+  openAppRef.current = openApp?.app.id ?? null;
+  const lockedRef = useRef(true);
+  lockedRef.current = locked;
   const [searchOpen, setSearchOpen] = useState(false);
   const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -94,7 +130,9 @@ export function Shell() {
 
   // Let actions (src/system/actions.ts) drive the shell: open apps, lock, ...
   const controls = useRef({
-    openApp: (appId: string, from?: ScreenRect | null) => {
+    openApp: (requested: string, from?: ScreenRect | null) => {
+      // Once Vantage is connected, Lock In lives inside it: its widgets and shortcuts open Vantage
+      const appId = requested === 'lockin' && isVantageConnected() ? 'vantage' : requested;
       const app = getApp(appId);
       if (!app) return;
       closeAllOverlays();
@@ -297,9 +335,10 @@ export function Shell() {
         {/* Wind Down: a warm layer and slow dimming over everything (touches go through) */}
         <div className={styles.windDown} aria-hidden="true" />
         {/* A new phone: the first-boot setup, after the boot animation */}
-      <AnimatePresence>{!setupDone && !booting && <FirstSetup key="setup" />}</AnimatePresence>
-      <GameBoyBoot />
-      {booting && <Boot onDone={() => setBooting(false)} />}
+        <AnimatePresence>{!setupDone && !booting && <FirstSetup key="setup" />}</AnimatePresence>
+        <GameBoyBoot />
+        <VantageOverlay />
+        {booting && <Boot onDone={() => setBooting(false)} />}
       </div>
     </MotionConfig>
   );

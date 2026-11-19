@@ -8,11 +8,15 @@ import { initSounds } from './system/sounds';
 import { handleSpotifyRedirect } from './system/spotify';
 import { initTheme } from './system/theme';
 import { onEasterEgg } from './system/easterEgg';
+import { onVolumeChord } from './system/nativeBridge';
+import { summon } from './vantage/summon';
 
 preventZoom();
 initSounds();
 initTheme();
 onEasterEgg(() => void runAction('easter.gameboy', {}));
+// After the jailbreak: volume up + down summons Vantage (does nothing before)
+onVolumeChord(() => summon('volume-chord'));
 // Coming back from the Spotify sign-in page: finish connecting
 void handleSpotifyRedirect();
 

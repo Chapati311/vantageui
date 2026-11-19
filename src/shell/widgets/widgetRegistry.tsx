@@ -21,6 +21,7 @@ import { CountdownWidget, DotCalendarWidget } from './productivity/ProductivityW
 import { SolarSystemWidget } from './space/SolarSystemWidget';
 import { VoiceNoteWidget } from './VoiceNoteWidget';
 import { WeatherWidget } from './WeatherWidget';
+import { summon } from '../../vantage/summon';
 import { HumidityWidget, SerifDateWidget, TickDialWidget, WindConeWidget } from './PackWidgets';
 import { SmartStackWidget, smartStackApp } from './productivity/SmartStack';
 import {
@@ -160,11 +161,10 @@ export const WIDGETS: WidgetDefinition[] = [
     id: 'ask',
     name: 'Ask Vantage',
     category: 'info',
-    description: 'Search apps and actions.',
+    description: 'Summon Vantage.',
     component: AskWidget,
     sizes: ['4x1'],
-    // Until the Vantage AI exists, the bar opens search.
-    onTap: ({ openSearch }) => openSearch(),
+    onTap: () => summon('ask-bar'),
   },
 
   // ---- Fun

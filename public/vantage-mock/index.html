@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Vantage (test page)</title>
+<style>
+  /* Painted with the OS theme it receives in "hello" and "theme" */
+  :root { --color-bg: #06090d; --color-surface: #0e141a; --text-primary: #fff; --text-secondary: #8a939c; --color-accent: #2dd4bf; --color-on-accent: #06090d; --color-hairline: rgba(255,255,255,.12); --radius-widget: 28px; --font-body: system-ui, sans-serif; }
+  html, body { margin: 0; height: 100%; background: transparent; color: var(--text-primary); font: 15px/1.4 var(--font-body); -webkit-user-select: none; user-select: none; }
+  body { display: flex; flex-direction: column; gap: 12px; padding: 16px; box-sizing: border-box; }
+  body.app { background: var(--color-bg); padding-top: 72px; }
+  .note { font-size: 13px; color: var(--text-secondary); }
+  .log { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+  .msg { padding: 10px 14px; border-radius: 18px; background: var(--color-surface); max-width: 85%; }
+  .me { align-self: flex-end; background: var(--color-accent); color: var(--color-on-accent); }
+  form { display: flex; gap: 8px; }
+  input { flex: 1; min-width: 0; height: 44px; padding: 0 16px; border: 1px solid var(--color-hairline); border-radius: 999px; background: var(--color-surface); color: var(--text-primary); font: inherit; font-size: 16px; outline: none; }
+  button { height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font: inherit; font-weight: 600; }
+  h1 { margin: 0; font: 400 34px/1 'Instrument Serif', Georgia, serif; }
+</style>
+</head>
+<body>
+<h1 id="title">Vantage</h1>
+<p class="note">Test page. The real Vantage isn't connected yet (set VITE_VANTAGE_URL once the /vantage/ rewrite is in place). This page only understands a few commands, to test the connection: "timer 5", "pack porcelain", "theme ocean", "dark", "light", "lock", "clear notifications".</p>
+<div class="log" id="log"></div>
+<form id="form"><input id="input" placeholder="Type a command" autocomplete="off" /><button>Send</button></form>
+<script>
+  const params = new URLSearchParams(location.search);
+  if (params.get('view') !== 'overlay') document.body.classList.add('app');
+  const log = document.getElementById('log');
+  let counter = 0;
+  const post = (type, extra = {}) => parent.postMessage({ v: 1, id: 'mock-' + ++counter, type, ...extra }, location.origin);
+  const say = (text, me) => { const el = document.createElement('div'); el.className = 'msg' + (me ? ' me' : ''); el.textContent = text; log.append(el); log.scrollTop = log.scrollHeight; };
+  const paint = (theme) => { for (const [k, v] of Object.entries(theme || {})) if (k.startsWith('--') && v) document.documentElement.style.setProperty(k, v); };
+
+  // The few commands this test page understands, as OS actions
+  const understand = (text) => {
+    const t = text.trim().toLowerCase();
+    let m;
+    if ((m = /^timer\s+(\d+)/.exec(t))) return ['os.timer.quick', { minutes: Number(m[1]) }];
+    if ((m = /^pack\s+(\w+)/.exec(t))) return ['os.theme.applyPack', { id: m[1] }];
+    if ((m = /^theme\s+(\w+)/.exec(t))) return ['os.theme.apply', { id: m[1] }];
+    if (t === 'dark' || t === 'light') return ['os.theme.setAppearance', { appearance: t }];
+    if (t === 'lock') return ['os.shell.lock', {}];
+    if (t === 'clear notifications') return ['os.notifications.clear', {}];
+    return null;
+  };
+
+  addEventListener('message', (event) => {
+    if (event.origin !== location.origin || event.data?.v !== 1) return;
+    const data = event.data;
+    if (data.type === 'hello') { paint(data.theme); say(`Connected to Vantage OS${data.userName ? ', hi ' + data.userName : ''}. ${data.tools.length} actions available.`); }
+    if (data.type === 'theme') paint(data.theme);
+    if (data.type === 'summon') { post('state', { state: 'listening', level: 0.3 }); document.getElementById('input').focus(); if (data.text) run(data.text); }
+    if (data.type === 'dismiss') post('state', { state: 'idle' });
+    if (data.type === 'actionResult') say(data.ok ? 'Done: ' + data.receipt : data.error === 'edit' ? 'OK, what should I change?' : data.error === 'cancelled' ? 'Cancelled.' : 'That failed: ' + data.error);
+  });
+
+  const run = (text) => {
+    say(text, true);
+    post('state', { state: 'thinking' });
+    setTimeout(() => {
+      const action = understand(text);
+      if (!action) say("This test page doesn't understand that. The real Vantage will.");
+      else post('action', { name: action[0], params: action[1] });
+      post('state', { state: 'idle' });
+    }, 600);
+  };
+  document.getElementById('form').addEventListener('submit', (event) => { event.preventDefault(); const input = document.getElementById('input'); if (input.value.trim()) run(input.value); input.value = ''; });
+  post('ready');
+</script>
+</body>
+</html>

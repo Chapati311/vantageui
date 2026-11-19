@@ -1,3 +1,4 @@
+import { useVantage } from '../vantage/bridge';
 import { Toast } from '../components/kit/Toast';
 import { motion, useMotionValue, useMotionValueEvent } from 'motion/react';
 import { homePageProgress } from './home/homeMotion';
@@ -66,13 +67,15 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
   const rows = metrics?.rows ?? MAX_ROWS;
   // Apps you hid in Customise > Home screen stay out of sight (search still finds them)
   const [hiddenApps] = useSetting('hiddenApps');
+  const vantageConnected = useVantage().connected;
   const layout = useMemo(
     () =>
       fitToRows(
-        saved.filter((item) => !(item.kind === 'app' && hiddenApps.includes(item.ref))),
+        // Hidden apps, and Lock In once it lives inside a connected Vantage
+        saved.filter((item) => !(item.kind === 'app' && (hiddenApps.includes(item.ref) || (item.ref === 'lockin' && vantageConnected)))),
         rows,
       ),
-    [saved, rows, hiddenApps],
+    [saved, rows, hiddenApps, vantageConnected],
   );
   const layoutRef = useRef(layout);
   layoutRef.current = layout;

@@ -551,3 +551,9 @@ export function useTheme(): ThemeState {
     () => state,
   );
 }
+
+/** Called after every theme change (e.g. to tell Vantage the new colors). */
+export function subscribeToTheme(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}

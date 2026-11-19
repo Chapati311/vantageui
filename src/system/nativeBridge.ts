@@ -36,6 +36,13 @@ interface VantageNative {
   setFlashlight?: (on: boolean) => Promise<void>;
   getBattery?: () => Promise<BatteryInfo>;
   setBrightness?: (level: number) => Promise<void>;
+  /**
+   * Volume up then volume down within 400 ms: the tweak swallows the pair
+   * (the volume doesn't change) and calls this to summon Vantage.
+   */
+  onVolumeChord?: (callback: () => void) => void;
+  /** Sends a text message (after the user confirmed it on an action card). */
+  sendMessage?: (to: string, body: string) => Promise<void>;
 }
 
 /** The browser battery API (Chrome/Android only - iOS Safari does not have it). */
@@ -246,4 +253,33 @@ export function watchBattery(onChange: (info: BatteryInfo | null) => void): () =
     stopped = true;
     cleanup();
   };
+}
+
+// ---- Vantage (VANTAGE.md section 6, step 7) ------------------------------------------------
+
+/**
+ * Calls `callback` when the volume chord is pressed (volume up, then down,
+ * within 400 ms). Only the jailbreak tweak can see the buttons: without the
+ * bridge this does nothing, and Vantage is summoned by touch instead.
+ */
+export function onVolumeChord(callback: () => void): void {
+  native()?.onVolumeChord?.(callback);
+}
+
+/**
+ * Sends a text message. With the bridge it really sends (only ever after
+ * the user confirmed the exact text and recipient on an action card).
+ * Without it, the Messages app opens with the text filled in and you tap send.
+ */
+export async function sendMessage(to: string, body: string): Promise<BridgeResult> {
+  const bridge = native();
+  if (bridge?.sendMessage) {
+    try {
+      await bridge.sendMessage(to, body);
+      return { ok: true, via: 'bridge' };
+    } catch {
+      return { ok: false, reason: 'failed' };
+    }
+  }
+  return message(to, body);
 }

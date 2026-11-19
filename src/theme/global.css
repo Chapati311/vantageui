@@ -103,3 +103,12 @@ button {
 :root[data-icon-pack='pixel'] [data-app-icon] rect {
   fill: currentColor;
 }
+
+/* Vantage summoned: the whole screen shrinks back a little behind it */
+#root > * {
+  transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+:root[data-summoned] #root > * {
+  transform: scale(0.96);
+}

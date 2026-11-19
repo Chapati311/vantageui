@@ -4,12 +4,11 @@ import styles from './AskWidget.module.css';
 
 /**
  * The "Ask Vantage" bar: a frosted pill across the whole grid.
- * It is a placeholder for the assistant; for now tapping it opens search
- * (that is set in widgetRegistry).
+ * Tapping it summons Vantage (the overlay with the dotted V orb).
  */
 export function AskWidget() {
   return (
-    <div className={styles.bar} role="button" aria-label="Ask Vantage">
+    <div className={styles.bar} aria-label="Ask Vantage">
       <span className={styles.logo}>
         {/* Monochrome here: the page already has its one accent element */}
         <DotLogo mono />

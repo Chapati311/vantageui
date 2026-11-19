@@ -221,3 +221,26 @@ export function LockInIcon() {
     </Icon>
   );
 }
+
+/** Vantage: the V drawn in dots, like the logo */
+export function VantageIcon() {
+  return (
+    <Icon>
+      {[
+        [5, 5],
+        [6.3, 8.5],
+        [7.6, 12],
+        [8.9, 15.5],
+        [10.4, 18.6],
+        [12, 20.5],
+        [13.6, 18.6],
+        [15.1, 15.5],
+        [16.4, 12],
+        [17.7, 8.5],
+        [19, 5],
+      ].map(([cx, cy]) => (
+        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="1.15" fill="currentColor" stroke="none" />
+      ))}
+    </Icon>
+  );
+}

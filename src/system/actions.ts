@@ -42,11 +42,12 @@ import {
   type ModeId,
   type Settings,
 } from './settingsStore';
-import { setFlashlight } from './nativeBridge';
+import { sendMessage, setFlashlight } from './nativeBridge';
 import { getPack } from '../theme/packs';
 import { setKeepAwake } from './keepAwake';
 import { renameRecording, startRecording, trimRecording } from './recordings';
-import { SESSION_TYPES, startSession } from '../apps/lockin/focusStore';
+import { SESSION_TYPES, endSession, startSession } from '../apps/lockin/focusStore';
+import { summon } from '../vantage/summon';
 import { deleteEvent, saveEvent, type CalendarEvent } from './events';
 import { deleteReminder, saveReminder, setReminderDone, type Reminder } from './reminders';
 import { clearNotifications, dismissNotification, pushNotification } from './notifications';
@@ -271,6 +272,22 @@ const ACTIONS = {
     'Save a shorter copy of a recording, from start to end (seconds).',
     ({ id, start, end }) => trimRecording(id, start, end),
   ),
+  'message.send': define<{ to: string; body: string }>(
+    'Send a text message. Without the native bridge the Messages app opens with the text filled in.',
+    async ({ to, body }) => {
+      await sendMessage(to, body);
+    },
+  ),
+  'vantage.summon': define<{ text?: string }>('Summon Vantage, optionally with something already typed.', ({ text }) =>
+    summon('action', text),
+  ),
+  'blocking.lockFor': define<{ minutes: number }>('Lock the distraction apps for this many minutes (0 = unlock).', ({ minutes }) =>
+    updateLockIn((data) => ({ blocking: { ...data.blocking, lockedUntil: minutes > 0 ? Date.now() + minutes * 60_000 : null } })),
+  ),
+  'blocking.setDistractions': define<{ appIds: string[] }>('Choose which apps count as distractions (they get locked).', ({ appIds }) =>
+    updateLockIn((data) => ({ blocking: { ...data.blocking, distractions: appIds.filter((id) => typeof id === 'string') } })),
+  ),
+  'focus.stop': define<{ completed?: boolean }>('End the running focus session.', ({ completed }) => endSession(completed ?? false)),
   'lock.nextClockStyle': define<Record<string, never>>('Switch the lock screen clock to the next style.', () => {
     const styles = LOCK_CLOCK_STYLES;
     const index = styles.indexOf(getSettings().lockClockStyle);

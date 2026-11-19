@@ -1,3 +1,5 @@
+import { summon } from '../vantage/summon';
+import { VantageIcon } from '../system/appIcons';
 import { Toast } from '../components/kit/Toast';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType, type RefObject } from 'react';
@@ -244,7 +246,10 @@ export function Search({ open, inputRef, actions, recents, onClose, onOpenApp }:
           onKeyDown={(event) => {
             if (event.key === 'Escape') onClose();
             if (event.key !== 'Enter') return;
-            if (command) doCommand(command);
+            if (/^ask vantage/i.test(q)) {
+              onClose();
+              summon('search', q.replace(/^ask vantage:?\s*/i, ''));
+            } else if (command) doCommand(command);
             else if (answer) copyAnswer();
             else if (results[0]) choose(results[0], document.querySelector(`[data-result="${results[0].key}"]`));
           }}
@@ -325,6 +330,21 @@ export function Search({ open, inputRef, actions, recents, onClose, onOpenApp }:
               </motion.div>
             );
           })}
+          {q && (
+            <motion.div key="ask" className={styles.wide} {...enter()}>
+              <Pressable
+                className={styles.tile}
+                tabIndex={open ? 0 : -1}
+                onClick={() => {
+                  onClose();
+                  summon('search', q.replace(/^ask vantage:?\s*/i, ''));
+                }}
+              >
+                <VantageIcon />
+                <span className={styles.name}>Ask Vantage: "{q.replace(/^ask vantage:?\s*/i, '')}"</span>
+              </Pressable>
+            </motion.div>
+          )}
           {q && !answer && !command && results.length === 0 && (
             <motion.div key="nothing" className={styles.wide} {...enter()}>
               <Pressable

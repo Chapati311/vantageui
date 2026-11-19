@@ -1,3 +1,4 @@
+import { summon } from '../vantage/summon';
 import { useDrag } from '@use-gesture/react';
 import { animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { useEffect, useLayoutEffect, useRef } from 'react';
@@ -146,6 +147,9 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
     return () => window.removeEventListener('keydown', onKey);
   });
 
+  const holdSummon = useRef(0);
+  const holdStart = useRef<{ x: number; y: number } | null>(null);
+
   // Swipe up from the bottom edge: the app shrinks with the finger.
   // Let go quickly to go home; slow down and hold to see the recent apps.
   // Sideways along the edge: switch to the previous / next app.
@@ -233,7 +237,23 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
           <Content />
         </div>
         <div className={styles.topZone} aria-hidden="true" {...(bindTop() as object)} />
-        <div className={styles.homeZone} aria-label="Swipe up to go home" {...(bind() as object)}>
+        <div
+          className={styles.homeZone}
+          aria-label="Swipe up to go home, hold to ask Vantage"
+          {...(bind() as object)}
+          // Holding the home indicator still (no swipe) summons Vantage
+          onPointerDownCapture={(event) => {
+            holdStart.current = { x: event.clientX, y: event.clientY };
+            window.clearTimeout(holdSummon.current);
+            holdSummon.current = window.setTimeout(() => summon('home-indicator'), 550);
+          }}
+          onPointerMoveCapture={(event) => {
+            const from = holdStart.current;
+            if (from && Math.hypot(event.clientX - from.x, event.clientY - from.y) > 8) window.clearTimeout(holdSummon.current);
+          }}
+          onPointerUpCapture={() => window.clearTimeout(holdSummon.current)}
+          onPointerCancelCapture={() => window.clearTimeout(holdSummon.current)}
+        >
           <span className={styles.homeBar} />
         </div>
       </OverlayLayer>

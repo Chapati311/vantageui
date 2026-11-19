@@ -1,0 +1,210 @@
+/* Sits above everything, invisible and untouchable until summoned */
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.open {
+  pointer-events: auto;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  /* Dark enough that Vantage reads clearly over any screen */
+  background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+}
+
+/* 1. A mint light wave crossing from the left edge */
+.wave {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 70%;
+  opacity: 0;
+  background: radial-gradient(60% 50% at 0% 50%, rgb(var(--accent-rgb) / 0.55), transparent 70%);
+  pointer-events: none;
+}
+
+.sheet {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(var(--top-inset) + var(--space-16)) var(--grid-margin) calc(var(--safe-bottom) + var(--space-24));
+  gap: var(--space-16);
+  pointer-events: none;
+}
+
+.open .sheet {
+  pointer-events: auto;
+}
+
+/* 3. The orb */
+.orb {
+  position: relative;
+  flex-shrink: 0;
+  width: calc(var(--grid-cell) * 1.4);
+  height: calc(var(--grid-cell) * 1.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.breathe {
+  display: flex;
+  width: 70%;
+  animation: breathe 3.2s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  50% {
+    transform: scale(1.06);
+    opacity: 0.85;
+  }
+}
+
+/* Thinking: three dots orbit the V like the lock screen planets */
+.orbit {
+  position: absolute;
+  inset: -12%;
+  opacity: 0;
+  transition: opacity 0.3s;
+  animation: spin 1.6s linear infinite;
+}
+
+.thinking .orbit {
+  opacity: 1;
+}
+
+.orbit span {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: var(--radius-circle);
+  background: var(--color-accent);
+  transform-origin: 3px calc(var(--grid-cell) * 0.84);
+}
+
+.orbit span:nth-child(2) {
+  rotate: 120deg;
+  opacity: 0.6;
+}
+
+.orbit span:nth-child(3) {
+  rotate: 240deg;
+  opacity: 0.3;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 4. Vantage's own UI */
+.frame {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-widget);
+  background: transparent;
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.3s 0.25s,
+    transform 0.4s 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+  pointer-events: none;
+}
+
+.open .frame {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.mock {
+  color: var(--text-secondary);
+}
+
+/* Action cards slide up at the bottom */
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-16);
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  background: var(--color-surface);
+  box-shadow: var(--highlight-top);
+  color: var(--text-primary);
+}
+
+.cardState {
+  color: var(--text-secondary);
+}
+
+.cardText {
+  font-size: var(--text-15);
+  line-height: 1.35;
+}
+
+.cardError {
+  font-size: var(--text-13);
+  color: var(--status-bad);
+}
+
+.cardButtons {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.cardButton {
+  min-height: calc(var(--space-32) + var(--space-8));
+  padding: 0 var(--space-16);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--text-15);
+  font-weight: 600;
+}
+
+.primary {
+  border-color: transparent;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+:root[data-retro] .breathe,
+:root[data-retro] .orbit {
+  animation-timing-function: steps(6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breathe,
+  .orbit,
+  .wave {
+    animation: none;
+  }
+  .wave {
+    display: none;
+  }
+}

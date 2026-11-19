@@ -1,3 +1,5 @@
+import { useVantage } from '../../vantage/bridge';
+import { MovedToVantage } from './MovedToVantage';
 import { useState } from 'react';
 import { CircleButton } from '../../components/CircleButton';
 import { LockIcon, MoonIcon } from '../../components/glyphs';
@@ -19,6 +21,8 @@ type WorkView = 'tasks' | 'projects';
 
 /** Lock In: Focus, School (or Work), Wind Down and Stats. */
 export function LockInApp() {
+  const vantage = useVantage();
+  const [stayHere, setStayHere] = useState(false);
   const data = useLockIn();
   const [tab, setTab] = useState<Tab>('focus');
   const [schoolView, setSchoolView] = useState<SchoolView>('grades');
@@ -26,6 +30,7 @@ export function LockInApp() {
   const [blocking, setBlocking] = useState(false);
   const [addingProject, setAddingProject] = useState(false);
 
+  if (vantage.connected && !stayHere) return <MovedToVantage onStay={() => setStayHere(true)} />;
   if (!data.setupDone) return <Setup />;
   if (blocking) return <BlockingPage onBack={() => setBlocking(false)} />;
 
