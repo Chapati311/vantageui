@@ -37,6 +37,9 @@
 }
 
 .card {
+  /* Fill the grid column (older WebKit sizes buttons to their content) */
+  width: 100%;
+  min-width: 0;
   position: relative;
   display: flex;
   flex-direction: column;

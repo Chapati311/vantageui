@@ -20,6 +20,8 @@ const SUITE = [
   'theme-screenshots',
   'pack-screenshots',
   'perfection',
+  'setup-screenshots',
+  'host-mode-check',
 ];
 const webkitOnly = process.argv.includes('--webkit-only');
 

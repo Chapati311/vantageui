@@ -8,6 +8,10 @@
 .tile {
   display: flex;
   flex-direction: column;
+  /* Fill the grid column: older WebKit (iOS 16.3) sizes buttons to their
+     content, which left the clock previews 0 px wide. */
+  width: 100%;
+  min-width: 0;
   gap: var(--space-8);
   padding: 0;
   border: 0;
@@ -72,7 +76,9 @@
 }
 
 .chipOn {
+  /* Selected = accent fill with the theme's on-accent text (AA in every theme) */
   border-color: transparent;
-  background: var(--text-primary);
-  color: var(--color-bg);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: 600;
 }

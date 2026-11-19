@@ -16,7 +16,12 @@ export function ScaledPreview({ children, className }: { children: ReactNode; cl
   useLayoutEffect(() => {
     const element = box.current;
     if (!element) return;
-    const measure = () => setScale(element.clientWidth / SCREEN_WIDTH);
+    // Older WebKit (iOS 16.3) can report 0 for a box inside a <button>:
+    // fall back to the parent's width so the preview still draws.
+    const measure = () => {
+      const width = element.getBoundingClientRect().width || element.parentElement?.getBoundingClientRect().width || 0;
+      setScale(width / SCREEN_WIDTH);
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(element);

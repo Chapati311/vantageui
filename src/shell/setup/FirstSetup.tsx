@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { DotLogo } from '../../components/DotLogo';
 import { DotNumber } from '../../components/DotNumber';
 import { Pressable } from '../../components/Pressable';
@@ -8,7 +8,7 @@ import { Button, SegmentedControl } from '../../components/kit';
 import { ThemeCard } from '../../apps/settings/ThemeCard';
 import { useLockIn } from '../../apps/lockin/lockInStore';
 import { runAction } from '../../system/actions';
-import { LOCK_CLOCK_STYLES, useSettings, type LockClockStyle } from '../../system/settingsStore';
+import { LOCK_CLOCK_NAMES, LOCK_CLOCK_STYLES, useSettings } from '../../system/settingsStore';
 import { useTheme } from '../../system/theme';
 import { PRESETS } from '../../theme/presets';
 import { SPRING } from '../../theme/tokens';
@@ -18,22 +18,26 @@ import { Wallpaper } from '../wallpaper/Wallpaper';
 import tiles from '../../apps/settings/SettingsApp.module.css';
 import styles from './FirstSetup.module.css';
 
-const STEPS = ['welcome', 'name', 'theme', 'wallpaper', 'clock', 'lockin', 'done'] as const;
+const STEPS = ['welcome', 'name', 'theme', 'wallpaper', 'clock', 'focus', 'done'] as const;
 const THEMES = ['midnight', 'ocean', 'aurora', 'paper', 'sunset', 'mono'];
-const CLOCK_NAMES: Record<LockClockStyle, string> = {
-  dot: 'Dots',
-  pixel: 'Pixel',
-  serif: 'Serif',
-  vertical: 'Tall',
-  analog: 'Hands',
-  flip: 'Flip',
-  binary: 'Binary',
-  word: 'Words',
-  segment: 'Segment',
-  numeral: 'Numeral',
-  hands: 'Hands',
-};
 const GOALS = [60, 120, 180, 240];
+
+/** A hidden input focused during a tap, so iOS opens the keyboard (see `go`). */
+function focusKeyboardStandIn() {
+  removeKeyboardStandIn();
+  const input = document.createElement('input');
+  input.id = 'keyboard-stand-in';
+  input.setAttribute('aria-hidden', 'true');
+  input.tabIndex = -1;
+  // 16 px stops iOS from zooming in; off-screen and invisible
+  input.style.cssText = 'position:fixed;top:0;left:-200px;width:1px;height:1px;opacity:0;font-size:16px';
+  document.body.appendChild(input);
+  input.focus();
+}
+
+function removeKeyboardStandIn() {
+  document.getElementById('keyboard-stand-in')?.remove();
+}
 
 /**
  * The first-boot setup, like a new phone: welcome, your name, a theme (the
@@ -49,10 +53,27 @@ export function FirstSetup() {
   const [direction, setDirection] = useState(1);
   const [name, setName] = useState(settings.userName);
 
+  const nameInput = useRef<HTMLInputElement>(null);
+
   const go = (next: number) => {
+    const target = Math.max(0, Math.min(STEPS.length - 1, next));
+    // iOS only opens the keyboard during a tap, but the name field appears
+    // after the slide animation. Focus a hidden stand-in now (inside the tap),
+    // then hand the focus to the real field when it is there.
+    if (STEPS[target] === 'name') focusKeyboardStandIn();
     setDirection(next > step ? 1 : -1);
-    setStep(Math.max(0, Math.min(STEPS.length - 1, next)));
+    setStep(target);
   };
+
+  // The real name field is on screen: take the focus (and the open keyboard) over.
+  useEffect(() => {
+    if (STEPS[step] !== 'name') return;
+    const id = window.setTimeout(() => {
+      nameInput.current?.focus();
+      removeKeyboardStandIn();
+    }, 50);
+    return () => window.clearTimeout(id);
+  }, [step]);
   const finish = () => void runAction('setup.finish', { name });
   const id = STEPS[step];
 
@@ -95,18 +116,29 @@ export function FirstSetup() {
       title = 'Your name';
       text = 'Used for greetings on Today and the lock screen. It stays on this phone.';
       body = (
-        <input
-          className={tiles.input}
-          placeholder="First name"
-          aria-label="Your first name"
-          value={name}
-          maxLength={24}
-          autoComplete="given-name"
-          onChange={(event) => setName(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') go(step + 1);
-          }}
-        />
+        // The wrapper sets the big serif size: inputs take their parent's size
+        // (global.css, so iOS never zooms into a field)
+        <div className={styles.nameField}>
+          <input
+            ref={nameInput}
+            className={styles.nameInput}
+            placeholder="First name"
+            aria-label="Your first name"
+            value={name}
+            maxLength={24}
+            autoComplete="given-name"
+            autoCapitalize="words"
+            enterKeyHint="next"
+            onChange={(event) => setName(event.target.value)}
+            onKeyDown={(event) => {
+              // Return = Next
+              if (event.key === 'Enter') {
+                event.currentTarget.blur();
+                go(step + 1);
+              }
+            }}
+          />
+        </div>
       );
       break;
     case 'theme':
@@ -164,16 +196,18 @@ export function FirstSetup() {
                 aria-pressed={settings.lockClockStyle === style}
                 onClick={() => void runAction('settings.set', { key: 'lockClockStyle', value: style })}
               >
-                {CLOCK_NAMES[style]}
+                {LOCK_CLOCK_NAMES[style]}
               </Pressable>
             ))}
           </div>
         </>
       );
       break;
-    case 'lockin':
-      title = 'Lock In';
-      text = 'How long do you want to focus each day? Subjects, lessons and grades can be added later in Lock In.';
+    // Vantage replaces Lock In (VANTAGE.md): the daily focus goal is Vantage's.
+    // (It is stored with the focus data that Vantage syncs when you sign in.)
+    case 'focus':
+      title = 'Vantage';
+      text = 'How long do you want to focus each day? Vantage keeps you to it: focus sessions, school, grades and stats all live in Vantage.';
       body = (
         <>
           <div className={styles.goal}>
@@ -275,7 +309,7 @@ export function FirstSetup() {
           </Button>
         ) : (
           <Button kind="primary" onPress={() => go(step + 1)}>
-            {id === 'name' && !name.trim() ? 'Skip' : 'Next'}
+            Next
           </Button>
         )}
       </div>

@@ -23,12 +23,17 @@
   height: var(--icon-size);
 }
 
-/* The one accent element on the screen */
+/* The one accent element on the screen. Solid, crisp label: no filter or
+   opacity ever (iOS renders text under a filter blurred). */
 .primary {
   border-color: transparent;
   background: var(--color-accent);
   box-shadow: var(--glow-accent);
   color: var(--color-on-accent);
+  font-weight: 600;
+  opacity: 1;
+  filter: none !important;
+  -webkit-font-smoothing: antialiased;
 }
 
 .destructive {

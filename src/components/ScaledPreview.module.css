@@ -1,6 +1,9 @@
 .box {
   position: relative;
+  display: block;
   width: 100%;
+  /* A colored card even before (or without) the drawing: never a bare label */
+  background: var(--surface-widget, #151c23);
   aspect-ratio: 375 / 667;
   overflow: hidden;
   pointer-events: none;

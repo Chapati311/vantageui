@@ -21,6 +21,20 @@ export const NUMERAL_STYLES = ['dot', 'serif', 'segment'] as const;
 export type NumeralStyle = (typeof NUMERAL_STYLES)[number];
 export const LOCK_CLOCK_STYLES = ['dot', 'pixel', 'serif', 'vertical', 'analog', 'flip', 'binary', 'word', 'segment', 'numeral', 'hands'] as const;
 export type LockClockStyle = (typeof LOCK_CLOCK_STYLES)[number];
+/** The one set of names for the lock clock styles (setup, Customise, everywhere). */
+export const LOCK_CLOCK_NAMES: Record<LockClockStyle, string> = {
+  dot: 'Dot',
+  pixel: 'Pixel',
+  serif: 'Serif',
+  vertical: 'Vertical',
+  analog: 'Thin analog',
+  flip: 'Flip',
+  binary: 'Binary',
+  word: 'Words',
+  segment: 'Segment',
+  numeral: 'Numeral',
+  hands: 'Three hands',
+};
 export type BatteryStyle = 'percent' | 'ring' | 'bar' | 'pixel';
 export type UiFont = 'inter' | 'system' | 'serif' | 'mono';
 export type IconShape = 'circle' | 'squircle' | 'square';

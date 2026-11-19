@@ -1,10 +1,27 @@
 /* ---- Widgets: up to four circles in a row, one grid cell each ---------- */
 .widgets {
   flex-shrink: 0;
+  /* As wide as the widgets actually shown (ones without data are left out) */
   display: grid;
-  grid-template-columns: repeat(4, var(--grid-cell));
+  grid-auto-flow: column;
+  grid-auto-columns: var(--grid-cell);
   gap: var(--grid-gap);
   justify-content: center;
+  align-self: center;
+  width: max-content;
+  margin: 0 auto;
+  /* Its own quiet surface, so the orbit lines behind don't run through the widgets */
+  padding: var(--space-8);
+  border-radius: calc(var(--grid-cell) / 2 + var(--space-8));
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 0 0 1px var(--color-hairline);
+}
+
+/* Every widget hid itself (no data yet): no empty panel */
+.widgets:empty {
+  display: none;
 }
 
 .round {
@@ -17,9 +34,8 @@
   width: var(--grid-cell);
   height: var(--grid-cell);
   border-radius: var(--radius-circle);
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  /* Solid: the panel behind already blurs the orbit lines */
+  background: var(--surface-widget);
   box-shadow: inset 0 0 0 1px var(--color-hairline);
   color: var(--text-primary);
 }

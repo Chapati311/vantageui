@@ -3,24 +3,10 @@ import { ScaledPreview } from '../../components/ScaledPreview';
 import { Row, Section as KitSection, SegmentedControl, Toggle } from '../../components/kit';
 import { LOCK_WIDGETS } from '../../shell/lock/LockWidgets';
 import { runAction } from '../../system/actions';
-import { LOCK_CLOCK_STYLES, useSettings, type LockClockStyle } from '../../system/settingsStore';
+import { LOCK_CLOCK_NAMES, LOCK_CLOCK_STYLES, useSettings } from '../../system/settingsStore';
 import { LockClock } from '../../shell/LockClock';
 import { Section, SettingsPage } from '../settings/SettingsPage';
 import styles from './LockScreenPage.module.css';
-
-const NAMES: Record<LockClockStyle, string> = {
-  dot: 'Dot',
-  pixel: 'Pixel',
-  serif: 'Serif',
-  vertical: 'Vertical',
-  analog: 'Thin analog',
-  flip: 'Flip',
-  binary: 'Binary',
-  word: 'Words',
-  segment: 'Segment',
-  numeral: 'Numeral',
-  hands: 'Three hands',
-};
 
 /** Lock screen: eight clock styles, size, position, round widgets and the two shortcuts. */
 export function LockScreenPage({ onBack }: { onBack: () => void }) {
@@ -44,7 +30,7 @@ export function LockScreenPage({ onBack }: { onBack: () => void }) {
                   </div>
                 </ScaledPreview>
               </span>
-              <span className={styles.name}>{NAMES[id]}</span>
+              <span className={styles.name}>{LOCK_CLOCK_NAMES[id]}</span>
             </Pressable>
           ))}
         </div>

@@ -15,7 +15,7 @@ import { AppShell, Button } from '../../components/kit';
 import { Pressable } from '../../components/Pressable';
 import { runAction } from '../../system/actions';
 import { CustomiseIcon, MusicIcon } from '../../system/appIcons';
-import { useSettings } from '../../system/settingsStore';
+import { LOCK_CLOCK_NAMES, useSettings } from '../../system/settingsStore';
 import { useSetups } from '../../system/setups';
 import { useLabWidgets } from '../../shell/widgets/lab/labStore';
 import { setQuietThemeChanges, useTheme } from '../../system/theme';
@@ -110,19 +110,6 @@ const SYSTEM: SectionDef[] = [
 const MODE_NAMES = { clean: 'Clean', focus: 'Focus', retro: 'Retro', winddown: 'Wind Down' } as const;
 const STYLE_NAMES = { solid: 'Solid', glass: 'Glass', outline: 'Outline', tinted: 'Tinted', glossy: 'Glossy', pill: 'Black', colorblock: 'Color block', paper: 'Paper', line: 'Line' } as const;
 const APPEARANCE_NAMES = { dark: 'Dark', light: 'Light', auto: 'Automatic' } as const;
-const LOCK_NAMES = {
-  dot: 'Dot clock',
-  pixel: 'Pixel clock',
-  serif: 'Serif clock',
-  vertical: 'Vertical clock',
-  analog: 'Thin analog',
-  flip: 'Flip clock',
-  binary: 'Binary clock',
-  word: 'Word clock',
-  segment: 'Segment clock',
-  numeral: 'Serif numerals',
-  hands: 'Three hands',
-} as const;
 const BATTERY_NAMES = { percent: 'Battery number', ring: 'Battery ring', bar: 'Battery bar', pixel: 'Pixel battery' } as const;
 
 /**
@@ -181,7 +168,7 @@ export function CustomiseApp() {
           : getPreset(theme.presetId).accentName,
     appearance: APPEARANCE_NAMES[settings.appearance],
     wallpapers: theme.retro ? 'Theme' : wallpaperName(settings.wallpaper),
-    lock: LOCK_NAMES[settings.lockClockStyle],
+    lock: LOCK_CLOCK_NAMES[settings.lockClockStyle],
     statusbar: BATTERY_NAMES[settings.batteryStyle],
     home: { dots: 'Page dots', numbers: 'Page numbers', hidden: 'No indicator' }[settings.pageDots],
     icons: `${settings.iconShape[0].toUpperCase()}${settings.iconShape.slice(1)}, ${settings.iconStyle}`,

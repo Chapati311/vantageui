@@ -152,6 +152,11 @@
 .tile {
   display: flex;
   flex-direction: column;
+  /* Buttons don't stretch to their grid column in older WebKit (iOS 16.3):
+     without this the preview frame is 0 px wide (no preview, and the
+     selected outline looked like a stray "]"). */
+  width: 100%;
+  min-width: 0;
   gap: var(--space-8);
   padding: 0;
   border: 0;

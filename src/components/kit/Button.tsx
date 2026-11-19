@@ -1,5 +1,6 @@
 import type { ComponentType, ReactNode } from 'react';
 import { Pressable } from '../Pressable';
+import { MOTION } from '../../theme/tokens';
 import styles from './Button.module.css';
 
 interface ButtonProps {
@@ -18,6 +19,9 @@ export function Button({ children, onPress, kind = 'secondary', icon: Glyph, wid
   return (
     <Pressable
       className={`${styles.button} ${styles[kind]} ${wide ? styles.wide : ''}`}
+      // Press = shrink only. The usual brightness filter leaves a CSS filter on
+      // the button, and iOS draws text under a filter soft and faint.
+      whileTap={{ scale: MOTION.pressScale }}
       disabled={disabled}
       onClick={onPress}
     >

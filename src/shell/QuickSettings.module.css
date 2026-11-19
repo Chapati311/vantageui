@@ -154,9 +154,11 @@
 }
 
 .chipOn {
+  /* Selected = accent fill with the theme's on-accent text (AA in every theme) */
   border-color: transparent;
-  background: var(--text-primary);
-  color: var(--color-bg);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: 600;
 }
 
 /* ---- Shortcuts: five small circles with names ------------------------- */
