@@ -56,7 +56,15 @@ export function StopwatchTab() {
         <svg className={styles.ring} viewBox="0 0 100 100" aria-hidden="true" style={retro ? { display: 'none' } : undefined}>
           <circle className={styles.ringTrack} cx="50" cy="50" r={RADIUS} />
           {Array.from({ length: 60 }, (_, i) => (
-            <line key={i} className={i % 5 === 0 ? styles.tickMajor : styles.tick} x1="50" y1="9" x2="50" y2={i % 5 === 0 ? 12 : 10.5} transform={`rotate(${i * 6} 50 50)`} />
+            <line
+              key={i}
+              className={i % 5 === 0 ? styles.tickMajor : styles.tick}
+              x1="50"
+              y1="9"
+              x2="50"
+              y2={i % 5 === 0 ? 12 : 10.5}
+              transform={`rotate(${i * 6} 50 50)`}
+            />
           ))}
           <circle ref={dotRef} className={styles.sweep} cx="50" cy={50 - RADIUS} r="2.2" />
         </svg>
@@ -89,9 +97,27 @@ export function StopwatchTab() {
         )}
       </div>
 
+      {/* Laps chart: one bar per lap, its height the lap's time (fastest in the accent) */}
+      {laps.length > 1 && (
+        <div className={styles.lapChart} role="img" aria-label={`${laps.length} laps, fastest ${formatStopwatch(fastest)}`}>
+          {laps.slice(-16).map((lap) => (
+            <span key={lap.number} className={styles.lapBarBox}>
+              <span
+                className={`${styles.lapBar} ${lap.split === fastest ? styles.lapBarFast : ''} ${lap.split === slowest ? styles.lapBarSlow : ''}`}
+                style={{ transform: `scaleY(${Math.max(0.08, lap.split / slowest)})` }}
+              />
+              <span className={styles.lapBarLabel}>{lap.number}</span>
+            </span>
+          ))}
+        </div>
+      )}
+
       <div className={styles.laps}>
         {[...laps].reverse().map((lap) => (
-          <div key={lap.number} className={`${styles.lap} ${lap.split === fastest ? styles.fastest : ''} ${lap.split === slowest ? styles.slowest : ''}`}>
+          <div
+            key={lap.number}
+            className={`${styles.lap} ${lap.split === fastest ? styles.fastest : ''} ${lap.split === slowest ? styles.slowest : ''}`}
+          >
             <span className="label">Lap {lap.number}</span>
             <span className={styles.lapSplit}>{formatStopwatch(lap.split)}</span>
             <span className={styles.lapTotal}>{formatStopwatch(lap.total)}</span>

@@ -407,3 +407,87 @@
     opacity: 0.6;
   }
 }
+
+/* ---- Laps chart --------------------------------------------------------- */
+.lapChart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  width: 100%;
+  height: calc(var(--grid-cell) * 0.9);
+  padding: 0 var(--space-8);
+}
+
+.lapBarBox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-4);
+  height: 100%;
+  min-width: 0;
+}
+
+.lapBar {
+  width: 100%;
+  max-width: var(--space-16);
+  flex: 1;
+  border-radius: var(--radius-pill);
+  background: var(--text-secondary);
+  transform-origin: bottom;
+  transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.lapBarFast {
+  background: var(--color-accent);
+}
+
+.lapBarSlow {
+  background: var(--text-tertiary);
+}
+
+:root[data-retro] .lapBar {
+  border-radius: 0;
+}
+
+.lapBarLabel {
+  font-size: var(--text-11);
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Bedtime card --------------------------------------------------------- */
+.bedtime {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-8) var(--space-16);
+  margin-bottom: var(--space-16);
+  padding: var(--space-16) var(--space-24);
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  background: var(--surface-widget);
+  box-shadow: var(--highlight-top);
+}
+
+.bedtimePart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  color: var(--text-secondary);
+}
+
+/* A dotted line from sleep to wake */
+.bedtimeLine {
+  height: 2px;
+  margin-top: var(--space-24);
+  background-image: radial-gradient(circle, var(--text-secondary) 1px, transparent 1.5px);
+  background-size: 6px 2px;
+}
+
+.bedtimeNote {
+  grid-column: 1 / -1;
+  font-size: var(--text-13);
+  color: var(--text-secondary);
+}
