@@ -178,11 +178,27 @@ Original per app.
 - [ ] Part 4 perfection loop [PWA]
 
 ## Final prompt (FINAL_PROMPT.md)
-- [ ] Part 2: 10 signature theme packs (SPECS 1b), generated wallpapers, new
-      widget styles, icon packs and clock styles [PWA]
-- [ ] Part 3: Vantage replaces Lock In (VANTAGE.md section 6) [PWA]
-- [ ] Part 4: real iPhone SE pass [PWA]
-- [ ] Part 5: perfection loop, 5+ passes [PWA]
+- [x] Part 2: 10 signature theme packs (SPECS 1b) with generated wallpapers
+      (npm run gen:wallpapers), widget styles (glossy, black pill, color
+      block, paper, line), icon packs (line, glyph, pixel, color block),
+      serif and segment numbers, clocks (segment, serif numeral, three hands),
+      pack widgets (serif date, tick dial, humidity cylinder, wind cone),
+      Signature section first in Customise > Themes, earbuds device page [PWA]
+      (legibility scrim is a fixed amount per pack, not measured per widget)
+- [x] Icon packs [PWA]
+- [x] Part 3, OS side of VANTAGE.md section 6: bridge and protocol, every
+      action as an os.* tool, summon overlay and triggers, action cards with
+      confirm and Undo, theme and context sync, Lock In data offer, volume
+      chord and sendMessage hooks, Vantage in the dock [PWA]
+- [ ] Part 3, still needs you: the Vantage deployment URL for the /vantage/
+      rewrite (vercel.json) and VITE_VANTAGE_URL; until then a labelled test
+      page stands in. Lock In hands over to Vantage once a real one connects.
+      The end-to-end test with 30 real commands needs the real Vantage.
+- [x] Part 4 (what a computer can do): apps load lazily (main bundle 955 KB to
+      336 KB), 16px text fields, animations pause when hidden and on unseen
+      pages; PHONE_TEST.md lists the finger tests [PWA]
+- [ ] Part 4 on the phone: 60 fps, cold start, battery (see PHONE_TEST.md)
+- [x] Part 5: perfection loop, 5 passes in 8 themes (npm run perfection) [PWA]
 
 ## Later: after the jailbreak
 - [ ] Vantage OS replaces the iOS home screen [BRIDGE]
