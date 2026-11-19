@@ -6,7 +6,8 @@
 .screen {
   position: absolute;
   inset: 0;
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-position: center;
   color: var(--text-primary);
   font-family: var(--font-body);
 }
@@ -23,6 +24,9 @@
 }
 
 .widget {
+  --text-primary: var(--widget-text);
+  --text-secondary: var(--widget-text-2);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,4 +91,28 @@
   border: var(--border-widget);
   border-radius: var(--radius-circle);
   background: var(--surface-widget);
+}
+
+/* Packs with serif or segment numbers */
+.serifTime,
+.segmentTime {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0.9;
+  font-size: 64px;
+}
+
+.serifTime {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 76px;
+}
+
+.segmentTime {
+  font-family: ui-monospace, Menlo, monospace;
+  font-weight: 300;
+}
+
+.minutes {
+  color: var(--text-secondary);
 }

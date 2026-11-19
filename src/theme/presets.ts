@@ -32,6 +32,8 @@ export interface ThemePreset {
   glow: number;
   /** Paper: shadows instead of borders */
   shadowsOnly?: boolean;
+  /** One of the 10 signature theme packs (more than colors: see theme/packs.ts) */
+  signature?: boolean;
   /** Retro themes only */
   retro?: {
     style: RetroStyle;
@@ -184,6 +186,13 @@ export const PRESETS: ThemePreset[] = [
     glow: 0.8,
   },
 
+  // ---- Signature packs, dark (SPECS.md section 1b; the rest of each pack is in theme/packs.ts)
+  { id: 'signal', name: 'Signal', group: 'dark', signature: true, accentName: 'red', bg: '#000000', surface: '#111111', raised: '#1A1A1A', text: '#FFFFFF', text2: '#8C8C8C', accent: '#E8312A', wallpaper: { kind: 'solid', color: 'bg' }, glow: 0 },
+  { id: 'obsidian', name: 'Obsidian Leaf', group: 'dark', signature: true, accentName: 'red dot', bg: '#0B0B0B', surface: '#121212', raised: '#1B1B1B', text: '#F2F2F2', text2: '#8F8F8F', accent: '#FF3B30', wallpaper: { kind: 'image', id: 'obsidian' }, glow: 0.3 },
+  { id: 'lacquer', name: 'Lacquer', group: 'dark', signature: true, accentName: 'white', bg: '#120204', surface: '#000000', raised: '#111111', text: '#FFFFFF', text2: '#C2A3A6', accent: '#FFFFFF', wallpaper: { kind: 'image', id: 'lacquer' }, glow: 0 },
+  { id: 'popink', name: 'Pop Ink', group: 'dark', signature: true, accentName: 'coral', bg: '#000000', surface: '#141414', raised: '#1F1F1F', text: '#FFFFFF', text2: '#9A9A9A', accent: '#F2694A', wallpaper: { kind: 'solid', color: 'bg' }, glow: 0 },
+  { id: 'nightreed', name: 'Night Reed', group: 'dark', signature: true, accentName: 'red', bg: '#050A07', surface: '#0A0A0A', raised: '#151515', text: '#FFFFFF', text2: '#8FA394', accent: '#FF453A', wallpaper: { kind: 'image', id: 'nightreed' }, glow: 0.2 },
+
   // ---- Light ----------------------------------------------------------------
   {
     id: 'paper',
@@ -256,6 +265,13 @@ export const PRESETS: ThemePreset[] = [
     wallpaper: { kind: 'gradient', id: 'theme' },
     glow: 0.4,
   },
+
+  // ---- Signature packs, light
+  { id: 'porcelain', name: 'Porcelain', group: 'light', signature: true, accentName: 'orange', bg: '#EFEFEC', surface: '#FAFAF8', raised: '#FFFFFF', text: '#111111', text2: '#8A8A86', accent: '#FF4F1F', wallpaper: { kind: 'image', id: 'porcelain' }, glow: 0, shadowsOnly: true },
+  { id: 'reedglass', name: 'Reed Glass', group: 'light', signature: true, accentName: 'red', bg: '#DDE4D9', surface: '#F4F6F2', raised: '#FFFFFF', text: '#0A0A0A', text2: '#55605A', accent: '#FF3B30', wallpaper: { kind: 'image', id: 'reed' }, glow: 0 },
+  { id: 'frost', name: 'Frost', group: 'light', signature: true, accentName: 'black', bg: '#E4E6E9', surface: '#F7F8F9', raised: '#FFFFFF', text: '#111111', text2: '#6F757C', accent: '#111111', wallpaper: { kind: 'image', id: 'frost' }, glow: 0 },
+  { id: 'notebook', name: 'Notebook', group: 'light', signature: true, accentName: 'highlighter', bg: '#F5EDD3', surface: '#FBF6E6', raised: '#FFFDF4', text: '#141414', text2: '#6E6450', accent: '#FFE45C', wallpaper: { kind: 'image', id: 'notebook' }, glow: 0, shadowsOnly: true },
+  { id: 'gallery', name: 'Gallery', group: 'light', signature: true, accentName: 'red dot', bg: '#FFFFFF', surface: '#FFFFFF', raised: '#FFFFFF', text: '#0A0A0A', text2: '#7A7A7A', accent: '#E8312A', wallpaper: { kind: 'solid', color: 'bg' }, glow: 0 },
 
   // ---- Retro ----------------------------------------------------------------
   // For retro themes: bg = the screen, text = the ink. "Raised" is a faint ink

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { motion, useAnimate } from 'motion/react';
 import { useEffect } from 'react';
 import { AppTile, FolderTile } from '../../components/AppTile';
@@ -60,6 +61,9 @@ interface HomeItemViewProps {
  * One home screen item at its place on the grid. When its place changes
  * (something was rearranged) it springs there.
  */
+/** The color-block widget colors (Pop Ink): coral, butter, cream, sky, mint */
+const BLOCK_COLORS = ['#F2694A', '#F6CE46', '#F3EAD7', '#9EC9F0', '#9FE3C1'];
+
 export function HomeItemView({ item, x, y, width, height, editing, hidden, index, onResize, onRemove, editTick, enterKey = 0, enterOrder = 0 }: HomeItemViewProps) {
   const [scope, animateItem] = useAnimate();
   useEffect(() => {
@@ -78,7 +82,8 @@ export function HomeItemView({ item, x, y, width, height, editing, hidden, index
     <motion.div
       className={`${styles.frame} ${hidden ? styles.hidden : ''}`}
       data-item-id={item.id}
-      style={{ width, height }}
+      // Color-block packs: each item takes the next color of the set (by its place on the page)
+      style={{ width, height, '--block-color': BLOCK_COLORS[(item.row * 4 + item.col + item.page) % BLOCK_COLORS.length] } as CSSProperties}
       initial={false}
       animate={{ x, y }}
       // A hidden item (its copy is being dragged) jumps instead of springing.

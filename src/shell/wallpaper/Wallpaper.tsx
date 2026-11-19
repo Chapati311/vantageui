@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react';
 import { useSetting } from '../../system/settingsStore';
 import { useTheme } from '../../system/theme';
 import { useWallpaperPhoto } from '../../system/wallpaperPhoto';
-import { gradientCss, gradientStops, type WallpaperConfig } from '../../theme/wallpapers';
+import { gradientCss, gradientStops, type WallpaperConfig, imageUrl } from '../../theme/wallpapers';
 import { LockOrbit } from '../LockOrbit';
 import { homePageProgress } from '../home/homeMotion';
 import { LiveAurora } from './LiveAurora';
@@ -61,6 +61,9 @@ export function Wallpaper({ place, config, paused = false, progress }: Wallpaper
     case 'gradient':
       layer = <div className={styles.fill} style={{ background: gradientCss(gradientStops(wallpaper.id, theme.dark, theme.themeStops)) }} />;
       break;
+    case 'image':
+      layer = <div className={styles.fill} style={{ backgroundImage: `url(${imageUrl(wallpaper.id)})` }} />;
+      break;
     case 'photo':
       layer = photo ? (
         <div className={styles.fill} style={{ backgroundImage: `url(${photo.dataUrl})` } as CSSProperties} />
@@ -92,7 +95,7 @@ export function Wallpaper({ place, config, paused = false, progress }: Wallpaper
 
   // Orbit moves on its own when swiped; everything else uses the shared parallax.
   const ownSwipe = wallpaper.kind === 'live' && wallpaper.id === 'orbit';
-  const photoLike = wallpaper.kind === 'photo' || wallpaper.kind === 'gradient';
+  const photoLike = wallpaper.kind === 'photo' || wallpaper.kind === 'gradient' || wallpaper.kind === 'image';
 
   return (
     <div

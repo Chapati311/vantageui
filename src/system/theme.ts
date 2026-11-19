@@ -23,7 +23,7 @@ import {
   type ThemePreset,
 } from '../theme/presets';
 import { setRetroMotion } from '../theme/tokens';
-import { gradientStops, type WallpaperConfig } from '../theme/wallpapers';
+import { gradientStops, type WallpaperConfig, IMAGE_WALLPAPERS } from '../theme/wallpapers';
 import { getSettings, subscribeToSettings, type ModeId, type Settings } from './settingsStore';
 import { sunTimes } from './sun';
 import {
@@ -46,6 +46,8 @@ const SUN_PLACE = { latitude: 47.3769, longitude: 8.5417 }; // Zurich
 
 /** What the rest of the app may want to know about the current theme. */
 export interface ThemeState {
+  /** How numbers are drawn: dot matrix, serif numerals or segmented mono */
+  numerals: 'dot' | 'serif' | 'segment';
   presetId: string;
   presetName: string;
   group: ThemeGroup;
@@ -110,6 +112,10 @@ export function resolveWallpaper(s: Settings, preset: ThemePreset): WallpaperCon
 /** The colors in a wallpaper, for "Colors from wallpaper". Live wallpapers have none. */
 function colorsOf(wallpaper: WallpaperConfig, dark: boolean, themeStops: string[]): WallpaperColors | null {
   if (wallpaper.kind === 'photo') return getWallpaperPhoto()?.colors ?? null;
+  if (wallpaper.kind === 'image') {
+    const image = IMAGE_WALLPAPERS.find((item) => item.id === wallpaper.id);
+    return image ? { dominant: image.dominant, vibrant: image.vibrant, swatches: [image.dominant, image.vibrant] } : null;
+  }
   if (wallpaper.kind === 'solid' && wallpaper.color !== 'bg') {
     return { dominant: wallpaper.color, vibrant: wallpaper.color, swatches: [] };
   }
@@ -231,6 +237,9 @@ export function computeTheme(s: Settings, now = new Date()) {
   let border: string;
   let depth: string;
   let blur = 'none';
+  // Text inside widgets: the theme's text, unless the widget style has its own (black cards on light themes...)
+  let widgetText = palette.text;
+  let widgetText2 = palette.text2;
 
   if (retro === 'desktop') {
     // Classic Desktop: flat grey windows with a 3D bevel
@@ -263,6 +272,41 @@ export function computeTheme(s: Settings, now = new Date()) {
       case 'tinted':
         surface = `linear-gradient(180deg, ${rgba(mix(palette.surfaceTop, accent, dark ? 0.16 : 0.12), op)} 0%, ${rgba(mix(palette.surfaceBottom, accent, dark ? 0.1 : 0.08), op)} 100%)`;
         break;
+      // ---- Styles from the signature packs ----
+      case 'glossy':
+        // Glossy black: a faint white ring and a soft highlight across the top
+        surface = `radial-gradient(120% 80% at 50% 0%, rgb(255 255 255 / 0.1), transparent 60%), linear-gradient(180deg, ${rgba([20, 20, 20], op)}, ${rgba([8, 8, 8], op)})`;
+        border = '1px solid rgb(255 255 255 / 0.08)';
+        depth = 'inset 0 1px 0 rgb(255 255 255 / 0.12), 0 6px 18px rgb(0 0 0 / 0.35)';
+        widgetText = [255, 255, 255];
+        widgetText2 = [150, 150, 150];
+        break;
+      case 'pill':
+        // Black cards with white text, on any theme
+        surface = rgba([10, 10, 10], op);
+        border = '1px solid transparent';
+        depth = dark ? 'none' : '0 6px 16px rgb(0 0 0 / 0.18)';
+        widgetText = [255, 255, 255];
+        widgetText2 = [160, 160, 160];
+        break;
+      case 'colorblock':
+        // Flat color blocks with black text; the colors rotate per widget (see global.css)
+        surface = 'var(--block-color, #F2694A)';
+        border = '0 solid transparent';
+        depth = 'none';
+        widgetText = [20, 20, 20];
+        widgetText2 = [70, 62, 55];
+        break;
+      case 'paper':
+        surface = rgba(mix(palette.raised, [255, 250, 235], 0.5), op);
+        border = `1px solid ${rgba([0, 0, 0], 0.06)}`;
+        depth = '0 1px 1px rgb(0 0 0 / 0.06), 0 6px 14px rgb(60 40 0 / 0.06)';
+        break;
+      case 'line':
+        surface = rgba(palette.surface, op);
+        border = `1px solid ${rgba(line, (dark ? 0.16 : 0.08) * hc)}`;
+        depth = 'none';
+        break;
       default:
         surface = `linear-gradient(180deg, ${rgba(palette.surfaceTop, op)} 0%, ${rgba(palette.surfaceBottom, op)} 100%)`;
     }
@@ -294,6 +338,8 @@ export function computeTheme(s: Settings, now = new Date()) {
     '--text-primary': rgbToHex(palette.text),
     '--text-secondary': rgbToHex(palette.text2),
     '--text-tertiary': rgbToHex(palette.text3),
+    '--widget-text': rgbToHex(widgetText),
+    '--widget-text-2': rgbToHex(widgetText2),
 
     '--accent-rgb': rgbTriplet(accent),
     '--color-accent': rgbToHex(accent),
@@ -376,6 +422,7 @@ export function computeTheme(s: Settings, now = new Date()) {
     accent: rgbToHex(accent),
     bg: rgbToHex(palette.bg),
     nextSwitch,
+    numerals: retro ? 'dot' : s.numerals,
   };
   return { vars, state };
 }
@@ -422,6 +469,8 @@ function apply() {
     root.toggleAttribute('data-reduce-motion', s.reduceMotion);
     root.dataset.iconShape = s.iconShape;
     root.dataset.iconStyle = s.iconStyle;
+    root.dataset.iconPack = next.retro ? 'line' : s.iconPack;
+    root.dataset.widgetStyle = next.retro ? 'retro' : s.widgetStyle;
     setRetroMotion(next.retro !== null);
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next.bg);
   };

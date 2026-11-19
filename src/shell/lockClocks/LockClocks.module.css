@@ -151,3 +151,94 @@
 .word.small {
   font-size: var(--serif-34);
 }
+
+/* ---- Pack clocks ------------------------------------------------------- */
+/* Segmented mono: "14 02 57" */
+.segment {
+  display: flex;
+  justify-content: center;
+  gap: 0.35em;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 64px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.segment.small {
+  font-size: 44px;
+}
+
+.segmentSeconds {
+  color: var(--text-secondary);
+}
+
+/* Big serif numerals, hours over minutes */
+.numeral {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-serif);
+  font-size: 150px;
+  font-weight: 400;
+  line-height: 0.82;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.numeral.small {
+  font-size: 104px;
+}
+
+.numeralMinutes {
+  color: var(--text-secondary);
+}
+
+/* Three slim hands on a 60-tick dial, a red dot for the seconds */
+.hands {
+  overflow: visible;
+}
+
+.handsTick,
+.handsTickMajor {
+  stroke: var(--text-secondary);
+  stroke-linecap: round;
+}
+
+.handsTick {
+  stroke-width: 0.5;
+  opacity: 0.6;
+}
+
+.handsTickMajor {
+  stroke: var(--text-primary);
+  stroke-width: 0.9;
+}
+
+.handsHour,
+.handsMinute {
+  stroke: var(--text-primary);
+  stroke-linecap: round;
+}
+
+.handsHour {
+  stroke-width: 2.4;
+}
+
+.handsMinute {
+  stroke-width: 1.4;
+}
+
+/* The red details are part of the design: a "red dot" like a watch, not the theme accent */
+.handsSecond {
+  stroke: #ff3b30;
+  stroke-width: 0.6;
+}
+
+.handsDot,
+.handsCenter {
+  fill: #ff3b30;
+}

@@ -17,6 +17,9 @@ const NAMES: Record<LockClockStyle, string> = {
   flip: 'Flip',
   binary: 'Binary',
   word: 'Words',
+  segment: 'Segment',
+  numeral: 'Numeral',
+  hands: 'Three hands',
 };
 
 /** Lock screen: eight clock styles, size, position, round widgets and the two shortcuts. */

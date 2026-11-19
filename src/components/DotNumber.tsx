@@ -138,7 +138,8 @@ export function DotNumber({
   instant,
   pixels,
 }: DotNumberProps) {
-  const retro = useTheme().retro !== null;
+  const theme = useTheme();
+  const retro = theme.retro !== null;
   const square = pixels ?? retro;
   const pitch = size / ROWS; // distance between dot centres, in px
   const characters = [...value];
@@ -151,6 +152,25 @@ export function DotNumber({
     if (index === colonAt) return quietColon ? 'secondary' : 'accent';
     return 'secondary';
   };
+
+  // Signature packs can draw numbers as serif numerals or segmented mono
+  // instead of dots (same sizes, same colors per character)
+  if (!pixels && theme.numerals !== 'dot') {
+    return (
+      <span
+        className={`${styles.type} ${theme.numerals === 'serif' ? styles.typeSerif : styles.typeSegment}`}
+        style={{ fontSize: size * (theme.numerals === 'serif' ? 1.32 : 1.12), height: size }}
+        role="img"
+        aria-label={value}
+      >
+        {characters.map((character, index) => (
+          <span key={index} className={`${styles[toneOf(index)]} ${character === ':' && blinkColon ? styles.blink : ''}`}>
+            {character}
+          </span>
+        ))}
+      </span>
+    );
+  }
 
   return (
     <span

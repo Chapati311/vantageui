@@ -77,3 +77,24 @@
     transition: none;
   }
 }
+
+/* ---- Numbers as type (signature packs) ------------------------------- */
+.type {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.typeSerif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.typeSegment {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-weight: 300;
+  letter-spacing: -0.04em;
+}

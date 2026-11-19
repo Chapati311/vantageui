@@ -11,8 +11,15 @@ import { isWallpaperConfig, type WallpaperConfig } from '../theme/wallpapers';
 
 export type ModeId = 'clean' | 'focus' | 'retro' | 'winddown';
 export type Appearance = 'dark' | 'light' | 'auto';
-export type WidgetStyle = 'solid' | 'glass' | 'outline' | 'tinted';
-export const LOCK_CLOCK_STYLES = ['dot', 'pixel', 'serif', 'vertical', 'analog', 'flip', 'binary', 'word'] as const;
+export const WIDGET_STYLES = ['solid', 'glass', 'outline', 'tinted', 'glossy', 'pill', 'colorblock', 'paper', 'line'] as const;
+export type WidgetStyle = (typeof WIDGET_STYLES)[number];
+/** How app icons are drawn: line glyphs, glyph in a solid circle, pixel glyphs, or on color blocks */
+export const ICON_PACKS = ['line', 'glyph', 'pixel', 'colorblock'] as const;
+export type IconPack = (typeof ICON_PACKS)[number];
+/** How numbers are drawn everywhere: dot matrix, big serif numerals, or a segmented mono */
+export const NUMERAL_STYLES = ['dot', 'serif', 'segment'] as const;
+export type NumeralStyle = (typeof NUMERAL_STYLES)[number];
+export const LOCK_CLOCK_STYLES = ['dot', 'pixel', 'serif', 'vertical', 'analog', 'flip', 'binary', 'word', 'segment', 'numeral', 'hands'] as const;
 export type LockClockStyle = (typeof LOCK_CLOCK_STYLES)[number];
 export type BatteryStyle = 'percent' | 'ring' | 'bar' | 'pixel';
 export type UiFont = 'inter' | 'system' | 'serif' | 'mono';
@@ -80,6 +87,8 @@ export interface Settings {
   /** Small names under the app icons on the home screen */
   iconLabels: boolean;
   iconStyle: IconStyle;
+  iconPack: IconPack;
+  numerals: NumeralStyle;
   uiFont: UiFont;
 
   // ---- System pieces
@@ -181,6 +190,8 @@ export const DEFAULT_SETTINGS: Settings = {
   iconShape: 'circle',
   iconLabels: true,
   iconStyle: 'outline',
+  iconPack: 'line',
+  numerals: 'dot',
   uiFont: 'inter',
   bootAnimation: true,
   keypadStyle: 'dots',
@@ -278,7 +289,7 @@ export function sanitizeSettings(input: unknown): Settings {
           accent: isHexColor(p.accent) ? p.accent : null,
           matchWallpaper: bool(p.matchWallpaper, false),
           wallpaper: isWallpaperConfig(p.wallpaper) ? p.wallpaper : d.wallpaper,
-          widgetStyle: oneOf(p.widgetStyle, ['solid', 'glass', 'outline', 'tinted'] as const, d.widgetStyle),
+          widgetStyle: oneOf(p.widgetStyle, WIDGET_STYLES, d.widgetStyle),
           widgetOpacity: between(p.widgetOpacity, 0.4, 1, d.widgetOpacity),
           cornerRadius: between(p.cornerRadius, 12, 36, d.cornerRadius),
         }))
@@ -309,6 +320,8 @@ export function sanitizeSettings(input: unknown): Settings {
     setupDone: bool(raw.setupDone, Object.keys(raw).length > 0 || (typeof navigator !== 'undefined' && navigator.webdriver === true)),
     iconShape: oneOf(raw.iconShape, ['circle', 'squircle', 'square'] as const, d.iconShape),
     iconStyle: oneOf(raw.iconStyle, ['outline', 'filled', 'tinted'] as const, d.iconStyle),
+    iconPack: oneOf(raw.iconPack, ICON_PACKS, d.iconPack),
+    numerals: oneOf(raw.numerals, NUMERAL_STYLES, d.numerals),
     uiFont: oneOf(raw.uiFont, ['inter', 'system', 'serif', 'mono'] as const, d.uiFont),
     bootAnimation: bool(raw.bootAnimation, d.bootAnimation),
     keypadStyle: oneOf(raw.keypadStyle, ['dots', 'plain'] as const, d.keypadStyle),
@@ -333,7 +346,7 @@ export function sanitizeSettings(input: unknown): Settings {
             Object.entries(raw.appStyles as Record<string, unknown>).filter(([, value]) => value === 'vantage' || value === 'original'),
           ) as Record<string, 'vantage' | 'original'>
         : {},
-    widgetStyle: oneOf(raw.widgetStyle, ['solid', 'glass', 'outline', 'tinted'] as const, d.widgetStyle),
+    widgetStyle: oneOf(raw.widgetStyle, WIDGET_STYLES, d.widgetStyle),
     widgetOpacity: between(raw.widgetOpacity, 0.4, 1, d.widgetOpacity),
     cornerRadius: between(raw.cornerRadius, 12, 36, d.cornerRadius),
     textScale: between(raw.textScale, 0.85, 1.3, d.textScale),
@@ -419,12 +432,56 @@ export function applyPreset(id: string): void {
     updateSettings({ ...common, retroTheme: preset.id, mode: 'retro' });
     return;
   }
+  // A basic theme after a signature pack: the pack's own looks go back to normal
+  const fromPack = (['glossy', 'pill', 'colorblock', 'paper', 'line'] as WidgetStyle[]).includes(settings.widgetStyle);
   updateSettings({
     ...common,
     [preset.group === 'dark' ? 'darkTheme' : 'lightTheme']: preset.id,
     appearance: settings.appearance === 'auto' ? 'auto' : preset.group,
     // Leaving Retro mode when a modern theme is chosen
     mode: settings.mode === 'retro' ? 'clean' : settings.mode,
+    ...(fromPack || settings.iconPack !== 'line' || settings.numerals !== 'dot'
+      ? { widgetStyle: fromPack ? 'solid' : settings.widgetStyle, iconPack: 'line', numerals: 'dot', cornerRadius: 28 }
+      : {}),
+  });
+}
+
+/**
+ * Applies a whole signature pack: its colors (the preset with the same id)
+ * and everything else in theme/packs.ts: widget style, icons, numerals,
+ * font, clock, sounds, roundness and wallpaper scrim.
+ */
+export function applyPack(pack: {
+  id: string;
+  widgetStyle: WidgetStyle;
+  iconPack: IconPack;
+  numerals: NumeralStyle;
+  uiFont: UiFont;
+  lockClockStyle: LockClockStyle;
+  soundPack: SoundPack;
+  cornerRadius: number;
+  scrim: number;
+}): void {
+  const preset = PRESETS.find((p) => p.id === pack.id);
+  if (!preset || preset.group === 'retro') return;
+  updateSettings({
+    accent: null,
+    matchWallpaper: false,
+    wallpaper: { kind: 'theme' },
+    lockWallpaper: null,
+    [preset.group === 'dark' ? 'darkTheme' : 'lightTheme']: preset.id,
+    appearance: preset.group,
+    mode: settings.mode === 'retro' ? 'clean' : settings.mode,
+    widgetStyle: pack.widgetStyle,
+    widgetOpacity: 1,
+    iconPack: pack.iconPack,
+    numerals: pack.numerals,
+    uiFont: pack.uiFont,
+    lockClockStyle: pack.lockClockStyle,
+    soundPack: pack.soundPack,
+    cornerRadius: pack.cornerRadius,
+    homeDim: pack.scrim,
+    homeBlur: 0,
   });
 }
 

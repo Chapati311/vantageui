@@ -10,12 +10,14 @@
     "icons": "node scripts/generate-icons.mjs",
     "screenshots": "node scripts/screenshots.mjs",
     "check:layout": "node scripts/layout-check.mjs",
+    "gen:wallpapers": "node scripts/gen-wallpapers.mjs",
     "screenshots:themes": "node scripts/theme-screenshots.mjs",
     "screenshots:kit": "node scripts/kit-screenshots.mjs",
     "screenshots:shell": "node scripts/shell-screenshots.mjs",
     "screenshots:widgets": "node scripts/widget-screenshots.mjs",
     "test": "vitest run",
-    "screenshots:apps": "node scripts/app-screenshots.mjs"
+    "screenshots:apps": "node scripts/app-screenshots.mjs",
+    "screenshots:packs": "node scripts/pack-screenshots.mjs"
   },
   "dependencies": {
     "@fontsource-variable/doto": "^5.3.0",

@@ -5,6 +5,7 @@ import { useClock } from '../system/useClock';
 import { AnalogClock } from './lockClocks/AnalogClock';
 import { BinaryClock } from './lockClocks/BinaryClock';
 import { FlipClock } from './lockClocks/FlipClock';
+import { HandsClock, NumeralClock, SegmentClock } from './lockClocks/PackClocks';
 import { wordTime } from './lockClocks/wordTime';
 import styles from './lockClocks/LockClocks.module.css';
 
@@ -53,6 +54,15 @@ export function LockClock({ style }: LockClockProps) {
       break;
     case 'word':
       clock = <span className={`${styles.word} ${large ? '' : styles.small}`}>{wordTime(now)}</span>;
+      break;
+    case 'segment':
+      clock = <SegmentClock large={large} />;
+      break;
+    case 'numeral':
+      clock = <NumeralClock date={now} large={large} />;
+      break;
+    case 'hands':
+      clock = <HandsClock size={large ? 220 : 156} />;
       break;
     default:
       clock = <DotNumber value={formatTime(now)} size={dotSize} clock blinkColon />;

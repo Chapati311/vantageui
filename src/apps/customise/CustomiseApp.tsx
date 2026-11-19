@@ -108,7 +108,7 @@ const SYSTEM: SectionDef[] = [
 ];
 
 const MODE_NAMES = { clean: 'Clean', focus: 'Focus', retro: 'Retro', winddown: 'Wind Down' } as const;
-const STYLE_NAMES = { solid: 'Solid', glass: 'Glass', outline: 'Outline', tinted: 'Tinted' } as const;
+const STYLE_NAMES = { solid: 'Solid', glass: 'Glass', outline: 'Outline', tinted: 'Tinted', glossy: 'Glossy', pill: 'Black', colorblock: 'Color block', paper: 'Paper', line: 'Line' } as const;
 const APPEARANCE_NAMES = { dark: 'Dark', light: 'Light', auto: 'Automatic' } as const;
 const LOCK_NAMES = {
   dot: 'Dot clock',
@@ -119,6 +119,9 @@ const LOCK_NAMES = {
   flip: 'Flip clock',
   binary: 'Binary clock',
   word: 'Word clock',
+  segment: 'Segment clock',
+  numeral: 'Serif numerals',
+  hands: 'Three hands',
 } as const;
 const BATTERY_NAMES = { percent: 'Battery number', ring: 'Battery ring', bar: 'Battery bar', pixel: 'Pixel battery' } as const;
 

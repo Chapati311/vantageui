@@ -5,6 +5,8 @@
  *  - gradient: one of the gradients below ('theme' = made from the theme's colors)
  *  - live:     an animated wallpaper drawn in code (SPECS.md section 5)
  *  - photo:    the user's own photo (stored on the device in IndexedDB)
+ *  - image:    one of the signature pictures in public/wallpapers (made by
+ *              scripts/gen-wallpapers.mjs)
  */
 
 export type LiveId = 'orbit' | 'starfield' | 'aurora' | 'waves' | 'sundown' | 'pixel';
@@ -15,7 +17,23 @@ export type WallpaperConfig =
   | { kind: 'solid'; color: string }
   | { kind: 'gradient'; id: GradientId }
   | { kind: 'live'; id: LiveId }
-  | { kind: 'photo' };
+  | { kind: 'photo' }
+  | { kind: 'image'; id: ImageId };
+
+export type ImageId = 'lacquer' | 'obsidian' | 'reed' | 'nightreed' | 'porcelain' | 'notebook' | 'frost';
+
+/** The signature pictures, with their main and most vivid color (for "colors from wallpaper"). */
+export const IMAGE_WALLPAPERS: { id: ImageId; name: string; dominant: string; vibrant: string }[] = [
+  { id: 'lacquer', name: 'Lacquer folds', dominant: '#5E0B12', vibrant: '#E0313E' },
+  { id: 'obsidian', name: 'Obsidian leaf', dominant: '#1c1d1f', vibrant: '#8a8f94' },
+  { id: 'reed', name: 'Reed glass', dominant: '#c9d3c4', vibrant: '#5e805c' },
+  { id: 'nightreed', name: 'Night reed', dominant: '#0b1610', vibrant: '#46704c' },
+  { id: 'porcelain', name: 'Porcelain', dominant: '#EFEFEC', vibrant: '#EFEFEC' },
+  { id: 'notebook', name: 'Paper', dominant: '#F5EDD3', vibrant: '#E8D9A8' },
+  { id: 'frost', name: 'Frost flower', dominant: '#c9cdd2', vibrant: '#9aa2ab' },
+];
+
+export const imageUrl = (id: ImageId): string => `${import.meta.env.BASE_URL}wallpapers/${id}.webp`;
 
 export const LIVE_WALLPAPERS: { id: LiveId; name: string }[] = [
   { id: 'orbit', name: 'Orbit' },
@@ -85,6 +103,8 @@ export function isWallpaperConfig(value: unknown): value is WallpaperConfig {
       return GRADIENT_IDS.includes(w.id);
     case 'live':
       return LIVE_IDS.includes(w.id);
+    case 'image':
+      return IMAGE_WALLPAPERS.some((image) => image.id === w.id);
     default:
       return false;
   }
@@ -107,5 +127,7 @@ export function wallpaperName(wallpaper: WallpaperConfig): string {
       return wallpaper.id === 'theme' ? 'Theme gradient' : getGradient(wallpaper.id).name;
     case 'live':
       return LIVE_WALLPAPERS.find((l) => l.id === wallpaper.id)?.name ?? 'Live';
+    case 'image':
+      return IMAGE_WALLPAPERS.find((image) => image.id === wallpaper.id)?.name ?? 'Picture';
   }
 }

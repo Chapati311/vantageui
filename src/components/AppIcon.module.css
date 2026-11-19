@@ -9,7 +9,8 @@
   border-radius: var(--radius-circle);
   background: var(--surface-widget);
   box-shadow: var(--highlight-top);
-  color: var(--text-primary);
+  /* The widget style decides the glyph color (white on black cards, black on color blocks) */
+  color: var(--widget-text, var(--text-primary));
 }
 
 .icon svg {

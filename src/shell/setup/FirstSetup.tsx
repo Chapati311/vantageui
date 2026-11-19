@@ -29,6 +29,9 @@ const CLOCK_NAMES: Record<LockClockStyle, string> = {
   flip: 'Flip',
   binary: 'Binary',
   word: 'Words',
+  segment: 'Segment',
+  numeral: 'Numeral',
+  hands: 'Hands',
 };
 const GOALS = [60, 120, 180, 240];
 

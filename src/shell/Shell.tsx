@@ -56,6 +56,12 @@ export function Shell() {
   const [booting, setBooting] = useState(() => getSettings().bootAnimation);
   const [reduceMotion] = useSetting('reduceMotion');
   const [setupDone] = useSetting('setupDone');
+  // A signature pack was applied: the home screen pops in again in its new style
+  useEffect(() => {
+    const replay = () => setUnlockCount((count) => count + 1);
+    window.addEventListener('vantage:pack', replay);
+    return () => window.removeEventListener('vantage:pack', replay);
+  }, []);
   const [locked, setLocked] = useState(true);
   const [openApp, setOpenApp] = useState<OpenApp | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);

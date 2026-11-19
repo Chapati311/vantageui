@@ -145,7 +145,7 @@
 /* Grids of preview tiles (themes, wallpapers) */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--grid-gap);
 }
 
@@ -240,5 +240,5 @@
 
 /* Theme gallery: two big mini phones per row */
 .tilesTwo {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }

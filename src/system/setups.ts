@@ -134,7 +134,7 @@ export function surpriseMe(): void {
   const light = settings.appearance === 'light';
   const group = light ? 'light' : 'dark';
   const currentId = light ? settings.lightTheme : settings.darkTheme;
-  const theme = pick(presetsIn(group).filter((p) => p.id !== currentId)).id;
+  const theme = pick(presetsIn(group).filter((p) => p.id !== currentId && !p.signature)).id;
   updateSettings({
     ...(light ? { lightTheme: theme } : { darkTheme: theme }),
     wallpaper: pick(wallpapers),

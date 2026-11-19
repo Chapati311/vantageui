@@ -32,6 +32,7 @@ import {
   applyCustomPreset,
   applyPreset,
   deleteCustomPreset,
+  applyPack,
   getSettings,
   LOCK_CLOCK_STYLES,
   saveCustomPreset,
@@ -42,6 +43,7 @@ import {
   type Settings,
 } from './settingsStore';
 import { setFlashlight } from './nativeBridge';
+import { getPack } from '../theme/packs';
 import { setKeepAwake } from './keepAwake';
 import { renameRecording, startRecording, trimRecording } from './recordings';
 import { SESSION_TYPES, startSession } from '../apps/lockin/focusStore';
@@ -168,6 +170,16 @@ const ACTIONS = {
   // ---- Look
   'theme.apply': define<{ id: string }>('Switch to one of the 21 theme presets by id (e.g. midnight, ocean, paper, nokia).', ({ id }) =>
     applyPreset(id),
+  ),
+  'theme.applyPack': define<{ id: string }>(
+    'Switch to a signature theme pack (signal, obsidian, lacquer, popink, nightreed, porcelain, reedglass, frost, notebook, gallery): colors, wallpaper, widgets, icons, numbers, clock and sounds.',
+    ({ id }) => {
+      const pack = getPack(id);
+      if (!pack) return;
+      applyPack(pack);
+      // The home screen replays its pop-in, so the widgets morph into the new style
+      window.dispatchEvent(new Event('vantage:pack'));
+    },
   ),
   'theme.setAppearance': define<{ appearance: Appearance }>('Use dark, light or automatic appearance.', ({ appearance }) =>
     updateSettings({ appearance }),

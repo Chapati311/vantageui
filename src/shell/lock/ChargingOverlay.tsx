@@ -15,11 +15,13 @@ export function ChargingOverlay({ active }: { active: boolean }) {
   const battery = useBattery();
   const [show, setShow] = useState(false);
   const wasCharging = useRef<boolean | null>(null);
+  // The battery reports itself a moment after the page opens: that isn't "plugging in"
+  const mountedAt = useRef(Date.now());
 
   useEffect(() => {
     const charging = battery?.charging ?? false;
     // Only on the moment it starts charging (not when the page loads already charging)
-    if (wasCharging.current === false && charging && active) {
+    if (wasCharging.current === false && charging && active && Date.now() - mountedAt.current > 4000) {
       setShow(true);
       const timer = window.setTimeout(() => setShow(false), 3200);
       wasCharging.current = charging;

@@ -1,5 +1,9 @@
 /* The surface every widget shares: gradient, hairline border, top highlight */
 .widget {
+  /* Inside a widget, text follows the widget style (e.g. white on black cards in a light pack) */
+  --text-primary: var(--widget-text);
+  --text-secondary: var(--widget-text-2);
+  color: var(--text-primary);
   position: relative;
   width: 100%;
   height: 100%;
