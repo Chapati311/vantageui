@@ -35,6 +35,8 @@ export function HomeItemContent({ item, editTick = 0 }: { item: HomeItem; editTi
 }
 
 interface HomeItemViewProps {
+  /** On a home page you can't see right now: its animations pause */
+  offscreen?: boolean;
   item: HomeItem;
   /** Position and size in pixels */
   x: number;
@@ -64,7 +66,7 @@ interface HomeItemViewProps {
 /** The color-block widget colors (Pop Ink): coral, butter, cream, sky, mint */
 const BLOCK_COLORS = ['#F2694A', '#F6CE46', '#F3EAD7', '#9EC9F0', '#9FE3C1'];
 
-export function HomeItemView({ item, x, y, width, height, editing, hidden, index, onResize, onRemove, editTick, enterKey = 0, enterOrder = 0 }: HomeItemViewProps) {
+export function HomeItemView({ item, x, y, width, height, editing, hidden, index, onResize, onRemove, editTick, enterKey = 0, enterOrder = 0, offscreen = false }: HomeItemViewProps) {
   const [scope, animateItem] = useAnimate();
   useEffect(() => {
     if (!enterKey || !scope.current) return;
@@ -82,6 +84,7 @@ export function HomeItemView({ item, x, y, width, height, editing, hidden, index
     <motion.div
       className={`${styles.frame} ${hidden ? styles.hidden : ''}`}
       data-item-id={item.id}
+      data-offscreen={offscreen || undefined}
       // Color-block packs: each item takes the next color of the set (by its place on the page)
       style={{ width, height, '--block-color': BLOCK_COLORS[(item.row * 4 + item.col + item.page) % BLOCK_COLORS.length] } as CSSProperties}
       initial={false}

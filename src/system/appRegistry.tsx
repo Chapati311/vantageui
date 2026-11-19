@@ -1,29 +1,6 @@
-import { VantageApp } from '../vantage/VantageApp';
-import { EarbudsApp } from '../apps/devices/EarbudsApp';
 import { SoundIcon } from '../components/glyphs';
 import { lazy, Suspense, type ComponentType } from 'react';
-import { ArcadeApp } from '../apps/arcade/ArcadeApp';
-import { BrowserApp } from '../apps/browser/BrowserApp';
-import { CalculatorApp } from '../apps/calculator/CalculatorApp';
-import { CalendarApp } from '../apps/calendar/CalendarApp';
-import { CameraApp } from '../apps/camera/CameraApp';
-import { ClockApp } from '../apps/clock/ClockApp';
-import { CompassApp } from '../apps/compass/CompassApp';
-import { ContactsApp } from '../apps/contacts/ContactsApp';
-import { CustomiseApp } from '../apps/customise/CustomiseApp';
-import { FilesApp } from '../apps/files/FilesApp';
-import { KitApp } from '../apps/kit/KitApp';
-import { LockInApp } from '../apps/lockin/LockInApp';
-import { MailApp } from '../apps/mail/MailApp';
-import { MessagesApp } from '../apps/messages/MessagesApp';
-import { MusicApp } from '../apps/music/MusicApp';
-import { NotesApp } from '../apps/notes/NotesApp';
-import { PhoneApp } from '../apps/phone/PhoneApp';
-import { PhotosApp } from '../apps/photos/PhotosApp';
-import { RecorderApp } from '../apps/recorder/RecorderApp';
-import { RemindersApp } from '../apps/reminders/RemindersApp';
-import { SettingsApp } from '../apps/settings/SettingsApp';
-import { WeatherApp } from '../apps/weather/WeatherApp';
+import { EmptyState } from '../components/kit/EmptyState';
 import {
   ArcadeIcon,
   BrowserIcon,
@@ -48,6 +25,47 @@ import {
   RemindersIcon,
   SettingsIcon,
   WeatherIcon, VantageIcon } from './appIcons';
+
+/**
+ * Every app is its own small file that is only downloaded the first time it
+ * opens (then the service worker keeps it for offline use). The phone starts
+ * with just the shell, so a cold start stays fast on the A13.
+ */
+function lazyApp(load: () => Promise<Record<string, unknown>>, name: string): ComponentType {
+  const Lazy = lazy(() => load().then((module) => ({ default: module[name] as ComponentType })));
+  return function LazyApp() {
+    return (
+      <Suspense fallback={<EmptyState kind="loading" title="Opening" />}>
+        <Lazy />
+      </Suspense>
+    );
+  };
+}
+
+const VantageApp = lazyApp(() => import('../vantage/VantageApp'), 'VantageApp');
+const EarbudsApp = lazyApp(() => import('../apps/devices/EarbudsApp'), 'EarbudsApp');
+const ArcadeApp = lazyApp(() => import('../apps/arcade/ArcadeApp'), 'ArcadeApp');
+const BrowserApp = lazyApp(() => import('../apps/browser/BrowserApp'), 'BrowserApp');
+const CalculatorApp = lazyApp(() => import('../apps/calculator/CalculatorApp'), 'CalculatorApp');
+const CalendarApp = lazyApp(() => import('../apps/calendar/CalendarApp'), 'CalendarApp');
+const CameraApp = lazyApp(() => import('../apps/camera/CameraApp'), 'CameraApp');
+const ClockApp = lazyApp(() => import('../apps/clock/ClockApp'), 'ClockApp');
+const CompassApp = lazyApp(() => import('../apps/compass/CompassApp'), 'CompassApp');
+const ContactsApp = lazyApp(() => import('../apps/contacts/ContactsApp'), 'ContactsApp');
+const CustomiseApp = lazyApp(() => import('../apps/customise/CustomiseApp'), 'CustomiseApp');
+const FilesApp = lazyApp(() => import('../apps/files/FilesApp'), 'FilesApp');
+const KitApp = lazyApp(() => import('../apps/kit/KitApp'), 'KitApp');
+const LockInApp = lazyApp(() => import('../apps/lockin/LockInApp'), 'LockInApp');
+const MailApp = lazyApp(() => import('../apps/mail/MailApp'), 'MailApp');
+const MessagesApp = lazyApp(() => import('../apps/messages/MessagesApp'), 'MessagesApp');
+const MusicApp = lazyApp(() => import('../apps/music/MusicApp'), 'MusicApp');
+const NotesApp = lazyApp(() => import('../apps/notes/NotesApp'), 'NotesApp');
+const PhoneApp = lazyApp(() => import('../apps/phone/PhoneApp'), 'PhoneApp');
+const PhotosApp = lazyApp(() => import('../apps/photos/PhotosApp'), 'PhotosApp');
+const RecorderApp = lazyApp(() => import('../apps/recorder/RecorderApp'), 'RecorderApp');
+const RemindersApp = lazyApp(() => import('../apps/reminders/RemindersApp'), 'RemindersApp');
+const SettingsApp = lazyApp(() => import('../apps/settings/SettingsApp'), 'SettingsApp');
+const WeatherApp = lazyApp(() => import('../apps/weather/WeatherApp'), 'WeatherApp');
 
 // Maps carries a big map library: it is only downloaded when Maps opens.
 const LazyMaps = lazy(() => import('../apps/maps/MapsApp').then((module) => ({ default: module.MapsApp })));

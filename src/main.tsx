@@ -12,6 +12,8 @@ import { onVolumeChord } from './system/nativeBridge';
 import { summon } from './vantage/summon';
 
 preventZoom();
+// Battery: CSS animations pause while the app is in the background (see global.css)
+document.addEventListener('visibilitychange', () => document.documentElement.toggleAttribute('data-hidden', document.visibilityState === 'hidden'));
 initSounds();
 initTheme();
 onEasterEgg(() => void runAction('easter.gameboy', {}));

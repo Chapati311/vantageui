@@ -112,3 +112,25 @@ button {
 :root[data-summoned] #root > * {
   transform: scale(0.96);
 }
+
+/* ---- iPhone SE pass ---------------------------------------------------- */
+/* Safari zooms into any text field under 16px: never let that happen */
+input,
+textarea,
+select {
+  font-size: max(16px, 1em) !important;
+}
+
+/* Battery: nothing animates while Vantage OS is in the background */
+:root[data-hidden] *,
+:root[data-hidden] *::before,
+:root[data-hidden] *::after {
+  animation-play-state: paused !important;
+}
+
+/* Widgets on home pages you can't see don't animate either */
+[data-offscreen] *,
+[data-offscreen] *::before,
+[data-offscreen] *::after {
+  animation-play-state: paused !important;
+}

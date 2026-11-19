@@ -288,6 +288,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
                 editTick={editTicks[item.id]}
                 enterKey={item.page === page ? enterKey : 0}
                 enterOrder={item.row * 4 + item.col}
+                offscreen={item.page !== page && !editing}
               />
             ))}
           {dropRect && (
