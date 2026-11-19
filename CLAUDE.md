@@ -319,12 +319,23 @@ The jailbreak tweak will inject `window.vantageNative`. Always write code like:
 Put all of this in `system/nativeBridge.ts` so the rest of the app never
 checks for the bridge directly.
 
-Planned bridge functions (all return Promises):
+Bridge functions (built: vantage-tweak, `VantageHost/Resources/bridge.js`; all return Promises):
 - `openApp(bundleId: string)` - launch a real iOS app
-- `listApps()` - installed apps with name, bundleId and icon (base64)
+- `listApps()` - visible installed apps with name, bundleId and icon (PNG base64)
 - `setFlashlight(on: boolean)`
 - `getBattery()` - level 0-1 and charging state
-- `setBrightness(level: number)`
+- `setBrightness(level: number)`, `getBrightness()`
+- `onVolumeChord(callback)` - volume up, then down within 400 ms
+- `isHosted()`, `getInfo()` - `{ hosted, version, iosVersion, model }`
+
+Host mode (Vantage OS IS the phone's home screen, inside VantageHost): check
+with `isHosted()` from `nativeBridge.ts`. The page also gets `vantage:home`
+(home button) and `?restore=1` (reloaded after iOS ended it).
+
+Testing for the phone (iOS 16.3 WebKit): `npm run test:webkit` runs every UI
+script on Chromium and WebKit (iPhone SE profile) and lists WebKit-only
+errors; `node scripts/host-mode-check.mjs` checks host mode. The build targets
+Safari 16.3. On the phone itself, `make weblog` in vantage-tweak shows web errors.
 
 ## How to work with me
 
