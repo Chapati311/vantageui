@@ -43,7 +43,7 @@ import {
 } from './settingsStore';
 import { setFlashlight } from './nativeBridge';
 import { setKeepAwake } from './keepAwake';
-import { startRecording } from './recordings';
+import { renameRecording, startRecording, trimRecording } from './recordings';
 import { SESSION_TYPES, startSession } from '../apps/lockin/focusStore';
 import { deleteEvent, saveEvent, type CalendarEvent } from './events';
 import { deleteReminder, saveReminder, setReminderDone, type Reminder } from './reminders';
@@ -254,6 +254,11 @@ const ACTIONS = {
     },
   ),
   'recorder.start': define<Record<string, never>>('Start a voice recording.', () => startRecording()),
+  'recorder.rename': define<{ id: string; name: string }>('Rename a voice recording.', ({ id, name }) => renameRecording(id, name)),
+  'recorder.trim': define<{ id: string; start: number; end: number }>(
+    'Save a shorter copy of a recording, from start to end (seconds).',
+    ({ id, start, end }) => trimRecording(id, start, end),
+  ),
   'lock.nextClockStyle': define<Record<string, never>>('Switch the lock screen clock to the next style.', () => {
     const styles = LOCK_CLOCK_STYLES;
     const index = styles.indexOf(getSettings().lockClockStyle);

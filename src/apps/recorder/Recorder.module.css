@@ -42,3 +42,69 @@
   border-radius: 3px;
   background: var(--color-on-accent);
 }
+
+/* Live waveform: a dot grid, lit from the middle out */
+.wave {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+}
+
+.wave span {
+  aspect-ratio: 1;
+  border-radius: var(--radius-circle);
+  background: var(--text-primary);
+  opacity: var(--ghost, 0.12);
+  transition: opacity 0.08s linear;
+}
+
+.wave span[data-on='1'] {
+  opacity: 1;
+}
+
+.wave span[data-on='soft'] {
+  opacity: 0.35;
+}
+
+:root[data-retro] .wave span {
+  border-radius: 0;
+}
+
+/* ---- Edit sheet ------------------------------------------------------- */
+.edit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  color: var(--text-secondary);
+}
+
+.renameRow,
+.editButtons {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.editButtons {
+  justify-content: space-between;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: calc(var(--space-32) + var(--space-16));
+  padding: 0 var(--space-24);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
+  outline: none;
+  background: var(--surface-widget);
+  color: var(--text-primary);
+  caret-color: var(--color-accent);
+  font: inherit;
+  font-size: var(--text-17);
+}
+
+.error {
+  margin: 0;
+  font-size: var(--text-13);
+  color: var(--status-bad);
+}
