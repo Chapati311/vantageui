@@ -35,7 +35,8 @@ export function LockNotifications() {
           return (
             <motion.div
               key={note.id}
-              className={styles.note}
+              // Cards stacked behind only peek out as edges: their text would show through the glass
+              className={`${styles.note} ${behind ? styles.behind : ''}`}
               layout
               drag={index === 0 || open ? 'x' : false}
               dragSnapToOrigin

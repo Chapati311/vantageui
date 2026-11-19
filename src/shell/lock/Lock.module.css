@@ -164,6 +164,10 @@
   touch-action: pan-y;
 }
 
+.behind > * {
+  visibility: hidden;
+}
+
 .noteHead {
   display: flex;
   justify-content: space-between;
