@@ -9,11 +9,13 @@ const BLOCKS = 5;
 /**
  * The battery in the status row, in the style chosen in Customise > Status
  * bar: percent (number + outline), ring, bar (outline only) or pixel blocks.
- * Shows "--" (or an empty outline) when the level is unknown.
+ * Hidden while the level is unknown (no "--"): on the phone the value comes
+ * from the native bridge a moment after start.
  */
 export function BatteryIndicator({ style }: { style?: BatteryStyle }) {
   const battery = useBattery();
   const [saved] = useSetting('batteryStyle');
+  if (!battery) return null;
   const look = style ?? saved;
   const level = battery?.level ?? 0;
   const percent = battery ? Math.round(level * 100) : null;

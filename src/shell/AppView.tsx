@@ -138,13 +138,18 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
     void springTo(target, 0).then(onClosed);
   };
 
-  // Escape closes the app (handy when testing on a computer).
+  // Escape closes the app (handy when testing on a computer), and so does the
+  // iPhone's home button in host mode ('vantage:close-app' from the Shell).
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') close();
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener('vantage:close-app', close);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('vantage:close-app', close);
+    };
   });
 
   const holdSummon = useRef(0);

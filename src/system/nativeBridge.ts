@@ -24,6 +24,17 @@ export interface InstalledApp {
   icon: string;
 }
 
+/** The jailbroken phone running Vantage OS as its home screen. */
+export interface HostInfo {
+  hosted: true;
+  /** Tweak version, e.g. "0.3.0" */
+  version: string;
+  /** e.g. "16.3" */
+  iosVersion: string;
+  /** e.g. "iPhone12,8" */
+  model: string;
+}
+
 /** How a request was carried out. */
 export type BridgeResult =
   | { ok: true; via: 'bridge' | 'url' | 'shortcut' }
@@ -36,11 +47,18 @@ interface VantageNative {
   setFlashlight?: (on: boolean) => Promise<void>;
   getBattery?: () => Promise<BatteryInfo>;
   setBrightness?: (level: number) => Promise<void>;
+  getBrightness?: () => Promise<number>;
   /**
-   * Volume up then volume down within 400 ms: the tweak swallows the pair
-   * (the volume doesn't change) and calls this to summon Vantage.
+   * Volume up then volume down within 400 ms: the volume is put back to where
+   * it was and this is called to summon Vantage. (The tweak resolves with a
+   * function that stops listening.)
    */
-  onVolumeChord?: (callback: () => void) => void;
+  onVolumeChord?: (callback: () => void) => void | Promise<() => void>;
+  /** Always true inside VantageHost (the jailbroken phone's home screen). */
+  isHosted?: () => Promise<boolean>;
+  getInfo?: () => Promise<HostInfo>;
+  version?: string;
+  iosVersion?: string;
   /** Sends a text message (after the user confirmed it on an action card). */
   sendMessage?: (to: string, body: string) => Promise<void>;
 }
@@ -65,6 +83,26 @@ const native = () => window.vantageNative;
 /** True once the jailbreak bridge is there. */
 export function hasBridge(): boolean {
   return !!native();
+}
+
+/**
+ * True when Vantage OS IS the phone's home screen (inside the VantageHost app
+ * on the jailbroken iPhone), not a website or home-screen web app. The
+ * user agent also says so, in case the bridge is checked very early.
+ */
+export function isHosted(): boolean {
+  return !!native() || (typeof navigator !== 'undefined' && navigator.userAgent.includes('VantageOSHost'));
+}
+
+/** Tweak version, iOS version and model when hosted, otherwise null. */
+export async function hostInfo(): Promise<HostInfo | null> {
+  const bridge = native();
+  if (!bridge?.getInfo) return null;
+  try {
+    return await bridge.getInfo();
+  } catch {
+    return null;
+  }
 }
 
 /** Opens a URL that iOS hands to another app (tel:, sms:, maps://, shortcuts://...). */
@@ -198,6 +236,17 @@ export async function setBrightness(level: number): Promise<BridgeResult> {
   }
 }
 
+/** The screen brightness (0-1), or null without the bridge. */
+export async function getBrightness(): Promise<number | null> {
+  const bridge = native();
+  if (!bridge?.getBrightness) return null;
+  try {
+    return await bridge.getBrightness();
+  } catch {
+    return null;
+  }
+}
+
 /** Do Not Disturb. Without the bridge, runs the "DND" Shortcut (it toggles). */
 export function toggleDoNotDisturb(): BridgeResult {
   return runShortcut('DND');
@@ -210,7 +259,8 @@ export function createSystemAlarm(time: string, label: string): BridgeResult {
 
 // ---- Battery ----------------------------------------------------------------------------
 
-const BRIDGE_POLL_MS = 60_000;
+/** The status bar shows the battery, so poll the bridge twice a minute. */
+const BRIDGE_POLL_MS = 30_000;
 
 /**
  * Calls `onChange` with the battery state now and whenever it changes.
@@ -263,7 +313,11 @@ export function watchBattery(onChange: (info: BatteryInfo | null) => void): () =
  * bridge this does nothing, and Vantage is summoned by touch instead.
  */
 export function onVolumeChord(callback: () => void): void {
-  native()?.onVolumeChord?.(callback);
+  try {
+    void native()?.onVolumeChord?.(callback);
+  } catch {
+    // no bridge buttons: Vantage is summoned by touch instead
+  }
 }
 
 /**

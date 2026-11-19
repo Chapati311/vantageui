@@ -8,7 +8,7 @@ import { hasPasscode } from '../system/passcode';
 import { getSettings, useSetting } from '../system/settingsStore';
 import { useTheme } from '../system/theme';
 import { blockState, countUsage } from '../apps/lockin/blocking';
-import { canOpenApp, openApp as openNativeApp } from '../system/nativeBridge';
+import { canOpenApp, isHosted, openApp as openNativeApp } from '../system/nativeBridge';
 import { AlarmRinging } from './AlarmRinging';
 import { LockedApp } from './LockedApp';
 import { ModeHome } from './ModeHome';
@@ -38,6 +38,26 @@ import { TimerBanner } from './TimerBanner';
 import { Wallpaper } from './wallpaper/Wallpaper';
 import styles from './Shell.module.css';
 
+/**
+ * Host mode: Vantage OS IS the phone's home screen (VantageHost on the
+ * jailbroken iPhone). The iOS lock screen already did the security, so the
+ * Vantage lock screen is skipped after unlocking.
+ */
+const HOSTED = isHosted();
+
+/** VantageHost reloads with ?restore=1 after iOS ended the page (memory): reopen the last screen. */
+const RESTORING = HOSTED && new URLSearchParams(window.location.search).get('restore') === '1';
+const LAST_SCREEN_KEY = 'vantage.lastScreen.v1';
+
+function savedLastApp(): string | null {
+  try {
+    const saved = JSON.parse(localStorage.getItem(LAST_SCREEN_KEY) ?? 'null') as { appId?: string | null } | null;
+    return saved?.appId ?? null;
+  } catch {
+    return null;
+  }
+}
+
 interface OpenApp {
   app: AppDefinition;
   from: ScreenRect | null;
@@ -58,7 +78,7 @@ function findIconRect(appId: string): ScreenRect | null {
  * old-phone versions.
  */
 export function Shell() {
-  const [booting, setBooting] = useState(() => getSettings().bootAnimation);
+  const [booting, setBooting] = useState(() => getSettings().bootAnimation && !RESTORING);
   const [reduceMotion] = useSetting('reduceMotion');
   const [setupDone] = useSetting('setupDone');
   // What Vantage is told about the moment (VANTAGE.md: the "context" message)
@@ -94,11 +114,11 @@ export function Shell() {
     window.addEventListener('vantage:pack', replay);
     return () => window.removeEventListener('vantage:pack', replay);
   }, []);
-  const [locked, setLocked] = useState(true);
+  const [locked, setLocked] = useState(!HOSTED);
   const [openApp, setOpenApp] = useState<OpenApp | null>(null);
   const openAppRef = useRef<string | null>(null);
   openAppRef.current = openApp?.app.id ?? null;
-  const lockedRef = useRef(true);
+  const lockedRef = useRef(!HOSTED);
   lockedRef.current = locked;
   const [searchOpen, setSearchOpen] = useState(false);
   const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
@@ -193,6 +213,63 @@ export function Shell() {
   const swipeDownFromTop = (x: number) =>
     void runAction(x < window.innerWidth / 2 ? 'shell.openNotifications' : 'shell.openControlCenter', {});
   useEffect(() => registerShell(controls.current), []);
+
+  // ---- Host mode (the real home screen) -------------------------------------------
+
+  // What is open right now, for the home button below.
+  const openNow = useRef({ app: false, overlays: false, lockedApp: false, passcode: false });
+  openNow.current = {
+    app: openApp !== null,
+    overlays: searchOpen || quickSettingsOpen || notificationsOpen || switcherOpen,
+    lockedApp: lockedApp !== null,
+    passcode: passcodeOpen,
+  };
+
+  useEffect(() => {
+    if (!HOSTED) return;
+    // Coming back to Vantage after the iOS lock screen: straight to home.
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      setPasscodeOpen(false);
+      setLocked(false);
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    morningSummary();
+    // Reloaded after iOS ended the page: reopen the app that was open.
+    if (RESTORING) {
+      const appId = savedLastApp();
+      if (appId) controls.current.openApp(appId, null);
+      const url = new URL(window.location.href);
+      url.searchParams.delete('restore');
+      window.history.replaceState(null, '', url);
+    }
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, []);
+
+  // Remember the open app, so a reload (above) can bring it back.
+  useEffect(() => {
+    try {
+      localStorage.setItem(LAST_SCREEN_KEY, JSON.stringify({ appId: openApp?.app.id ?? null, at: Date.now() }));
+    } catch {
+      // storage full or blocked: nothing to restore later, that's all
+    }
+  }, [openApp]);
+
+  // The iPhone's home button (VantageHost sends 'vantage:home'): like iOS,
+  // the first press closes what is open (apps with their normal close
+  // animation), the next one goes back to home page 1.
+  useEffect(() => {
+    const onHome = () => {
+      const now = openNow.current;
+      if (now.passcode) setPasscodeOpen(false);
+      if (now.lockedApp) setLockedApp(null);
+      if (now.overlays) closeAllOverlays();
+      if (now.app) window.dispatchEvent(new CustomEvent('vantage:close-app'));
+      else if (!now.overlays && !now.lockedApp && !now.passcode) window.dispatchEvent(new CustomEvent('vantage:home-page'));
+    };
+    window.addEventListener('vantage:home', onHome);
+    return () => window.removeEventListener('vantage:home', onHome);
+  }, []);
 
   // Lock In: count a minute of use for the open app (for daily limits)
   const openAppId = openApp?.app.id;

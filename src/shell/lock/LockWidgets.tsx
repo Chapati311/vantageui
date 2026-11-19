@@ -57,16 +57,19 @@ function LockWidget({ id }: { id: string }) {
   const { events } = useEvents();
 
   switch (id) {
+    // Widgets without data yet are left out (no "--", no "Alarm off").
     case 'weather':
+      if (!weather) return null;
       return (
-        <Round label={weather ? `${weather.daily[0]?.low ?? '--'}° ${weather.daily[0]?.high ?? '--'}°` : 'Weather'}>
-          <DotNumber value={weather ? `${weather.now.temperature}` : '--'} size={28} />
+        <Round label={weather.daily[0] ? `${weather.daily[0].low}° ${weather.daily[0].high}°` : 'Weather'}>
+          <DotNumber value={`${weather.now.temperature}`} size={28} />
         </Round>
       );
     case 'battery':
+      if (!battery) return null;
       return (
-        <Round ring={battery?.level ?? 0} label={battery?.charging ? 'Charging' : 'Battery'}>
-          <DotNumber value={battery ? String(Math.round(battery.level * 100)) : '--'} size={28} narrowOne />
+        <Round ring={battery.level} label={battery.charging ? 'Charging' : 'Battery'}>
+          <DotNumber value={String(Math.round(battery.level * 100))} size={28} narrowOne />
         </Round>
       );
     case 'focus': {
@@ -86,9 +89,10 @@ function LockWidget({ id }: { id: string }) {
           return { alarm, at };
         })
         .sort((a, b) => a.at.getTime() - b.at.getTime())[0];
+      if (!next) return null;
       return (
-        <Round label={next ? 'Alarm' : 'Alarm off'}>
-          <span className={styles.small}>{next ? `${two(next.alarm.hour)}:${two(next.alarm.minute)}` : '--:--'}</span>
+        <Round label="Alarm">
+          <span className={styles.small}>{`${two(next.alarm.hour)}:${two(next.alarm.minute)}`}</span>
         </Round>
       );
     }

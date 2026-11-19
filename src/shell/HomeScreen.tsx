@@ -80,6 +80,8 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
   const layoutRef = useRef(layout);
   layoutRef.current = layout;
   const [editing, setEditing] = useState(false);
+  const editingRef = useRef(editing);
+  editingRef.current = editing;
   const [page, setPage] = useState(0);
   const [galleryOpen, setGalleryOpen] = useState(false);
 
@@ -100,6 +102,21 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
     commit(compactPages(layoutRef.current));
     setEditing(false);
   };
+
+  // The home button with nothing open: back to page 1, like iOS.
+  useEffect(() => {
+    const toFirstPage = () => {
+      setMenu(null);
+      setOpenFolder(null);
+      setGalleryOpen(false);
+      if (editingRef.current) stopEditing();
+      setPage(0);
+    };
+    window.addEventListener('vantage:home-page', toFirstPage);
+    return () => window.removeEventListener('vantage:home-page', toFirstPage);
+    // stopEditing only reads refs
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // If the page we are on disappears (e.g. the extra edit page), go to the last one.
   useEffect(() => {
