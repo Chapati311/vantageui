@@ -1,0 +1,90 @@
+.layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Battery: nothing moves while the wallpaper can't be seen */
+.paused * {
+  animation-play-state: paused !important;
+}
+
+/* Rain: little dots falling (round dots, like everything else) */
+.drop {
+  position: absolute;
+  top: -8px;
+  width: 3px;
+  height: 3px;
+  border-radius: var(--radius-circle);
+  background: var(--text-primary);
+  opacity: 0.35;
+  animation: fall 1.2s linear infinite;
+  will-change: transform;
+}
+
+.snow {
+  width: 4px;
+  height: 4px;
+  opacity: 0.6;
+}
+
+@keyframes fall {
+  to {
+    transform: translate3d(-12px, 110vh, 0);
+  }
+}
+
+/* Night: a few stars that twinkle slowly */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: var(--radius-circle);
+  background: var(--text-primary);
+  opacity: 0.2;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+.big {
+  width: 3px;
+  height: 3px;
+}
+
+@keyframes twinkle {
+  50% {
+    opacity: 0.75;
+  }
+}
+
+/* Sunset: a warm glow rising from the bottom (a gradient, not a blur) */
+.glow {
+  position: absolute;
+  inset: 40% 0 0;
+  background: radial-gradient(120% 90% at 50% 100%, rgba(255, 140, 70, 0.32), rgba(255, 90, 60, 0.12) 45%, transparent 75%);
+  animation: warm 6s ease-in-out infinite alternate;
+}
+
+@keyframes warm {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+:root[data-retro] .layer {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drop,
+  .star,
+  .glow {
+    animation: none;
+  }
+  .drop {
+    display: none;
+  }
+}

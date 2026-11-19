@@ -1,0 +1,58 @@
+.stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Each card fills the stack; the old one slides up and out as the new one arrives */
+.layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.layer > * {
+  flex: 1;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: var(--space-16);
+  color: var(--text-primary);
+}
+
+.card .label {
+  color: var(--text-secondary);
+}
+
+.detail {
+  font-size: var(--text-13);
+  color: var(--text-secondary);
+}
+
+/* Which card is on top: small dots down the right edge */
+.dots {
+  position: absolute;
+  right: var(--space-8);
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.dot {
+  width: var(--space-4);
+  height: var(--space-4);
+  border-radius: var(--radius-circle);
+  background: var(--text-tertiary);
+  transition: background-color 0.2s;
+}
+
+.on {
+  background: var(--text-primary);
+}

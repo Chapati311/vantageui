@@ -107,6 +107,8 @@ export interface Settings {
   lockWallpaper: WallpaperConfig | null;
   /** A different live wallpaper every day */
   wallpaperShuffle: boolean;
+  /** Rain dots, night stars and a sunset glow over the wallpaper */
+  weatherWallpaper: boolean;
   /** App ids not shown on the home screen (still found in search) */
   hiddenApps: string[];
   /** Per app: open the Vantage version, or the original iPhone app */
@@ -191,6 +193,7 @@ export const DEFAULT_SETTINGS: Settings = {
   appStyles: {},
   lockWallpaper: null,
   wallpaperShuffle: false,
+  weatherWallpaper: false,
   hiddenApps: [],
   widgetStyle: 'solid',
   widgetOpacity: 1,
@@ -307,6 +310,7 @@ export function sanitizeSettings(input: unknown): Settings {
     lockNotifications: oneOf(raw.lockNotifications, ['count', 'hidden'] as const, d.lockNotifications),
     lockWidgets: Array.isArray(raw.lockWidgets) ? raw.lockWidgets.filter((id): id is string => typeof id === 'string').slice(0, 4) : d.lockWidgets,
     controlTiles: Array.isArray(raw.controlTiles) ? raw.controlTiles.filter((id): id is string => typeof id === 'string') : d.controlTiles,
+    weatherWallpaper: bool(raw.weatherWallpaper, d.weatherWallpaper),
     lockShortcuts: bool(raw.lockShortcuts, d.lockShortcuts),
     pillTimer: bool(raw.pillTimer, d.pillTimer),
     pillStopwatch: bool(raw.pillStopwatch, d.pillStopwatch),

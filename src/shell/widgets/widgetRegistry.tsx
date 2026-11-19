@@ -21,6 +21,7 @@ import { CountdownWidget, DotCalendarWidget } from './productivity/ProductivityW
 import { SolarSystemWidget } from './space/SolarSystemWidget';
 import { VoiceNoteWidget } from './VoiceNoteWidget';
 import { WeatherWidget } from './WeatherWidget';
+import { SmartStackWidget, smartStackApp } from './productivity/SmartStack';
 import {
   AuroraWidget,
   BreathingWidget,
@@ -108,6 +109,7 @@ export const WIDGETS: WidgetDefinition[] = [
   // ---- Productivity
   { id: 'lockin', appId: 'lockin', name: 'Lock In', category: 'productivity', description: "Today's focus ring and streak. One tap to start.", component: LockInRingWidget, sizes: ['1x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
   { id: 'plant', appId: 'lockin', name: 'Lock In plant', category: 'productivity', description: 'Grows with your focus streak.', component: PlantWidget, sizes: ['1x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
+  { id: 'smart-stack', name: 'Smart stack', category: 'productivity', description: 'Changes with the time of day: weather and lessons, homework and focus, Wind Down and alarm.', component: SmartStackWidget, sizes: ['2x2'], onTap: ({ openApp }) => openApp(smartStackApp()) },
   { id: 'next-lesson', appId: 'lockin', name: 'Next lesson', category: 'productivity', description: 'From your timetable.', component: NextLessonWidget, sizes: ['2x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
   { id: 'homework', appId: 'lockin', name: 'Homework due', category: 'productivity', description: 'What is due soonest.', component: HomeworkWidget, sizes: ['2x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },
   { id: 'grades', appId: 'lockin', name: 'Grade average', category: 'productivity', description: 'Your average, green to red.', component: GradeAverageWidget, sizes: ['1x1', '2x2'], onTap: ({ openApp }) => openApp('lockin') },

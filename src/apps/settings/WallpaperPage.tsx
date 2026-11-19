@@ -83,6 +83,11 @@ export function WallpaperPage({ onBack }: { onBack: () => void }) {
             detail="A different live wallpaper every day"
             trailing={<Toggle label="Daily shuffle" on={s.wallpaperShuffle} onChange={(on) => changeSetting('wallpaperShuffle', on)} />}
           />
+          <Row
+            title="React to the weather"
+            detail="Rain dots, night stars, a sunset glow"
+            trailing={<Toggle label="React to the weather" on={s.weatherWallpaper} onChange={(on) => changeSetting('weatherWallpaper', on)} />}
+          />
         </KitSection>
       </Section>
 

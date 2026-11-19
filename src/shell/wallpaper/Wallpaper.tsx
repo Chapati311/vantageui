@@ -11,6 +11,7 @@ import { LivePixel } from './LivePixel';
 import { LiveStarfield } from './LiveStarfield';
 import { LiveSundown } from './LiveSundown';
 import { LiveWaves } from './LiveWaves';
+import { WeatherLayer } from './WeatherLayer';
 import styles from './Wallpaper.module.css';
 
 interface WallpaperProps {
@@ -104,6 +105,7 @@ export function Wallpaper({ place, config, paused = false, progress }: Wallpaper
       >
         {layer}
       </motion.div>
+      {place !== 'preview' && <WeatherLayer paused={paused} />}
       {/* Home: darken it so widgets stand out. Lock: a soft shade behind the clock on photos. */}
       {place === 'home' && <div className={styles.dim} />}
       {place === 'lock' && photoLike && <div className={styles.scrim} />}
