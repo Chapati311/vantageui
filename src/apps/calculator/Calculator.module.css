@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: var(--space-24);
+  gap: var(--space-16);
 }
 
 /* The hero: big dot numbers, right-aligned */
@@ -76,4 +76,121 @@
   grid-column: span 2;
   justify-content: flex-start;
   padding-left: calc((var(--grid-cell) - var(--text-22)) / 2 + 4px);
+}
+
+/* ---- Tools row: History, Convert, Scientific --------------------------- */
+.displayTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  width: 100%;
+}
+
+.tools {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.tool {
+  min-height: var(--space-32);
+  padding: 0 var(--space-8);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-primary);
+}
+
+/* The last sum, small, above the display */
+.tape {
+  align-self: flex-end;
+  max-width: 100%;
+  min-height: var(--space-24);
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  color: var(--text-tertiary);
+  font: inherit;
+  font-size: var(--text-15);
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Scientific sheet ------------------------------------------------- */
+.sciDisplay {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 var(--space-8);
+}
+
+.sciKeys {
+  display: grid;
+  grid-template-columns: repeat(4, var(--grid-cell));
+  grid-auto-rows: calc(var(--grid-cell) * 0.75);
+  gap: var(--grid-gap);
+}
+
+.note {
+  margin: 0;
+  font-size: var(--text-13);
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+/* ---- Converter ---------------------------------------------------------- */
+.converter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.kinds,
+.units {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.unit {
+  min-height: var(--space-32);
+  padding: 0 var(--space-12);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--text-13);
+  font-weight: 600;
+}
+
+.unitOn {
+  border-color: transparent;
+  background: var(--text-primary);
+  color: var(--color-bg);
+}
+
+.unitRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  color: var(--text-secondary);
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-8);
+  padding: var(--space-16);
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  background: var(--surface-widget);
+  color: var(--text-secondary);
+}
+
+.converterButtons {
+  display: flex;
+  justify-content: space-between;
 }

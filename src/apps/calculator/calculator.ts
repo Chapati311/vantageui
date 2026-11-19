@@ -3,7 +3,7 @@
  * runs when the next one is pressed). Pure functions, no React.
  */
 
-export type Operator = '+' | '-' | '×' | '÷';
+export type Operator = '+' | '-' | '×' | '÷' | '^';
 
 export interface CalcState {
   /** What the display shows (as typed) */
@@ -30,6 +30,8 @@ function apply(a: number, operator: Operator, b: number): number {
       return a - b;
     case '×':
       return a * b;
+    case '^':
+      return a ** b;
     default:
       if (b === 0) throw new Error("Can't divide by zero");
       return a / b;
@@ -110,4 +112,77 @@ export function pressBackspace(state: CalcState): CalcState {
   if (state.fresh || state.error) return state;
   const display = state.display.length > 1 && state.display !== '-0' ? state.display.slice(0, -1) : '0';
   return { ...state, display: display === '-' ? '0' : display };
+}
+
+// ---- Scientific (the scientific sheet) ------------------------------------
+
+export type ScientificFn = 'sin' | 'cos' | 'tan' | 'ln' | 'log' | 'sqrt' | 'square' | 'inverse' | 'factorial' | 'pi' | 'e';
+
+const RAD = Math.PI / 180;
+
+function factorial(n: number): number {
+  if (n < 0 || !Number.isInteger(n)) throw new Error('Only for whole numbers');
+  if (n > 170) throw new Error('Too big');
+  let result = 1;
+  for (let i = 2; i <= n; i += 1) result *= i;
+  return result;
+}
+
+/** Runs a function on the number on the display (angles in degrees). */
+export function pressFunction(state: CalcState, fn: ScientificFn): CalcState {
+  if (state.error) state = INITIAL;
+  try {
+    const x = current(state);
+    let value: number;
+    switch (fn) {
+      case 'pi':
+        value = Math.PI;
+        break;
+      case 'e':
+        value = Math.E;
+        break;
+      case 'sin':
+        value = Math.sin(x * RAD);
+        break;
+      case 'cos':
+        value = Math.cos(x * RAD);
+        break;
+      case 'tan':
+        if (Math.abs(Math.cos(x * RAD)) < 1e-12) throw new Error('Not defined');
+        value = Math.tan(x * RAD);
+        break;
+      case 'ln':
+        if (x <= 0) throw new Error('Only above zero');
+        value = Math.log(x);
+        break;
+      case 'log':
+        if (x <= 0) throw new Error('Only above zero');
+        value = Math.log10(x);
+        break;
+      case 'sqrt':
+        if (x < 0) throw new Error('No negative roots');
+        value = Math.sqrt(x);
+        break;
+      case 'square':
+        value = x * x;
+        break;
+      case 'inverse':
+        if (x === 0) throw new Error("Can't divide by zero");
+        value = 1 / x;
+        break;
+      default:
+        value = factorial(x);
+    }
+    // Tiny floating-point leftovers (sin 180 = 1.2e-16) become 0
+    if (Math.abs(value) < 1e-12) value = 0;
+    return { ...state, display: format(value), fresh: true };
+  } catch (error) {
+    return { ...INITIAL, display: '-', error: (error as Error).message };
+  }
+}
+
+/** Puts a number on the display, e.g. one picked from the history tape. */
+export function pressValue(state: CalcState, value: string): CalcState {
+  if (!Number.isFinite(Number(value))) return state;
+  return { ...state, display: value, fresh: true, error: null };
 }

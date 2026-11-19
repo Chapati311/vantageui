@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { INITIAL, pressBackspace, pressClear, pressDigit, pressEquals, pressOperator, pressPercent, pressSign, type CalcState } from './calculator';
+import { INITIAL, pressBackspace, pressClear, pressDigit, pressEquals, pressOperator, pressFunction, pressPercent, pressSign, type CalcState } from './calculator';
 
 /** Presses keys in order, like fingers on the keypad. */
 function press(keys: string, start: CalcState = INITIAL): CalcState {
@@ -57,3 +57,24 @@ describe('calculator', () => {
     expect(press('1234567891').display).toBe('123456789');
   });
 });
+
+describe('scientific and powers', () => {
+  const type = (keys: string) => [...keys].reduce((state, key) => pressDigit(state, key), INITIAL);
+  it('raises to a power', () => {
+    const state = pressEquals(type2(pressOperator(type('2'), '^'), '10'));
+    expect(state.display).toBe('1024');
+  });
+  it('sin 30 = 0.5 and sin 180 = 0 (in degrees)', () => {
+    expect(pressFunction(type('30'), 'sin').display).toBe('0.5');
+    expect(pressFunction(type('180'), 'sin').display).toBe('0');
+  });
+  it('square root, factorial and friendly errors', () => {
+    expect(pressFunction(type('81'), 'sqrt').display).toBe('9');
+    expect(pressFunction(type('5'), 'factorial').display).toBe('120');
+    expect(pressFunction(pressSign(type('4')), 'sqrt').error).toBe('No negative roots');
+  });
+});
+
+function type2(state: ReturnType<typeof pressDigit>, keys: string) {
+  return [...keys].reduce((current, key) => pressDigit(current, key), state);
+}

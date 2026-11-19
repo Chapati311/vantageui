@@ -1,3 +1,4 @@
+import { UNITS, fromCelsius, toCelsius } from '../system/units';
 /**
  * The brains of search, as pure functions (tested in searchEngine.test.ts):
  * fuzzy matching, math ("12*7"), unit conversion ("5 km in mi") and
@@ -131,42 +132,7 @@ export function niceNumber(value: number): string {
   return String(Number(value.toFixed(8)));
 }
 
-// ---- Unit conversion --------------------------------------------------------
-
-/** Every unit as a factor to the base unit of its kind. */
-const UNITS: Record<string, { kind: string; factor: number; name: string }> = {
-  mm: { kind: 'length', factor: 0.001, name: 'mm' },
-  cm: { kind: 'length', factor: 0.01, name: 'cm' },
-  m: { kind: 'length', factor: 1, name: 'm' },
-  km: { kind: 'length', factor: 1000, name: 'km' },
-  in: { kind: 'length', factor: 0.0254, name: 'in' },
-  inch: { kind: 'length', factor: 0.0254, name: 'in' },
-  ft: { kind: 'length', factor: 0.3048, name: 'ft' },
-  feet: { kind: 'length', factor: 0.3048, name: 'ft' },
-  yd: { kind: 'length', factor: 0.9144, name: 'yd' },
-  mi: { kind: 'length', factor: 1609.344, name: 'mi' },
-  mile: { kind: 'length', factor: 1609.344, name: 'mi' },
-  miles: { kind: 'length', factor: 1609.344, name: 'mi' },
-  g: { kind: 'mass', factor: 0.001, name: 'g' },
-  kg: { kind: 'mass', factor: 1, name: 'kg' },
-  lb: { kind: 'mass', factor: 0.45359237, name: 'lb' },
-  lbs: { kind: 'mass', factor: 0.45359237, name: 'lb' },
-  oz: { kind: 'mass', factor: 0.028349523125, name: 'oz' },
-  ml: { kind: 'volume', factor: 0.001, name: 'ml' },
-  l: { kind: 'volume', factor: 1, name: 'l' },
-  gal: { kind: 'volume', factor: 3.785411784, name: 'gal' },
-  cup: { kind: 'volume', factor: 0.2365882365, name: 'cup' },
-  'km/h': { kind: 'speed', factor: 1 / 3.6, name: 'km/h' },
-  kmh: { kind: 'speed', factor: 1 / 3.6, name: 'km/h' },
-  mph: { kind: 'speed', factor: 0.44704, name: 'mph' },
-  'm/s': { kind: 'speed', factor: 1, name: 'm/s' },
-  c: { kind: 'temp', factor: 1, name: '°C' },
-  f: { kind: 'temp', factor: 1, name: '°F' },
-  k: { kind: 'temp', factor: 1, name: 'K' },
-};
-
-const toCelsius = (value: number, unit: string) => (unit === 'f' ? ((value - 32) * 5) / 9 : unit === 'k' ? value - 273.15 : value);
-const fromCelsius = (value: number, unit: string) => (unit === 'f' ? (value * 9) / 5 + 32 : unit === 'k' ? value + 273.15 : value);
+// ---- Unit conversion (the units live in system/units.ts) ----------------------
 
 /** "5 km in mi", "10kg to lb", "100 f in c". Returns "5 km = 3.1069 mi" or null. */
 export function convert(input: string): string | null {
