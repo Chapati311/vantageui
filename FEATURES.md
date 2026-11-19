@@ -62,12 +62,15 @@ they are finished. Details for every item are in SPECS.md.
       Control center, Notifications, Live pill, Motion and feel, Sounds, Boot
       and unlock, Modes, App styles, Accessibility, Setups (export/import,
       replay first-boot setup) [PWA]
-- [ ] Customise extras from SPECS 5: wallpaper by time of day or weather,
-      icon packs, control center tile order, UI sound packs, setup QR code,
-      lock widgets and bottom shortcuts [PWA]
+- [x] Customise extras from SPECS 5: wallpaper that reacts to the weather,
+      control center tile order, UI sound packs, lock widgets and bottom
+      shortcuts [PWA]
+- [ ] Icon packs (FINAL_PROMPT Part 2) [PWA]
+- [ ] Setup as a QR code [PWA] (needs a QR library; installing it was not
+      allowed in this session)
 - [x] Widget system: sizes 1x1, 2x1, 2x2, 4x2; styles solid, glass, outline,
       tinted (also per widget); widget gallery; folders [PWA]
-- [ ] Smart stacks that rotate by time of day [PWA]
+- [x] Smart stacks that rotate by time of day [PWA]
 - [x] Time widgets: dot clock, vertical clock, thin analog, flip, binary, word
       clock, world clocks, sunrise/sunset arc, moon phase [PWA]
 - [x] Space and beauty widgets: live solar system, orbit, starfield, aurora
@@ -158,19 +161,20 @@ Original per app.
 - [x] App quick actions on long press [PWA]
 - [x] Gestures: double-tap empty home to lock, pinch to edit, hold the
       wallpaper to change it, two-finger swipe down for search [PWA]
-- [ ] Today view (swipe right from page 1) [PWA]
-- [ ] Lock screen: lock widgets, now playing, notification stack, flashlight
+- [x] Today view (swipe right from page 1) [PWA]
+- [x] Lock screen: lock widgets, now playing, notification stack, flashlight
       and camera shortcuts, charging animation, tap clock to change style [PWA]
-- [ ] Bigger control center: music, volume dial, modes, quick timers, Lock In
+- [x] Bigger control center: music, volume dial, modes, quick timers, Lock In
       start, calculator, voice note, dark/light, keep awake, edit mode [PWA]
-- [ ] Smart stacks, weather-reactive wallpaper [PWA]
-- [ ] Notification grouping and actions [PWA]
-- [ ] Apps: stopwatch laps chart; weather hourly dot graph, rain dots, sun
-      arc, wind compass, animated illustrations; calculator history, unit and
-      currency converter, scientific sheet; notes pin, folders, markdown, undo
-      delete; recorder live waveform, trim, rename; "Surprise me" slot
-      machine [PWA]
-- [ ] Konami / 7-tap easter egg (Game Boy mode) [PWA]
+      (volume = Vantage's own music and sounds; keep awake needs iOS 16.4+)
+- [x] Smart stacks, weather-reactive wallpaper [PWA]
+- [x] Notification grouping and actions [PWA]
+- [x] Apps: bedtime card and stopwatch laps chart; weather dot graph, rain
+      dots, sun arc, wind compass, 10 days, animated drawings; calculator
+      history tape, unit and money converter, scientific sheet; notes pin,
+      folders, formatted view, undo delete; recorder live waveform, trim,
+      rename; "Surprise me" slot machine [PWA]
+- [x] Konami / 7-tap easter egg (Game Boy mode) [PWA]
 - [ ] Part 4 perfection loop [PWA]
 
 ## Final prompt (FINAL_PROMPT.md)
