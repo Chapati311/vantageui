@@ -25,6 +25,8 @@ export interface WeatherNow {
   condition: string;
   /** km/h */
   wind: number;
+  /** Where the wind comes from, degrees (0 = north). Missing in older saved weather. */
+  windDirection?: number;
   /** percent */
   humidity: number;
 }
@@ -92,6 +94,7 @@ interface ApiResponse {
     apparent_temperature: number;
     weather_code: number;
     wind_speed_10m: number;
+    wind_direction_10m?: number;
     relative_humidity_2m: number;
   };
   hourly: {
@@ -115,9 +118,9 @@ async function download(): Promise<Weather> {
     latitude: String(WEATHER_PLACE.latitude),
     longitude: String(WEATHER_PLACE.longitude),
     timezone: WEATHER_PLACE.timeZone,
-    forecast_days: '7',
+    forecast_days: '10',
     current:
-      'temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m',
+      'temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,relative_humidity_2m',
     hourly: 'temperature_2m,weather_code,precipitation_probability',
     daily:
       'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
@@ -141,6 +144,7 @@ async function download(): Promise<Weather> {
       temperature: Math.round(api.current.temperature_2m),
       feelsLike: Math.round(api.current.apparent_temperature),
       wind: Math.round(api.current.wind_speed_10m),
+      windDirection: api.current.wind_direction_10m,
       humidity: Math.round(api.current.relative_humidity_2m),
       ...describe(api.current.weather_code),
     },

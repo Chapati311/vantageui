@@ -15,7 +15,7 @@ function Dots({ y, count = 8, from = 11 }: { y: number; count?: number; from?: n
 /** Three overlapping outlines. `y` moves the whole cloud up or down. */
 function Cloud({ y = 0 }: { y?: number }) {
   return (
-    <g transform={`translate(0 ${y})`}>
+    <g transform={`translate(0 ${y})`} className={styles.drift}>
       <circle cx="22" cy="24" r="11" />
       <circle cx="36" cy="18" r="13" />
       <circle cx="47" cy="26" r="9" />
@@ -25,7 +25,8 @@ function Cloud({ y = 0 }: { y?: number }) {
 
 /**
  * A small wireframe drawing for the weather: thin outlined shapes and dots
- * instead of a colorful icon. One drawing per kind of weather.
+ * instead of a colorful icon. One drawing per kind of weather, gently
+ * animated: clouds drift, rain falls, the sun's ring turns, lightning flickers.
  */
 export function WeatherArt({ kind }: { kind: WeatherKind }) {
   return (
@@ -33,7 +34,7 @@ export function WeatherArt({ kind }: { kind: WeatherKind }) {
       {kind === 'clear' && (
         <>
           <circle cx="32" cy="22" r="10" />
-          <circle cx="32" cy="22" r="16" strokeDasharray="1.500 5" />
+          <circle className={styles.spin} cx="32" cy="22" r="16" strokeDasharray="1.500 5" />
           <path d="M6 43h52" />
         </>
       )}
@@ -46,14 +47,14 @@ export function WeatherArt({ kind }: { kind: WeatherKind }) {
       )}
       {kind === 'fog' && (
         <>
-          <path d="M10 12h44M16 20h38M8 28h40M14 36h42" />
+          <path className={styles.drift} d="M10 12h44M16 20h38M8 28h40M14 36h42" />
           <Dots y={43} />
         </>
       )}
       {kind === 'rain' && (
         <>
           <Cloud y={-4} />
-          <path d="M20 38l-3 8M30 38l-3 8M40 38l-3 8M50 38l-3 8" />
+          <path className={styles.fall} d="M20 38l-3 8M30 38l-3 8M40 38l-3 8M50 38l-3 8" />
         </>
       )}
       {kind === 'snow' && (
@@ -67,7 +68,7 @@ export function WeatherArt({ kind }: { kind: WeatherKind }) {
       {kind === 'storm' && (
         <>
           <Cloud y={-4} />
-          <path d="M35 32l-7 8h8l-5 7" />
+          <path className={styles.flash} d="M35 32l-7 8h8l-5 7" />
         </>
       )}
     </svg>

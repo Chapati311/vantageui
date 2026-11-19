@@ -14,9 +14,7 @@ export function DailyList({ days }: { days: WeatherDay[] }) {
     <div>
       {days.map((day, index) => (
         <div key={day.date} className={styles.day}>
-          <span className={styles.name}>
-            {index === 0 ? 'Today' : weekday.format(new Date(`${day.date}T00:00:00Z`))}
-          </span>
+          <span className={styles.name}>{index === 0 ? 'Today' : weekday.format(new Date(`${day.date}T00:00:00Z`))}</span>
           <div className={styles.art}>
             <WeatherArt kind={day.kind} />
           </div>

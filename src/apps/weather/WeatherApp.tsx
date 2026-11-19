@@ -8,10 +8,15 @@ import { formatTime } from '../../system/timeFormat';
 import { WEATHER_PLACE, useWeather } from '../../system/weather';
 import { DailyList } from './DailyList';
 import { HourlyStrip } from './HourlyStrip';
+import { RainDots, SunArc, TemperatureGraph, WindCompass } from './WeatherDetails';
 import styles from './WeatherApp.module.css';
 import { runAction } from '../../system/actions';
 
-/** Now, the next 24 hours, and 7 days for one place. */
+/**
+ * Now (with an animated line drawing), a dot graph of the next 24 hours'
+ * temperature, rain-chance dots, the sun's arc, a wind compass, the hours
+ * and the next 10 days, for one place.
+ */
 export function WeatherApp() {
   const { data, status } = useWeather();
 
@@ -20,7 +25,12 @@ export function WeatherApp() {
     return (
       <AppShell title="Weather" fixed>
         {status === 'error' ? (
-          <EmptyState kind="error" title="No connection" message="The weather couldn't be loaded." action={{ label: 'Try again', onPress: () => void runAction('weather.refresh', {}) }} />
+          <EmptyState
+            kind="error"
+            title="No connection"
+            message="The weather couldn't be loaded."
+            action={{ label: 'Try again', onPress: () => void runAction('weather.refresh', {}) }}
+          />
         ) : (
           <EmptyState kind="loading" title="One moment" message={`Getting the weather for ${WEATHER_PLACE.name}.`} />
         )}
@@ -30,9 +40,7 @@ export function WeatherApp() {
 
   const { now } = data;
   const updated =
-    status === 'loading'
-      ? 'Updating'
-      : `${status === 'error' ? 'Offline · saved' : 'Updated'} ${formatTime(new Date(data.fetchedAt))}`;
+    status === 'loading' ? 'Updating' : `${status === 'error' ? 'Offline · saved' : 'Updated'} ${formatTime(new Date(data.fetchedAt))}`;
 
   return (
     <AppShell
@@ -68,10 +76,19 @@ export function WeatherApp() {
         </Stat>
       </section>
 
+      <div className={styles.details}>
+        <TemperatureGraph hours={data.hourly} />
+        <RainDots hours={data.hourly} />
+        <div className={styles.pair}>
+          <SunArc />
+          <WindCompass speed={now.wind} direction={now.windDirection} />
+        </div>
+      </div>
+
       <h2 className={`label ${styles.section}`}>Next 24 hours</h2>
       <HourlyStrip hours={data.hourly} />
 
-      <h2 className={`label ${styles.section}`}>7 days</h2>
+      <h2 className={`label ${styles.section}`}>{data.daily.length} days</h2>
       <DailyList days={data.daily} />
     </AppShell>
   );

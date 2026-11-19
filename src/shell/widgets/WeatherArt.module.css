@@ -9,3 +9,81 @@
   fill: var(--text-secondary);
   stroke: none;
 }
+
+/* ---- Gentle motion (stops with Reduce motion) ------------------------- */
+.drift {
+  animation: drift 6s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  to {
+    transform: translateX(3px);
+  }
+}
+
+/* A cloud drawn with an offset keeps its own translate: drift adds on top */
+g.drift {
+  animation-name: driftGroup;
+}
+
+@keyframes driftGroup {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 3px 0;
+  }
+}
+
+.spin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spin 24s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fall {
+  stroke-dasharray: 3 3;
+  animation: fall 0.8s linear infinite;
+}
+
+@keyframes fall {
+  to {
+    stroke-dashoffset: -6;
+  }
+}
+
+.flash {
+  animation: flash 3.2s steps(1) infinite;
+}
+
+@keyframes flash {
+  0%,
+  86%,
+  92% {
+    opacity: 1;
+  }
+  88%,
+  94% {
+    opacity: 0.15;
+  }
+}
+
+:root[data-retro] .drift,
+:root[data-retro] .spin {
+  animation-timing-function: steps(4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drift,
+  .spin,
+  .fall,
+  .flash {
+    animation: none;
+  }
+}
