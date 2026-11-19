@@ -14,7 +14,17 @@ type Key = Exclude<keyof Settings, 'customPresets' | 'windDownSince' | 'mode'>;
 
 const set = <K extends Key>(key: K, value: Settings[K]) => void runAction('settings.set', { key, value });
 
-function Choice<T extends string>({ label, value, options, onChange }: { label: string; value: T; options: { id: T; label: string }[]; onChange: (value: T) => void }) {
+function Choice<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: T;
+  options: { id: T; label: string }[];
+  onChange: (value: T) => void;
+}) {
   return <SegmentedControl label={label} value={value} options={options} onChange={onChange} />;
 }
 
@@ -46,7 +56,10 @@ export function HomeScreenPage({ onBack }: { onBack: () => void }) {
           ]}
         />
       </Section>
-      <Section label="Apps on the home screen" note="Hidden apps are still found by search. Hold the home screen to move, resize, add or remove widgets.">
+      <Section
+        label="Apps on the home screen"
+        note="Hidden apps are still found by search. Hold the home screen to move, resize, add or remove widgets."
+      >
         <KitSection>
           {HOME_APPS.filter((app) => !DOCK_APP_IDS.includes(app.id)).map((app) => (
             <Switch
@@ -95,6 +108,19 @@ export function IconsPage({ onBack }: { onBack: () => void }) {
           ]}
         />
       </Section>
+      <Section label="Pack" note="Glyph: white in solid black circles. Pixel: pixel glyphs. Color block: every app on its own color.">
+        <Choice
+          label="Icon pack"
+          value={s.iconPack}
+          onChange={(value) => set('iconPack', value)}
+          options={[
+            { id: 'line', label: 'Line' },
+            { id: 'glyph', label: 'Glyph' },
+            { id: 'pixel', label: 'Pixel' },
+            { id: 'colorblock', label: 'Blocks' },
+          ]}
+        />
+      </Section>
     </Page>
   );
 }
@@ -103,7 +129,19 @@ export function FontsPage({ onBack }: { onBack: () => void }) {
   const s = useSettings();
   return (
     <Page title="Fonts" onBack={onBack}>
-      <Section label="Interface font" note="Numbers on clocks and widgets always use the dot-matrix style. Pick a clock style in Lock screen.">
+      <Section label="Numbers" note="How every number in the OS is drawn: dot matrix, big serif numerals or a segmented mono.">
+        <Choice
+          label="Numbers"
+          value={s.numerals}
+          onChange={(value) => set('numerals', value)}
+          options={[
+            { id: 'dot', label: 'Dots' },
+            { id: 'serif', label: 'Serif' },
+            { id: 'segment', label: 'Mono' },
+          ]}
+        />
+      </Section>
+      <Section label="Interface font" note="Pick a clock style in Lock screen.">
         <Choice
           label="Interface font"
           value={s.uiFont}
@@ -117,7 +155,15 @@ export function FontsPage({ onBack }: { onBack: () => void }) {
         />
       </Section>
       <Section label="Size and weight">
-        <Slider label="Text size" value={Math.round(s.textScale * 100)} min={85} max={130} step={5} format={(value) => `${value}%`} onChange={(value) => set('textScale', value / 100)} />
+        <Slider
+          label="Text size"
+          value={Math.round(s.textScale * 100)}
+          min={85}
+          max={130}
+          step={5}
+          format={(value) => `${value}%`}
+          onChange={(value) => set('textScale', value / 100)}
+        />
         <KitSection>
           <Switch title="Bold text" on={s.boldText} onChange={(on) => set('boldText', on)} />
         </KitSection>
@@ -185,8 +231,18 @@ export function BootPage({ onBack }: { onBack: () => void }) {
     <Page title="Boot and unlock" onBack={onBack}>
       <Section label="Start">
         <KitSection>
-          <Switch title="Boot animation" detail="The dotted V when Vantage starts" on={s.bootAnimation} onChange={(on) => set('bootAnimation', on)} />
-          <Switch title="Wallpaper parallax" detail="The lock wallpaper lags behind your swipe" on={s.parallax} onChange={(on) => set('parallax', on)} />
+          <Switch
+            title="Boot animation"
+            detail="The dotted V when Vantage starts"
+            on={s.bootAnimation}
+            onChange={(on) => set('bootAnimation', on)}
+          />
+          <Switch
+            title="Wallpaper parallax"
+            detail="The lock wallpaper lags behind your swipe"
+            on={s.parallax}
+            onChange={(on) => set('parallax', on)}
+          />
         </KitSection>
       </Section>
       <Section label="Passcode keypad" note="Turn the passcode on in Settings > Passcode.">
@@ -209,12 +265,33 @@ export function MotionPage({ onBack }: { onBack: () => void }) {
   return (
     <Page title="Motion and feel" onBack={onBack}>
       <Section label="Springs">
-        <Slider label="Speed" value={Math.round(s.animationSpeed * 10)} min={6} max={16} step={1} format={(value) => `${value / 10}x`} onChange={(value) => set('animationSpeed', value / 10)} />
-        <Slider label="Bounce" value={Math.round(s.springBounce * 10)} min={0} max={10} step={1} format={(value) => `${value * 10}%`} onChange={(value) => set('springBounce', value / 10)} />
+        <Slider
+          label="Speed"
+          value={Math.round(s.animationSpeed * 10)}
+          min={6}
+          max={16}
+          step={1}
+          format={(value) => `${value / 10}x`}
+          onChange={(value) => set('animationSpeed', value / 10)}
+        />
+        <Slider
+          label="Bounce"
+          value={Math.round(s.springBounce * 10)}
+          min={0}
+          max={10}
+          step={1}
+          format={(value) => `${value * 10}%`}
+          onChange={(value) => set('springBounce', value / 10)}
+        />
       </Section>
       <Section label="Comfort">
         <KitSection>
-          <Switch title="Reduce motion" detail="Fades instead of moving and zooming" on={s.reduceMotion} onChange={(on) => set('reduceMotion', on)} />
+          <Switch
+            title="Reduce motion"
+            detail="Fades instead of moving and zooming"
+            on={s.reduceMotion}
+            onChange={(on) => set('reduceMotion', on)}
+          />
           <Switch title="High contrast" on={s.highContrast} onChange={(on) => set('highContrast', on)} />
         </KitSection>
       </Section>

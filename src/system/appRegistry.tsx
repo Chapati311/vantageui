@@ -1,3 +1,5 @@
+import { EarbudsApp } from '../apps/devices/EarbudsApp';
+import { SoundIcon } from '../components/glyphs';
 import { lazy, Suspense, type ComponentType } from 'react';
 import { ArcadeApp } from '../apps/arcade/ArcadeApp';
 import { BrowserApp } from '../apps/browser/BrowserApp';
@@ -113,6 +115,7 @@ export const APPS: AppDefinition[] = [
     bundleId: 'com.apple.Preferences',
   },
   { id: 'kit', name: 'Kit', icon: KitIcon, keywords: ['components', 'design', 'test', 'ui'], component: KitApp, hidden: true },
+  { id: 'earbuds', name: 'Earbuds', icon: SoundIcon, keywords: ['airpods', 'headphones', 'battery', 'bluetooth'], component: EarbudsApp, hidden: true },
 ];
 
 /** The apps that get a place on the home screen (and in the retro menus). */

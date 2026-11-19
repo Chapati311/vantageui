@@ -21,6 +21,7 @@ import { CountdownWidget, DotCalendarWidget } from './productivity/ProductivityW
 import { SolarSystemWidget } from './space/SolarSystemWidget';
 import { VoiceNoteWidget } from './VoiceNoteWidget';
 import { WeatherWidget } from './WeatherWidget';
+import { HumidityWidget, SerifDateWidget, TickDialWidget, WindConeWidget } from './PackWidgets';
 import { SmartStackWidget, smartStackApp } from './productivity/SmartStack';
 import {
   AuroraWidget,
@@ -69,6 +70,8 @@ const game = (id: GameId, name: string, description: string): WidgetDefinition =
 export const WIDGETS: WidgetDefinition[] = [
   // ---- Time
   { id: 'clock', appId: 'clock', name: 'Dot clock', category: 'time', description: 'Big dot-matrix hours and minutes.', component: ClockWidget, sizes: ['2x2', '2x1'] },
+  { id: 'serif-date', appId: 'calendar', name: 'Serif date', category: 'time', description: 'A big serif day number.', component: SerifDateWidget, sizes: ['2x2', '1x1'] },
+  { id: 'tick-dial', appId: 'clock', name: 'Tick dial', category: 'time', description: '60 ticks, three slim hands, a red second dot.', component: TickDialWidget, sizes: ['2x2', '1x1'] },
   { id: 'vertical-clock', appId: 'clock', name: 'Vertical clock', category: 'time', description: 'Hours above minutes.', component: VerticalClockWidget, sizes: ['2x2'] },
   { id: 'analog', appId: 'clock', name: 'Thin analog', category: 'time', description: 'Hairline hands on a quiet face.', component: AnalogClockWidget, sizes: ['1x1', '2x2'] },
   { id: 'flip', appId: 'clock', name: 'Flip clock', category: 'time', description: 'Cards that flip every minute.', component: FlipClockWidget, sizes: ['2x1', '2x2'] },
@@ -129,6 +132,8 @@ export const WIDGETS: WidgetDefinition[] = [
   },
 
   // ---- Info and tools
+  { id: 'humidity', appId: 'weather', name: 'Humidity', category: 'info', description: 'A wireframe cylinder that fills up.', component: HumidityWidget, sizes: ['1x1', '2x2'] },
+  { id: 'wind-cone', appId: 'weather', name: 'Wind cone', category: 'info', description: 'A wireframe cone pointing where the wind blows.', component: WindConeWidget, sizes: ['2x2', '1x1'] },
   { id: 'weather', appId: 'weather', name: 'Weather', category: 'info', description: 'Line-art weather for Zurich.', component: WeatherWidget, sizes: ['2x1', '2x2', '1x1'] },
   { id: 'rain', appId: 'weather', name: 'Rain chance', category: 'info', description: 'Dots for rain in the next hours.', component: RainDotsWidget, sizes: ['2x1', '4x1'] },
   { id: 'air', appId: 'weather', name: 'UV and air', category: 'info', description: 'UV index and air quality.', component: AirWidget, sizes: ['2x1'] },
@@ -169,7 +174,7 @@ export const WIDGETS: WidgetDefinition[] = [
 
   // ---- Devices
   { id: 'battery', appId: 'settings', name: 'Battery ring', category: 'devices', description: "This phone's battery.", component: BatteryWidget, sizes: ['1x1', '2x2'] },
-  { id: 'airpods', appId: 'settings', name: 'AirPods', category: 'devices', description: 'Left, right and case (after unlock).', component: AirPodsWidget, sizes: ['2x2', '2x1'] },
+  { id: 'airpods', appId: 'earbuds', name: 'AirPods', category: 'devices', description: 'Left, right and case (after unlock).', component: AirPodsWidget, sizes: ['2x2', '2x1'] },
   { id: 'devices', appId: 'settings', name: 'Connected devices', category: 'devices', description: 'Bluetooth devices (after unlock).', component: ConnectedDevicesWidget, sizes: ['2x1', '2x2'] },
   { id: 'storage', appId: 'files', name: 'Storage', category: 'devices', description: 'What Vantage stores on the phone.', component: StorageWidget, sizes: ['2x1', '2x2'] },
 ];
