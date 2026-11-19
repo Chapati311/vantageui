@@ -1,5 +1,16 @@
-import type { ComponentType } from 'react';
-import { BellIcon, BoltIcon, FlagIcon, GridIcon, LockIcon, MoonIcon, SoundIcon, SunIcon, TextIcon, WifiIcon } from '../../components/glyphs';
+import { useState, type ComponentType } from 'react';
+import {
+  BellIcon,
+  BoltIcon,
+  FlagIcon,
+  GridIcon,
+  LockIcon,
+  MoonIcon,
+  SoundIcon,
+  SunIcon,
+  TextIcon,
+  WifiIcon,
+} from '../../components/glyphs';
 import { AppShell, Button } from '../../components/kit';
 import { Pressable } from '../../components/Pressable';
 import { runAction } from '../../system/actions';
@@ -7,7 +18,8 @@ import { CustomiseIcon, MusicIcon } from '../../system/appIcons';
 import { useSettings } from '../../system/settingsStore';
 import { useSetups } from '../../system/setups';
 import { useLabWidgets } from '../../shell/widgets/lab/labStore';
-import { useTheme } from '../../system/theme';
+import { setQuietThemeChanges, useTheme } from '../../system/theme';
+import { playSound } from '../../system/sounds';
 import { getPreset } from '../../theme/presets';
 import { wallpaperName } from '../../theme/wallpapers';
 import { AccentPage } from '../settings/AccentPage';
@@ -122,6 +134,31 @@ export function CustomiseApp() {
   const theme = useTheme();
   const setups = useSetups();
   const labCount = useLabWidgets().length;
+  const [spinning, setSpinning] = useState(false);
+  const [reelTick, setReelTick] = useState(0);
+
+  // "Surprise me": like a slot machine, a run of random looks that slows
+  // down, then stops on one (the last one gets the full theme animation)
+  const spin = () => {
+    if (spinning) return;
+    setSpinning(true);
+    const delays = [70, 80, 90, 110, 130, 160, 200, 260, 340];
+    let at = 0;
+    delays.forEach((delay, index) => {
+      at += delay;
+      window.setTimeout(() => {
+        const last = index === delays.length - 1;
+        setQuietThemeChanges(!last);
+        void runAction('customise.surprise', {});
+        setReelTick((tick) => tick + 1);
+        playSound('tick');
+        if (last) {
+          window.setTimeout(() => setQuietThemeChanges(false), 50);
+          setSpinning(false);
+        }
+      }, at);
+    });
+  };
 
   const all = [...LOOK, ...SYSTEM];
   const section = all.find((item) => item.id === open);
@@ -149,7 +186,10 @@ export function CustomiseApp() {
     widgetlab: labCount ? `${labCount} made` : 'Build your own',
     controls: settings.controlStyle === 'dial' ? 'Round dial' : 'Slider',
     notifications: settings.lockNotifications === 'count' ? 'Count on lock' : 'Hidden on lock',
-    pill: [settings.pillTimer && 'Timer', settings.pillStopwatch && 'Stopwatch', settings.pillRecording && 'Recording'].filter(Boolean).join(', ') || 'Off',
+    pill:
+      [settings.pillTimer && 'Timer', settings.pillStopwatch && 'Stopwatch', settings.pillRecording && 'Recording']
+        .filter(Boolean)
+        .join(', ') || 'Off',
     music: 'Spotify, Apple Music',
     boot: settings.bootAnimation ? 'Animation on' : 'Animation off',
     access: settings.highContrast ? 'High contrast' : `${Math.round(settings.textScale * 100)}% text`,
@@ -181,9 +221,16 @@ export function CustomiseApp() {
     <AppShell title="Customise">
       <LivePreview />
       <div className={styles.surprise}>
-        <Button icon={SparkIcon} onPress={() => void runAction('customise.surprise', {})}>
-          Surprise me
+        <Button icon={SparkIcon} disabled={spinning} onPress={spin}>
+          {spinning ? 'Spinning' : 'Surprise me'}
         </Button>
+        {/* The reel: the look's name rolls past like a slot machine */}
+        <div className={styles.reel} aria-live="polite">
+          {/* A new key restarts the roll-in each time the look changes */}
+          <span key={`${theme.presetName}-${reelTick}`} className={`${styles.reelText} ${spinning ? styles.fast : ''}`}>
+            {theme.presetName} · {wallpaperName(settings.wallpaper)}
+          </span>
+        </div>
       </div>
       {grid('Look', LOOK)}
       {grid('System', SYSTEM)}

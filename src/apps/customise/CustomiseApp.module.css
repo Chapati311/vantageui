@@ -1,6 +1,8 @@
 .surprise {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
 }
 
 .group {
@@ -63,4 +65,42 @@
   white-space: nowrap;
   font-size: var(--text-13);
   color: var(--text-secondary);
+}
+
+/* The slot-machine reel under "Surprise me": one line that rolls */
+.reel {
+  position: relative;
+  height: var(--space-24);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent);
+  mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent);
+}
+
+.reelText {
+  display: block;
+  font-size: var(--text-13);
+  font-weight: 600;
+  line-height: var(--space-24);
+  text-align: center;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  animation: roll 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.fast {
+  animation-duration: 0.08s;
+  animation-timing-function: linear;
+}
+
+@keyframes roll {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reelText {
+    animation: none;
+  }
 }

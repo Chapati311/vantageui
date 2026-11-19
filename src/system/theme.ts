@@ -408,7 +408,7 @@ function apply() {
     (applied['--color-bg'] !== vars['--color-bg'] ||
       applied['--color-accent'] !== vars['--color-accent'] ||
       state.retro !== next.retro);
-  const reduce = s.reduceMotion || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const reduce = quietChanges || s.reduceMotion || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
   const update = () => {
     setVars(vars);
@@ -458,6 +458,12 @@ function apply() {
 /** Re-applies on the next frame (many quick changes, e.g. a slider, become one). */
 function scheduleApply() {
   if (!frame) frame = requestAnimationFrame(apply);
+}
+
+/** While true, theme changes apply instantly (e.g. the "Surprise me" reel spinning). */
+let quietChanges = false;
+export function setQuietThemeChanges(quiet: boolean): void {
+  quietChanges = quiet;
 }
 
 /** Where the finger last touched, so a theme change can grow from there. */
