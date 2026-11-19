@@ -134,3 +134,10 @@ select {
 [data-offscreen] *::after {
   animation-play-state: paused !important;
 }
+
+/* Color-block packs: each home item resolves its own color (set on it in HomeItemView) */
+:root[data-widget-style='colorblock'] [data-item-id] {
+  --home-surface: var(--block-color, #f2694a);
+  /* Buttons inside a block are black with cream text (not black on black) */
+  --color-bg: #f6f1e4;
+}

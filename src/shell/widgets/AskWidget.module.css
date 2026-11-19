@@ -43,3 +43,30 @@
   width: var(--icon-size);
   height: var(--icon-size);
 }
+
+/* Signature packs with their own widget look: the bar wears it too */
+:global(:root[data-widget-style='pill']) .bar,
+:global(:root[data-widget-style='glossy']) .bar,
+:global(:root[data-widget-style='colorblock']) .bar,
+:global(:root[data-widget-style='paper']) .bar,
+:global(:root[data-widget-style='line']) .bar {
+  --text-primary: var(--widget-text);
+  --text-secondary: var(--widget-text-2);
+  border: var(--home-border);
+  background: var(--home-surface);
+  box-shadow: var(--home-depth);
+  color: var(--text-primary);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ...and the mic sits on a faint tint of the text color, so it always shows */
+:global(:root[data-widget-style='pill']) .mic,
+:global(:root[data-widget-style='glossy']) .mic,
+:global(:root[data-widget-style='colorblock']) .mic,
+:global(:root[data-widget-style='paper']) .mic,
+:global(:root[data-widget-style='line']) .mic {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--text-primary) 12%, transparent);
+  color: var(--text-primary);
+}

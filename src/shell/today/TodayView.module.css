@@ -44,11 +44,14 @@
   gap: var(--space-8);
   min-width: 0;
   padding: var(--space-16);
-  border: var(--border-widget);
+  /* Today is part of the home screen: it wears the pack's widget look */
+  --text-primary: var(--widget-text);
+  --text-secondary: var(--widget-text-2);
+  border: var(--home-border, var(--border-widget));
   border-radius: var(--radius-widget);
-  background: var(--surface-widget);
-  box-shadow: var(--highlight-top);
-  color: inherit;
+  background: var(--home-surface, var(--surface-widget));
+  box-shadow: var(--home-depth, var(--highlight-top));
+  color: var(--text-primary);
   font: inherit;
   text-align: left;
 }
@@ -283,4 +286,22 @@
   .step {
     animation: none;
   }
+}
+
+/* Color-block packs: each card its own color */
+.row > .card:first-child {
+  --block-color: #f2694a;
+}
+.row > .card:last-child {
+  --block-color: #f6ce46;
+}
+.today > .card:nth-of-type(1) {
+  --block-color: #9fe3c1;
+}
+.today > .card:nth-of-type(2) {
+  --block-color: #9ec9f0;
+}
+
+:global(:root[data-widget-style='colorblock']) .card {
+  --home-surface: var(--block-color, #f2694a);
 }
