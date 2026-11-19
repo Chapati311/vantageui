@@ -18,7 +18,8 @@
     "test": "vitest run",
     "screenshots:apps": "node scripts/app-screenshots.mjs",
     "screenshots:packs": "node scripts/pack-screenshots.mjs",
-    "perfection": "node scripts/perfection.mjs"
+    "perfection": "node scripts/perfection.mjs",
+    "test:webkit": "node scripts/test-webkit.mjs"
   },
   "dependencies": {
     "@fontsource-variable/doto": "^5.3.0",

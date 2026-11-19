@@ -3,6 +3,12 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  build: {
+    // The real phone is an iPhone SE on iOS 16.3 (Safari 16.3). Vite's default
+    // targets Safari 16.4+, which can ship code/CSS that 16.3 can't run.
+    target: ['es2020', 'safari16.3', 'ios16.3'],
+    cssTarget: ['safari16.3', 'ios16.3'],
+  },
   plugins: [
     react(),
     VitePWA({

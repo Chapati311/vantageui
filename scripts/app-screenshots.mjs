@@ -2,7 +2,7 @@
 // empty (the empty states are checked separately by opening a fresh app).
 //   npm run dev, then: npm run screenshots:apps [theme]
 import { mkdirSync, readFileSync } from 'node:fs';
-import { chromium } from 'playwright';
+import { browserType } from './_browser.mjs';
 
 const URL = process.env.APP_URL ?? 'http://localhost:5173';
 const OUT = 'screenshots/apps/';
@@ -37,7 +37,7 @@ const lockin = {
 };
 const sessions = [1, 2, 3].map((n) => ({ id: `x${n}`, startedAt: Date.now() - n * 86400000, minutes: 30 + n * 20, tag: 'Maths', type: 'pomodoro', completed: true }));
 
-const browser = await chromium.launch();
+const browser = await browserType.launch();
 const context = await browser.newContext({ viewport: { width: 375, height: 667 }, deviceScaleFactor: 2 });
 await context.addInitScript(([s, l, sess]) => {
   if (sessionStorage.getItem('seeded')) return;

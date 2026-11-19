@@ -8,7 +8,7 @@
 //                            npm run perfection -- midnight signal   (some)
 import { mkdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
+import { browserType } from './_browser.mjs';
 
 const URL = process.env.APP_URL ?? 'http://localhost:5173';
 const OUT = fileURLToPath(new globalThis.URL('../screenshots/perfection/', import.meta.url));
@@ -18,7 +18,7 @@ const APPS = ['vantage', 'phone', 'messages', 'contacts', 'mail', 'notes', 'cloc
 const themes = process.argv.slice(2).length ? process.argv.slice(2) : THEMES;
 
 mkdirSync(OUT, { recursive: true });
-const browser = await chromium.launch();
+const browser = await browserType.launch();
 const problems = [];
 
 for (const theme of themes) {

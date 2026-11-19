@@ -7,7 +7,7 @@
 //
 //   1. start the app:        npm run dev
 //   2. in a second terminal: npm run check:layout
-import { chromium } from 'playwright';
+import { browserType } from './_browser.mjs';
 
 const URL = process.env.APP_URL ?? 'http://localhost:5173';
 /** iPhone SE, plus a shorter and a taller screen to prove it adapts */
@@ -15,7 +15,7 @@ const HEIGHTS = [667, 560, 812];
 const WIDTH = 375;
 const MAX_ITEMS = 7;
 
-const browser = await chromium.launch();
+const browser = await browserType.launch();
 let failures = 0;
 
 for (const height of HEIGHTS) {

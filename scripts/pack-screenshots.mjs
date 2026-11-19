@@ -6,7 +6,7 @@
 //      (or only some packs: npm run screenshots:packs -- signal porcelain)
 import { mkdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
+import { browserType } from './_browser.mjs';
 
 const URL = process.env.APP_URL ?? 'http://localhost:5173';
 const OUT = fileURLToPath(new globalThis.URL('../screenshots/packs/', import.meta.url));
@@ -14,7 +14,7 @@ const ALL = ['signal', 'obsidian', 'lacquer', 'popink', 'nightreed', 'porcelain'
 const packs = process.argv.slice(2).length ? process.argv.slice(2) : ALL;
 
 mkdirSync(OUT, { recursive: true });
-const browser = await chromium.launch();
+const browser = await browserType.launch();
 const problems = [];
 
 for (const id of packs) {

@@ -8,7 +8,7 @@
 //      (a mode too: npm run screenshots:themes -- midnight:focus midnight:winddown)
 import { mkdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
+import { browserType } from './_browser.mjs';
 
 const URL = process.env.APP_URL ?? 'http://localhost:5173';
 const OUT = fileURLToPath(new globalThis.URL('../screenshots/themes/', import.meta.url));
@@ -36,7 +36,7 @@ function settingsFor(name) {
 }
 
 mkdirSync(OUT, { recursive: true });
-const browser = await chromium.launch();
+const browser = await browserType.launch();
 const problems = [];
 
 for (const id of themes) {

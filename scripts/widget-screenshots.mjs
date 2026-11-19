@@ -2,7 +2,7 @@
 // plus a home page full of new widgets. Then one sheet.
 //   npm run dev, then: npm run screenshots:widgets (optionally a theme id)
 import { mkdirSync, readFileSync } from 'node:fs';
-import { chromium } from 'playwright';
+import { browserType } from './_browser.mjs';
 
 const URL = process.env.APP_URL ?? 'http://localhost:5173';
 const OUT = 'screenshots/widgets/';
@@ -11,7 +11,7 @@ const LIGHT = ['paper', 'sand', 'sky', 'blossom', 'matcha'];
 mkdirSync(OUT, { recursive: true });
 
 const browser = await browser_launch();
-async function browser_launch() { return chromium.launch(); }
+async function browser_launch() { return browserType.launch(); }
 const context = await browser.newContext({ viewport: { width: 375, height: 667 }, deviceScaleFactor: 2 });
 await context.addInitScript((settings) => {
   if (sessionStorage.getItem('seeded')) return;
@@ -44,10 +44,12 @@ await page.mouse.down();
 await wait(900);
 await page.mouse.up();
 await wait(500);
+await page.getByText('Edit home screen').click(); // holding an item opens its menu first
+await wait(500);
 await page.getByRole('button', { name: 'Add widget' }).click();
 await wait(800);
 for (const category of ['Time', 'Space', 'Music', 'Games', 'Productivity', 'Info', 'Fun', 'Devices']) {
-  await page.getByRole('tab', { name: category }).click();
+  await page.getByRole('tab', { name: category }).click({ force: true }); // chips row keeps animating
   await wait(700);
   await shot(`gallery-${category.toLowerCase()}`);
 }

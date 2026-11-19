@@ -8,7 +8,7 @@
 // It drives a real (invisible) Chrome with Playwright, using the mouse as a finger.
 import { mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
+import { browserType } from './_browser.mjs';
 
 const URL = process.env.APP_URL ?? 'http://localhost:5173';
 const OUT = fileURLToPath(new globalThis.URL('../screenshots/', import.meta.url));
@@ -17,7 +17,7 @@ const HEIGHT = 667;
 
 mkdirSync(OUT, { recursive: true });
 
-const browser = await chromium.launch();
+const browser = await browserType.launch();
 const context = await browser.newContext({
   viewport: { width: WIDTH, height: HEIGHT },
   deviceScaleFactor: 2, // sharp, like the phone's screen
@@ -44,7 +44,6 @@ const swipe = async (x1, y1, x2, y2, { steps = 12, hold = 0 } = {}) => {
   await wait(700); // let the spring settle
 };
 
-const dock = page.getByRole('navigation', { name: 'Dock' });
 
 /** Opens an app by typing its name into search and pressing Enter. */
 const openFromSearch = async (name) => {
@@ -101,12 +100,16 @@ await shot('06-home-page-3');
 await swipe(60, 480, 300, 480);
 await swipe(60, 480, 300, 480);
 
-// Edit mode: long-press on empty space
-await page.mouse.move(187, 530);
+// Edit mode: hold an item, then "Edit home screen" in its menu
+// (holding the wallpaper changes the wallpaper since the home gestures update)
+const firstItem = await page.locator('[data-item-id]').first().boundingBox();
+await page.mouse.move(firstItem.x + 20, firstItem.y + 20);
 await page.mouse.down();
-await wait(700);
+await wait(900);
 await page.mouse.up();
 await wait(400);
+await page.getByText('Edit home screen').click();
+await wait(500);
 await shot('07-home-edit-mode');
 await page.getByRole('button', { name: 'Done' }).click();
 await wait(400);
@@ -125,7 +128,7 @@ await page.keyboard.press('Escape');
 await wait(600);
 
 // An app, opened from the dock
-await dock.getByRole('button', { name: 'Clock' }).click();
+await page.evaluate((id) => window.vantage.runAction('app.open', { appId: id }), 'clock'); // (the dock changes; open by id)
 await wait(900);
 await shot('10-clock-timer');
 await page.getByRole('tab', { name: 'Stopwatch' }).click();
@@ -133,7 +136,7 @@ await page.getByRole('button', { name: 'Start' }).click();
 await wait(1300);
 await page.getByRole('button', { name: 'Lap' }).click();
 await wait(500);
-await page.getByRole('button', { name: 'Stop' }).click();
+await page.evaluate(() => window.vantage.runAction('stopwatch.stop', {})); // two "Stop" buttons: the app's and the live pill's
 await wait(300);
 await shot('11-clock-stopwatch');
 await page.getByRole('tab', { name: 'World' }).click();
@@ -145,7 +148,7 @@ await openFromSearch('weather');
 await shot('13-weather');
 await closeApp();
 
-await dock.getByRole('button', { name: 'Notes' }).click();
+await page.evaluate((id) => window.vantage.runAction('app.open', { appId: id }), 'notes'); // (the dock changes; open by id)
 await wait(900);
 await shot('14-notes-empty');
 await page.getByRole('button', { name: 'New checklist' }).click();
@@ -165,7 +168,7 @@ await openFromSearch('settings');
 await shot('17-settings');
 await closeApp();
 
-await dock.getByRole('button', { name: 'Phone' }).click();
+await page.evaluate((id) => window.vantage.runAction('app.open', { appId: id }), 'phone'); // (the dock changes; open by id)
 await wait(900);
 await shot('18-placeholder-app');
 

@@ -1,6 +1,6 @@
-import { readFileSync } from 'node:fs'; import { chromium } from 'playwright';
+import { readFileSync } from 'node:fs'; import { browserType } from './_browser.mjs';
 const theme = process.argv[2] ?? 'midnight';
-const b=await chromium.launch(); const c=await b.newContext({viewport:{width:375,height:667},deviceScaleFactor:2});
+const b=await browserType.launch(); const c=await b.newContext({viewport:{width:375,height:667},deviceScaleFactor:2});
 await c.addInitScript((t)=>{if(sessionStorage.getItem('x'))return;localStorage.clear();if(t==='paper')localStorage.setItem('vantage.settings.v1',JSON.stringify({lightTheme:'paper',appearance:'light'}));sessionStorage.setItem('x','1');},theme);
 const p=await c.newPage(); const errs=[]; p.on('pageerror',e=>errs.push(e.message)); p.on('console',m=>m.type()==='error'&&errs.push(m.text().slice(0,160)));
 const run=(a,x={})=>p.evaluate(([a,x])=>window.vantage.runAction(a,x),[a,x]); const shots=[]; const shot=async n=>{const f=`screenshots/_h-${n}.png`;await p.screenshot({path:f});shots.push(f);};
