@@ -5,10 +5,10 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  border: var(--border-widget);
+  border: var(--home-border, var(--border-widget));
   border-radius: var(--radius-circle);
-  background: var(--surface-widget);
-  box-shadow: var(--highlight-top);
+  background: var(--home-surface, var(--surface-widget));
+  box-shadow: var(--home-depth, var(--highlight-top));
   /* The widget style decides the glyph color (white on black cards, black on color blocks) */
   color: var(--widget-text, var(--text-primary));
 }

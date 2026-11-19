@@ -12,9 +12,9 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: var(--border-widget);
-  background: var(--surface-widget);
-  box-shadow: var(--highlight-top);
+  border: var(--home-border, var(--border-widget));
+  background: var(--home-surface, var(--surface-widget));
+  box-shadow: var(--home-depth, var(--highlight-top));
 }
 
 .rounded {

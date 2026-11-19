@@ -121,12 +121,22 @@
   height: 100%;
 }
 
+/* A per-widget style also brings back the theme's own text color (a pack's white-on-black doesn't apply) */
+.widgetStyle[data-widget-style] {
+  --widget-text: var(--text-primary);
+  --widget-text-2: var(--text-secondary);
+  --home-depth: var(--highlight-top);
+  --home-border: var(--border-widget);
+}
+
 .widgetStyle[data-widget-style='solid'] {
   --surface-widget: linear-gradient(180deg, var(--color-surface-2), var(--color-surface));
+  --home-surface: linear-gradient(180deg, var(--color-surface-2), var(--color-surface));
 }
 
 .widgetStyle[data-widget-style='glass'] {
   --surface-widget: var(--glass-bg);
+  --home-surface: var(--glass-bg);
 }
 
 .widgetStyle[data-widget-style='glass'] > * {
@@ -136,11 +146,15 @@
 
 .widgetStyle[data-widget-style='outline'] {
   --surface-widget: transparent;
+  --home-surface: transparent;
   --border-widget: 1px solid var(--text-tertiary);
+  --home-border: 1px solid var(--text-tertiary);
   --highlight-top: none;
 }
 
 .widgetStyle[data-widget-style='tinted'] {
   --surface-widget: rgb(var(--accent-rgb) / 0.14);
+  --home-surface: rgb(var(--accent-rgb) / 0.14);
   --border-widget: 1px solid rgb(var(--accent-rgb) / 0.3);
+  --home-border: 1px solid rgb(var(--accent-rgb) / 0.3);
 }

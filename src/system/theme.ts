@@ -312,6 +312,21 @@ export function computeTheme(s: Settings, now = new Date()) {
     }
   }
 
+  // Signature pack styles dress only the home screen (widgets and app
+  // icons). Apps, sheets and controls keep the theme's normal cards, so
+  // their text always reads.
+  const homeSurface = surface;
+  const homeBorder = border;
+  const homeDepth = depth;
+  const packStyle = !retro && ['glossy', 'pill', 'colorblock', 'paper', 'line'].includes(s.widgetStyle);
+  if (packStyle) {
+    surface = `linear-gradient(180deg, ${rgba(palette.surfaceTop, op)} 0%, ${rgba(palette.surfaceBottom, op)} 100%)`;
+    border = preset.shadowsOnly ? '1px solid transparent' : `1px solid ${rgba(line, (dark ? 0.06 : 0.08) * hc)}`;
+    depth = dark
+      ? `inset 0 1px 0 ${rgba([255, 255, 255], 0.05)}`
+      : `inset 0 1px 0 ${rgba([255, 255, 255], 0.7)}, 0 1px 2px rgb(0 0 0 / 0.06)${preset.shadowsOnly ? ', 0 4px 12px rgb(0 0 0 / 0.05)' : ''}`;
+  }
+
   // Retro fonts look smaller for their size, so their text is scaled up
   const fontScale = s.textScale * (retro ? 1.3 : 1);
   const text = (px: number) => `${Math.round(px * fontScale)}px`;
@@ -338,6 +353,9 @@ export function computeTheme(s: Settings, now = new Date()) {
     '--text-primary': rgbToHex(palette.text),
     '--text-secondary': rgbToHex(palette.text2),
     '--text-tertiary': rgbToHex(palette.text3),
+    '--home-surface': homeSurface,
+    '--home-border': homeBorder,
+    '--home-depth': homeDepth,
     '--widget-text': rgbToHex(widgetText),
     '--widget-text-2': rgbToHex(widgetText2),
 

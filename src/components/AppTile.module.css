@@ -32,9 +32,9 @@
   place-items: center;
   padding: 22%;
   gap: 8%;
-  border: var(--border-widget);
+  border: var(--home-border, var(--border-widget));
   border-radius: var(--radius-circle);
-  background: var(--surface-widget);
+  background: var(--home-surface, var(--surface-widget));
   box-shadow: var(--highlight-top);
   color: var(--text-primary);
 }
