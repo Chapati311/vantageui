@@ -6,18 +6,18 @@
 <title>Vantage (test page)</title>
 <style>
   /* Painted with the OS theme it receives in "hello" and "theme" */
-  :root { --color-bg: #06090d; --color-surface: #0e141a; --text-primary: #fff; --text-secondary: #8a939c; --color-accent: #2dd4bf; --color-on-accent: #06090d; --color-hairline: rgba(255,255,255,.12); --radius-widget: 28px; --font-body: system-ui, sans-serif; }
+  :root { --color-bg: #06090d; --color-surface: #0e141a; --text-primary: #fff; --text-secondary: #8a939c; --color-accent: #2dd4bf; --color-on-accent: #06090d; --color-hairline: rgba(255,255,255,.12); --radius-widget: 28px; --radius-pill: 999px; --font-body: system-ui, sans-serif; --font-serif: Georgia, serif; }
   html, body { margin: 0; height: 100%; background: transparent; color: var(--text-primary); font: 15px/1.4 var(--font-body); -webkit-user-select: none; user-select: none; }
   body { display: flex; flex-direction: column; gap: 12px; padding: 16px; box-sizing: border-box; }
   body.app { background: var(--color-bg); padding-top: 72px; }
   .note { font-size: 13px; color: var(--text-secondary); }
   .log { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-  .msg { padding: 10px 14px; border-radius: 18px; background: var(--color-surface); max-width: 85%; }
+  .msg { padding: 10px 14px; border-radius: min(18px, var(--radius-widget)); background: var(--color-surface); max-width: 85%; }
   .me { align-self: flex-end; background: var(--color-accent); color: var(--color-on-accent); }
   form { display: flex; gap: 8px; }
-  input { flex: 1; min-width: 0; height: 44px; padding: 0 16px; border: 1px solid var(--color-hairline); border-radius: 999px; background: var(--color-surface); color: var(--text-primary); font: inherit; font-size: 16px; outline: none; }
-  button { height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font: inherit; font-weight: 600; }
-  h1 { margin: 0; font: 400 34px/1 'Instrument Serif', Georgia, serif; }
+  input { flex: 1; min-width: 0; height: 44px; padding: 0 16px; border: 1px solid var(--color-hairline); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--text-primary); font: inherit; font-size: 16px; outline: none; }
+  button { height: 44px; padding: 0 16px; border: 0; border-radius: var(--radius-pill); background: var(--color-accent); color: var(--color-on-accent); font: inherit; font-weight: 600; }
+  h1 { margin: 0; font: 400 34px/1 var(--font-serif); }
 </style>
 </head>
 <body>

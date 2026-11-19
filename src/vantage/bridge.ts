@@ -130,6 +130,9 @@ function themeTokens(): Record<string, string> {
     '--font-body',
     '--font-serif',
     '--color-hairline',
+    '--radius-pill',
+    '--font-display',
+    '--font-label',
   ];
   const theme = getThemeState();
   return {
@@ -153,7 +156,8 @@ function hello(mode: Mode): void {
 }
 
 // Theme changes go to Vantage as they happen
-subscribeToTheme(() => sendAll('theme', { theme: themeTokens() }));
+// (a moment later: a theme change may still be painting when listeners run)
+subscribeToTheme(() => window.setTimeout(() => sendAll('theme', { theme: themeTokens() }), 120));
 
 // ---- Summon and dismiss ---------------------------------------------------------------
 

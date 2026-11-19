@@ -330,7 +330,7 @@ export function Search({ open, inputRef, actions, recents, onClose, onOpenApp }:
               </motion.div>
             );
           })}
-          {q && (
+          {q && !answer && (
             <motion.div key="ask" className={styles.wide} {...enter()}>
               <Pressable
                 className={styles.tile}
