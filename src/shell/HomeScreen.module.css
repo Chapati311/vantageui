@@ -21,6 +21,14 @@
   min-height: 0;
 }
 
+/* Today sits one page left of page 1 */
+.todayPage {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
 /* The row of pages. Moved by motion (see HomeScreen.tsx). */
 .track {
   position: absolute;

@@ -1,6 +1,7 @@
 import { Toast } from '../components/kit/Toast';
 import { motion, useMotionValue, useMotionValueEvent } from 'motion/react';
 import { homePageProgress } from './home/homeMotion';
+import { TodayView } from './today/TodayView';
 import { setCustomiseSection } from '../apps/customise/customiseNav';
 import { EditIcon, GridIcon, ShareIcon, TrashIcon } from '../components/glyphs';
 import { getApp } from '../system/appRegistry';
@@ -18,16 +19,7 @@ import { WidgetGallery } from './home/WidgetGallery';
 import { runAction } from '../system/actions';
 import { LivePill, useHasLiveActivity } from './LivePill';
 import { getSettings, useSetting } from '../system/settingsStore';
-import {
-  COLS,
-  MAX_PAGES,
-  MAX_ROWS,
-  compactPages,
-  countPages,
-  fitToRows,
-  placeItem,
-  type HomeItem,
-} from './home/layout';
+import { COLS, MAX_PAGES, MAX_ROWS, compactPages, countPages, fitToRows, placeItem, type HomeItem } from './home/layout';
 import { loadLayout, saveLayout, subscribeToLayout } from './home/layoutStore';
 import { slotRect, useGridMetrics } from './home/useGridMetrics';
 import { useHomeGestures } from './home/useHomeGestures';
@@ -75,7 +67,11 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
   // Apps you hid in Customise > Home screen stay out of sight (search still finds them)
   const [hiddenApps] = useSetting('hiddenApps');
   const layout = useMemo(
-    () => fitToRows(saved.filter((item) => !(item.kind === 'app' && hiddenApps.includes(item.ref))), rows),
+    () =>
+      fitToRows(
+        saved.filter((item) => !(item.kind === 'app' && hiddenApps.includes(item.ref))),
+        rows,
+      ),
     [saved, rows, hiddenApps],
   );
   const layoutRef = useRef(layout);
@@ -176,15 +172,35 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
   const menuApp = menuItem?.kind === 'app' ? getApp(menuItem.ref) : undefined;
   const menuActions: ItemMenuAction[] = [];
   if (menuItem && menuWidget) {
-    if (menuWidget.appId) menuActions.push({ label: `Open ${getApp(menuWidget.appId)?.name ?? ''}`.trim(), icon: ShareIcon, onSelect: () => tapItem(menuItem.id) });
-    if (menuWidget.editable) menuActions.push({ label: 'Edit', icon: EditIcon, onSelect: () => setEditTicks((ticks) => ({ ...ticks, [menuItem.id]: (ticks[menuItem.id] ?? 0) + 1 })) });
+    if (menuWidget.appId)
+      menuActions.push({
+        label: `Open ${getApp(menuWidget.appId)?.name ?? ''}`.trim(),
+        icon: ShareIcon,
+        onSelect: () => tapItem(menuItem.id),
+      });
+    if (menuWidget.editable)
+      menuActions.push({
+        label: 'Edit',
+        icon: EditIcon,
+        onSelect: () => setEditTicks((ticks) => ({ ...ticks, [menuItem.id]: (ticks[menuItem.id] ?? 0) + 1 })),
+      });
     if (menuWidget.sizes.length > 1) menuActions.push({ label: 'Resize', icon: GridIcon, onSelect: () => resizeItem(menuItem.id) });
     menuActions.push({
       label: 'Style',
-      choices: (['solid', 'glass', 'outline', 'tinted'] as const).map((style) => ({ id: style, label: style[0].toUpperCase() + style.slice(1), selected: (menuItem.style ?? '') === style })),
-      onSelect: (style) => commit(layoutRef.current.map((item) => (item.id === menuItem.id ? { ...item, style: style as HomeItem['style'] } : item))),
+      choices: (['solid', 'glass', 'outline', 'tinted'] as const).map((style) => ({
+        id: style,
+        label: style[0].toUpperCase() + style.slice(1),
+        selected: (menuItem.style ?? '') === style,
+      })),
+      onSelect: (style) =>
+        commit(layoutRef.current.map((item) => (item.id === menuItem.id ? { ...item, style: style as HomeItem['style'] } : item))),
     });
-    menuActions.push({ label: 'Remove', icon: TrashIcon, destructive: true, onSelect: () => void runAction('home.removeWidget', { itemId: menuItem.id }) });
+    menuActions.push({
+      label: 'Remove',
+      icon: TrashIcon,
+      destructive: true,
+      onSelect: () => void runAction('home.removeWidget', { itemId: menuItem.id }),
+    });
   }
   if (menuItem && menuApp) {
     for (const action of QUICK_ACTIONS[menuApp.id] ?? []) {
@@ -197,7 +213,10 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
         },
       });
     }
-    menuActions.push({ label: 'Hide from home screen', onSelect: () => void runAction('settings.set', { key: 'hiddenApps', value: [...getSettings().hiddenApps, menuApp.id] }) });
+    menuActions.push({
+      label: 'Hide from home screen',
+      onSelect: () => void runAction('settings.set', { key: 'hiddenApps', value: [...getSettings().hiddenApps, menuApp.id] }),
+    });
   }
   if (menuItem?.kind === 'folder') menuActions.push({ label: 'Open', onSelect: () => setOpenFolder(menuItem.folder ?? null) });
   menuActions.push({ label: 'Edit home screen', icon: GridIcon, onSelect: () => setEditing(true) });
@@ -207,12 +226,16 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
     layout,
     page,
     pageCount,
+    minPage: editing ? 0 : -1,
     editing,
     trackX,
     ghostX,
     ghostY,
     setPage,
-    startEditing: () => setEditing(true),
+    startEditing: () => {
+      setEditing(true);
+      if (page < 0) setPage(0);
+    },
     stopEditing,
     onMoveItem: moveItem,
     onTapItem: tapItem,
@@ -238,6 +261,16 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
     <div ref={surfaceRef} className={styles.home}>
       <div ref={gridRef} className={styles.grid}>
         <motion.div className={styles.track} style={{ x: trackX }}>
+          {/* Today: one page to the left of page 1 */}
+          {metrics && !editing && (
+            <div
+              className={styles.todayPage}
+              style={{ transform: `translate3d(${-metrics.pitch}px, 0, 0)`, width: metrics.pitch - 2 * metrics.originX }}
+              aria-hidden={page !== -1}
+            >
+              <TodayView onOpenApp={(appId) => onOpenApp?.(appId, null)} />
+            </div>
+          )}
           {metrics &&
             layout.map((item, index) => (
               <HomeItemView
@@ -281,17 +314,14 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
       {/* Page dots have their own row, 8px above the dock. A running timer or
           stopwatch takes their place (the live pill). */}
       <div className={styles.dots}>
-        {live ? <LivePill compact /> : <PageDots count={pageCount} current={Math.min(page, pageCount - 1)} />}
+        {live ? <LivePill compact /> : <PageDots count={pageCount} current={Math.min(page, pageCount - 1)} today />}
       </div>
 
       <Dock onOpenApp={(appId, from) => onOpenApp?.(appId, from)} />
 
       {/* The copy of an item that follows the finger while dragging */}
       {draggedItem && draggedRect && (
-        <motion.div
-          className={styles.ghost}
-          style={{ x: ghostX, y: ghostY, width: draggedRect.width, height: draggedRect.height }}
-        >
+        <motion.div className={styles.ghost} style={{ x: ghostX, y: ghostY, width: draggedRect.width, height: draggedRect.height }}>
           <div className={styles.lifted}>
             <HomeItemContent item={draggedItem} />
           </div>
