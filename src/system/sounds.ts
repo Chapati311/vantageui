@@ -1,4 +1,4 @@
-import { getSettings } from './settingsStore';
+import { getSettings, type SoundPack } from './settingsStore';
 
 /**
  * Tiny UI sounds, made on the fly with the Web Audio API (no sound files).
@@ -52,22 +52,52 @@ function getContext(): AudioContext | null {
   return context;
 }
 
+/**
+ * The sound packs: the same little melodies, played differently.
+ * soft = round sine tones; glass = brighter and ringing longer; keys = a
+ * mechanical click with a low thock; retro = old-phone square-wave bleeps.
+ */
+const PACKS: Record<Exclude<SoundPack, 'auto'>, { wave: OscillatorType; pitch: number; length: number; click?: boolean }> = {
+  soft: { wave: 'sine', pitch: 1, length: 1 },
+  glass: { wave: 'triangle', pitch: 1.5, length: 2.2 },
+  keys: { wave: 'square', pitch: 0.35, length: 0.6, click: true },
+  retro: { wave: 'square', pitch: 1, length: 1 },
+};
+
+let noise: AudioBuffer | null = null;
+/** A very short burst of noise: the "click" of a key. */
+function click(audio: AudioContext, at: number, volume: number): void {
+  if (!noise) {
+    noise = audio.createBuffer(1, Math.floor(audio.sampleRate * 0.02), audio.sampleRate);
+    const data = noise.getChannelData(0);
+    for (let i = 0; i < data.length; i += 1) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length) ** 3;
+  }
+  const source = audio.createBufferSource();
+  source.buffer = noise;
+  const gain = audio.createGain();
+  gain.gain.value = volume * 1.6;
+  source.connect(gain).connect(audio.destination);
+  source.start(at);
+}
+
 export function playSound(name: SoundName): void {
-  const { soundsEnabled, soundVolume } = getSettings();
+  const { soundsEnabled, soundVolume, soundPack } = getSettings();
   const volume = MAX_VOLUME * soundVolume;
   if (!soundsEnabled || volume < 0.001) return;
   const audio = getContext();
   if (!audio) return;
+  // "auto": retro themes bleep like an old phone, modern ones are soft
+  const pack = PACKS[soundPack === 'auto' ? (document.documentElement.dataset.retro ? 'retro' : 'soft') : soundPack];
 
   for (const note of SOUNDS[name]) {
     const start = audio.currentTime + note.at;
-    const end = start + note.length;
+    const end = start + note.length * pack.length;
+    if (pack.click) click(audio, start, volume);
 
     const oscillator = audio.createOscillator();
-    // Retro themes bleep (square wave) like an old phone; modern ones are soft sine tones
-    oscillator.type = document.documentElement.dataset.retro ? 'square' : 'sine';
-    oscillator.frequency.setValueAtTime(note.from, start);
-    oscillator.frequency.linearRampToValueAtTime(note.to, end);
+    oscillator.type = pack.wave;
+    oscillator.frequency.setValueAtTime(note.from * pack.pitch, start);
+    oscillator.frequency.linearRampToValueAtTime(note.to * pack.pitch, end);
 
     // Quick fade in and out so there is no click
     const gain = audio.createGain();

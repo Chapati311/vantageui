@@ -18,6 +18,8 @@ export type BatteryStyle = 'percent' | 'ring' | 'bar' | 'pixel';
 export type UiFont = 'inter' | 'system' | 'serif' | 'mono';
 export type IconShape = 'circle' | 'squircle' | 'square';
 export type IconStyle = 'outline' | 'filled' | 'tinted';
+export const SOUND_PACKS = ['auto', 'soft', 'glass', 'keys', 'retro'] as const;
+export type SoundPack = (typeof SOUND_PACKS)[number];
 
 /** A look the user saved under their own name. */
 export interface CustomPreset {
@@ -132,6 +134,8 @@ export interface Settings {
 
   // ---- Sound
   soundsEnabled: boolean;
+  /** How UI sounds sound: follow the theme, or one pack */
+  soundPack: SoundPack;
   /** 0-1 */
   soundVolume: number;
 
@@ -204,6 +208,7 @@ export const DEFAULT_SETTINGS: Settings = {
   reduceMotion: false,
   animationSpeed: 1,
   soundsEnabled: true,
+  soundPack: 'auto',
   soundVolume: 0.5,
   userName: '',
   setupDone: false,
@@ -310,6 +315,7 @@ export function sanitizeSettings(input: unknown): Settings {
     lockNotifications: oneOf(raw.lockNotifications, ['count', 'hidden'] as const, d.lockNotifications),
     lockWidgets: Array.isArray(raw.lockWidgets) ? raw.lockWidgets.filter((id): id is string => typeof id === 'string').slice(0, 4) : d.lockWidgets,
     controlTiles: Array.isArray(raw.controlTiles) ? raw.controlTiles.filter((id): id is string => typeof id === 'string') : d.controlTiles,
+    soundPack: oneOf(raw.soundPack, SOUND_PACKS, d.soundPack),
     weatherWallpaper: bool(raw.weatherWallpaper, d.weatherWallpaper),
     lockShortcuts: bool(raw.lockShortcuts, d.lockShortcuts),
     pillTimer: bool(raw.pillTimer, d.pillTimer),

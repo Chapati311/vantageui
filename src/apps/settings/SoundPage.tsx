@@ -1,12 +1,13 @@
 import { Slider } from '../../components/kit/Slider';
 import { Toggle } from '../../components/kit/Toggle';
+import { SegmentedControl } from '../../components/kit/SegmentedControl';
 import { useSettings } from '../../system/settingsStore';
 import { playSound } from '../../system/sounds';
 import { changeSetting } from './setSetting';
 import { Section, SettingsPage } from './SettingsPage';
 import styles from './SettingsApp.module.css';
 
-/** UI sounds on or off, and how loud. */
+/** UI sounds on or off, how loud, and which sound pack. */
 export function SoundPage({ onBack }: { onBack: () => void }) {
   const s = useSettings();
   return (
@@ -34,6 +35,26 @@ export function SoundPage({ onBack }: { onBack: () => void }) {
           />
         )}
       </Section>
+
+      {s.soundsEnabled && (
+        <Section label="Sound pack" note="Auto follows the theme: soft tones, or bleeps in retro themes. Tap one to hear it.">
+          <SegmentedControl
+            label="Sound pack"
+            value={s.soundPack}
+            onChange={(value) => {
+              changeSetting('soundPack', value);
+              window.setTimeout(() => playSound('unlock'), 30);
+            }}
+            options={[
+              { id: 'auto', label: 'Auto' },
+              { id: 'soft', label: 'Soft' },
+              { id: 'glass', label: 'Glass' },
+              { id: 'keys', label: 'Keys' },
+              { id: 'retro', label: 'Retro' },
+            ]}
+          />
+        </Section>
+      )}
     </SettingsPage>
   );
 }

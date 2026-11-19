@@ -196,7 +196,9 @@ export function CustomiseApp() {
     widgets: theme.retro ? 'Retro' : STYLE_NAMES[settings.widgetStyle],
     modes: MODE_NAMES[settings.mode],
     motion: settings.reduceMotion ? 'Reduced' : `${settings.animationSpeed}x, ${Math.round(settings.springBounce * 100)}% bounce`,
-    sounds: settings.soundsEnabled ? `${Math.round(settings.soundVolume * 100)}%` : 'Off',
+    sounds: settings.soundsEnabled
+      ? `${settings.soundPack === 'auto' ? 'Auto' : settings.soundPack[0].toUpperCase() + settings.soundPack.slice(1)}, ${Math.round(settings.soundVolume * 100)}%`
+      : 'Off',
     setups: setups.length ? `${setups.length} saved` : 'Save and share',
   };
 
