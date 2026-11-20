@@ -104,13 +104,15 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
   };
 
   // The home button with nothing open: back to page 1, like iOS.
+  // (Routes send a page number too: { page } in the event's detail, -1 = Today.)
   useEffect(() => {
-    const toFirstPage = () => {
+    const toFirstPage = (event: Event) => {
       setMenu(null);
       setOpenFolder(null);
       setGalleryOpen(false);
       if (editingRef.current) stopEditing();
-      setPage(0);
+      const wanted = (event as CustomEvent<{ page?: number }>).detail?.page;
+      setPage(typeof wanted === 'number' ? Math.max(-1, wanted) : 0);
     };
     window.addEventListener('vantage:home-page', toFirstPage);
     return () => window.removeEventListener('vantage:home-page', toFirstPage);

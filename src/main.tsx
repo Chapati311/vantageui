@@ -10,6 +10,8 @@ import { initTheme } from './system/theme';
 import { onEasterEgg } from './system/easterEgg';
 import { onVolumeChord } from './system/nativeBridge';
 import { summon } from './vantage/summon';
+import { installRoutes } from './system/route';
+import { installFpsMeter } from './system/fpsMeter';
 
 preventZoom();
 // Battery: CSS animations pause while the app is in the background (see global.css)
@@ -19,6 +21,10 @@ initTheme();
 onEasterEgg(() => void runAction('easter.gameboy', {}));
 // After the jailbreak: volume up + down summons Vantage (does nothing before)
 onVolumeChord(() => summon('volume-chord'));
+// Routes: ?route=app/clock/timer, window.vantageGo(...), `make route` on the phone
+installRoutes();
+// Hidden FPS meter (?fps=1, `make fps` on the phone): frame times to the log
+installFpsMeter();
 // Coming back from the Spotify sign-in page: finish connecting
 void handleSpotifyRedirect();
 
