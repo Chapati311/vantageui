@@ -10,7 +10,7 @@ import { updateNote } from '../apps/notes/notesStore';
 import { Pressable } from '../components/Pressable';
 import { BellIcon, CheckIcon, CopyIcon, EditIcon, SearchIcon, SunIcon } from '../components/glyphs';
 import { runAction } from '../system/actions';
-import { APPS, getApp } from '../system/appRegistry';
+import { allApps, getApp } from '../system/appRegistry';
 import { ClockIcon, CustomiseIcon, LockInIcon, NotesIcon, RemindersIcon } from '../system/appIcons';
 import { newReminder } from '../system/reminders';
 import { PRESETS } from '../theme/presets';
@@ -152,7 +152,7 @@ export function Search({ open, inputRef, actions, recents, onClose, onOpenApp }:
   const results = useMemo<Result[]>(() => {
     if (!q) return [];
     const list: Result[] = [
-      ...APPS.filter((app) => !app.hidden).map((app) => ({ key: `app:${app.id}`, name: app.name, icon: app.icon, appId: app.id, score: bestScore(q, app.name, app.keywords) })),
+      ...allApps().map((app) => ({ key: `app:${app.id}`, name: app.name, icon: app.icon, appId: app.id, score: bestScore(q, app.name, app.keywords) })),
       ...actions.map((action) => ({ key: `action:${action.id}`, name: action.name, icon: action.icon, run: action.run, score: bestScore(q, action.name, action.keywords) * 0.95 })),
       ...SETTINGS.map((setting) => ({
         key: `setting:${setting.id}`,

@@ -1,7 +1,8 @@
 import { AppIcon } from '../../components/AppIcon';
 import { shapeOf, type ScreenRect } from '../AppView';
 import { Pressable } from '../../components/Pressable';
-import { DOCK_APP_IDS, getApp } from '../../system/appRegistry';
+import { dockAppIds, getApp } from '../../system/appRegistry';
+import { useNativeApps } from '../../system/nativeApps';
 import styles from './Dock.module.css';
 
 interface DockProps {
@@ -14,9 +15,10 @@ interface DockProps {
  * pages slide.
  */
 export function Dock({ onOpenApp }: DockProps) {
+  useNativeApps(); // host mode: the real Phone/Messages/Camera arrive from the phone
   return (
     <nav className={styles.dock} aria-label="Dock">
-      {DOCK_APP_IDS.map((id) => {
+      {dockAppIds().map((id) => {
         const app = getApp(id);
         if (!app) return null;
         return (

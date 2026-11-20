@@ -12,6 +12,7 @@ import { onVolumeChord } from './system/nativeBridge';
 import { summon } from './vantage/summon';
 import { installRoutes } from './system/route';
 import { installFpsMeter } from './system/fpsMeter';
+import { installNativeApps } from './system/nativeApps';
 
 preventZoom();
 // Battery: CSS animations pause while the app is in the background (see global.css)
@@ -23,6 +24,8 @@ onEasterEgg(() => void runAction('easter.gameboy', {}));
 onVolumeChord(() => summon('volume-chord'));
 // Routes: ?route=app/clock/timer, window.vantageGo(...), `make route` on the phone
 installRoutes();
+// Host mode: the phone's real apps (cached now, refreshed from SpringBoard)
+installNativeApps();
 // Hidden FPS meter (?fps=1, `make fps` on the phone): frame times to the log
 installFpsMeter();
 // Coming back from the Spotify sign-in page: finish connecting

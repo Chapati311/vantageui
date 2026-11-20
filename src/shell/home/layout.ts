@@ -13,6 +13,20 @@ export const MAX_PAGES = 5;
 /** Design system: fewer, better items. A page never holds more than this. */
 export const MAX_ITEMS_PER_PAGE = GRID.maxItemsPerPage;
 
+/**
+ * Pages with only app icons can hold more (host mode: the phone's real apps,
+ * 4 x 4 like iOS); pages with widgets keep the design rule above.
+ */
+let iconPageCapacity: number = MAX_ITEMS_PER_PAGE;
+export function setIconPageCapacity(capacity: number): void {
+  iconPageCapacity = Math.max(MAX_ITEMS_PER_PAGE, capacity);
+}
+/** How many items `page` may hold (widgets on it: the design rule; icons only: more). */
+export function capacityOf(layout: { page: number; kind?: string }[], page: number): number {
+  const onPage = layout.filter((item) => item.page === page);
+  return onPage.some((item) => item.kind === 'widget') ? MAX_ITEMS_PER_PAGE : iconPageCapacity;
+}
+
 /** One thing on the home screen: a widget or an app icon. */
 export interface HomeItem {
   /** Unique, e.g. "widget:clock" or "app:phone" */
@@ -104,7 +118,7 @@ export function placeItem(
   if (!item || !inBounds(target, rows)) return null;
   // Moving onto another page is refused when that page is already full.
   const onTargetPage = layout.filter((i) => i.id !== id && i.page === target.page).length;
-  if (item.page !== target.page && onTargetPage >= MAX_ITEMS_PER_PAGE) return null;
+  if (item.page !== target.page && onTargetPage >= capacityOf(layout, target.page)) return null;
 
   const moved: HomeItem = { ...item, ...target };
   const samePage = layout.filter((i) => i.id !== id && i.page === target.page);
@@ -133,7 +147,7 @@ export function firstFreeSlot(
 ): Slot | null {
   for (let page = fromPage; page < MAX_PAGES; page++) {
     // A full page takes no more items, even if it has empty cells.
-    if (layout.filter((item) => item.page === page).length >= MAX_ITEMS_PER_PAGE) continue;
+    if (layout.filter((item) => item.page === page).length >= capacityOf(layout, page)) continue;
     for (let row = 0; row <= rows - size.h; row++) {
       for (let col = 0; col <= COLS - size.w; col++) {
         // Only take the width and height: `size` may be a whole item with its own position.

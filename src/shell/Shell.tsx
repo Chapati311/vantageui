@@ -156,6 +156,11 @@ export function Shell() {
       const app = getApp(appId);
       if (!app) return;
       closeAllOverlays();
+      // Host mode: a real installed app opens for real (iOS animates it in)
+      if (app.native && app.bundleId) {
+        void openNativeApp(app.bundleId);
+        return;
+      }
       // App styles: "Original" opens the real iPhone app instead
       if (getSettings().appStyles[appId] === 'original' && app.bundleId && canOpenApp(app.bundleId)) {
         void openNativeApp(app.bundleId);

@@ -5,6 +5,7 @@ import { useSetting } from '../system/settingsStore';
 import { useTheme } from '../system/theme';
 import { useBlockState } from '../apps/lockin/blocking';
 import type { AppDefinition } from '../system/appRegistry';
+import { getNativeApp, useNativeApps } from '../system/nativeApps';
 import styles from './AppIcon.module.css';
 
 /**
@@ -20,10 +21,12 @@ export function AppIcon({ app }: { app: AppDefinition }) {
   const { locked } = useBlockState(app.id);
   const [iconPack] = useSetting('iconPack');
   const retro = useTheme().retro !== null;
+  useNativeApps(); // badges update live
+  const badge = app.native && app.bundleId ? getNativeApp(app.bundleId)?.badge : undefined;
 
   return (
     <div
-      className={`${styles.icon} ${locked ? styles.locked : ''}`}
+      className={`${styles.icon} ${locked ? styles.locked : ''} ${app.native ? styles.native : ''}`}
       role="img"
       aria-label={locked ? `${app.name}, locked` : app.name}
       data-app-icon={app.id}
@@ -31,6 +34,11 @@ export function AppIcon({ app }: { app: AppDefinition }) {
     >
       {/* Icon pack "pixel": the same pixel glyphs as the retro menus, in a glossy circle */}
       {iconPack === 'pixel' && !retro ? <PixelIcon id={app.id} size={22} /> : <Glyph />}
+      {badge !== undefined && badge !== '' && badge !== 0 && (
+        <span className={styles.badge} aria-label={`${badge} new`}>
+          {typeof badge === 'number' && badge > 99 ? '99+' : badge}
+        </span>
+      )}
       {locked && (
         <span className={styles.lock}>
           <LockIcon />

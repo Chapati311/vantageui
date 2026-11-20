@@ -1,0 +1,148 @@
+/* The App Library page: search, then a grid of group tiles (2 per row) */
+.library {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding-top: var(--space-8);
+  overflow: hidden;
+}
+
+.search {
+  flex: none;
+  width: 100%;
+  height: calc(var(--space-32) + var(--space-8));
+  padding: 0 var(--space-16);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
+  outline: none;
+  background: var(--surface-widget);
+  color: var(--text-primary);
+  caret-color: var(--color-accent);
+  text-align: center;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search::placeholder {
+  color: var(--text-secondary);
+}
+
+.search:focus {
+  text-align: left;
+}
+
+.groups {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: var(--space-16) var(--grid-gap);
+  overflow-y: auto;
+  padding-bottom: calc(var(--grid-cell) + var(--space-32));
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+.groups::-webkit-scrollbar {
+  display: none;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+/* One rounded tile: a 2 x 2 grid (3 big icons + a cluster of 4 small ones) */
+.tile {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-12);
+  padding: var(--space-12);
+  aspect-ratio: 1;
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  background: var(--surface-widget);
+  box-shadow: var(--highlight-top);
+}
+
+.big,
+.small {
+  /* Buttons fill their cell (older WebKit sizes buttons to their content) */
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  touch-action: pan-y;
+}
+
+.small {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12%;
+  padding: 6%;
+}
+
+.mini {
+  display: block;
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+.groupName {
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-13);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Searching: one A-Z list */
+.list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-bottom: calc(var(--grid-cell) + var(--space-32));
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  width: 100%;
+  min-height: calc(var(--space-32) + var(--space-24));
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-hairline);
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--text-17);
+  text-align: left;
+  touch-action: pan-y;
+}
+
+.rowIcon {
+  flex: none;
+  width: var(--space-40, 40px);
+  height: var(--space-40, 40px);
+}
+
+.none {
+  margin: var(--space-32) 0;
+  text-align: center;
+  color: var(--text-secondary);
+}

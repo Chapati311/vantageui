@@ -1,12 +1,19 @@
-import { HOME_APPS, DOCK_APP_IDS, getApp } from '../../system/appRegistry';
+import { dockAppIds, getApp, homeApps } from '../../system/appRegistry';
+import { isHosted } from '../../system/nativeBridge';
+import { getNativeApps, isNativeAppId, nativeAppId, subscribeToNativeApps } from '../../system/nativeApps';
 import { getWidget } from '../widgets/widgetRegistry';
 import type { WidgetSize } from '../widgets/types';
 import { DEFAULT_LAYOUT } from './defaultLayout';
-import { COLS, MAX_PAGES, MAX_ROWS, countPages, firstFreeSlot, type HomeItem } from './layout';
+import { COLS, MAX_PAGES, MAX_ROWS, countPages, firstFreeSlot, setIconPageCapacity, type HomeItem } from './layout';
 
 /** Change the version if the layout format ever changes (old saved layouts are then ignored). */
 /** v5: three balanced pages with folders (older layouts are replaced once). */
-const STORAGE_KEY = 'vantage.homeLayout.v5';
+const HOSTED = isHosted();
+/** Host mode (the real home screen) keeps its own layout: the browser one stays as it was. */
+const STORAGE_KEY = HOSTED ? 'vantage.homeLayout.host.v1' : 'vantage.homeLayout.v5';
+/** Real app icons fill pages 4 x 4, like iOS (rows 1-4, above the page dots). */
+const ICON_ROWS = 4;
+if (HOSTED) setIconPageCapacity(COLS * ICON_ROWS);
 
 const isWholeNumber = (value: unknown): value is number => Number.isInteger(value);
 
@@ -17,8 +24,10 @@ function isValid(item: HomeItem): boolean {
   if (item.page < 0 || item.page >= MAX_PAGES || item.col < 0 || item.row < 0) return false;
   if (item.col + item.w > COLS || item.row + item.h > MAX_ROWS) return false;
   if (item.kind === 'app') {
+    // Real apps whose list hasn't arrived yet keep their place (never lose the arrangement).
+    const exists = !!getApp(item.ref) || (isNativeAppId(item.ref) && getNativeApps().length === 0);
     // Dock apps live in the dock, not on the grid.
-    return item.w === 1 && item.h === 1 && !!getApp(item.ref) && !DOCK_APP_IDS.includes(item.ref);
+    return item.w === 1 && item.h === 1 && exists && !dockAppIds().includes(item.ref);
   }
   if (item.kind === 'widget') {
     return !!getWidget(item.ref)?.sizes.includes(`${item.w}x${item.h}` as WidgetSize);
@@ -36,7 +45,7 @@ function isValid(item: HomeItem): boolean {
  */
 function addMissingApps(layout: HomeItem[]): HomeItem[] {
   const result = [...layout];
-  const placed = new Set<string>(DOCK_APP_IDS);
+  const placed = new Set<string>(dockAppIds());
   for (const item of layout) {
     if (item.kind === 'app') placed.add(item.ref);
     if (item.kind === 'folder') item.folder?.apps.forEach((app) => placed.add(app));
@@ -45,24 +54,67 @@ function addMissingApps(layout: HomeItem[]): HomeItem[] {
       if (opens) placed.add(opens);
     }
   }
-  for (const app of HOME_APPS) {
+  for (const app of orderedHomeApps()) {
     const id = `app:${app.id}`;
     if (placed.has(app.id)) continue;
-    const slot = firstFreeSlot(result, { w: 1, h: 1 }, countPages(result) - 1);
+    // New apps land on the last page (no room: the App Library still has them).
+    const slot = firstFreeSlot(result, { w: 1, h: 1 }, Math.max(HOSTED ? 1 : 0, countPages(result) - 1), HOSTED ? ICON_ROWS : MAX_ROWS);
     if (slot) result.push({ ...slot, id, kind: 'app', ref: app.id });
   }
   return result;
 }
 
+// ---- Host mode: the first layout, built like iOS -------------------------------------
+
+/** The everyday apps first (in this order), then everything else A-Z. */
+const FIRST = [
+  'ios:com.apple.mobilesafari', 'ios:com.apple.mobileslideshow', 'ios:com.apple.Preferences', 'ios:com.apple.AppStore',
+  'ios:com.apple.Maps', 'ios:com.apple.Music', 'ios:com.apple.mobilemail', 'ios:com.apple.mobilecal',
+  'notes', 'ios:com.apple.mobilenotes', 'clock', 'weather', 'customise', 'calculator', 'ios:com.apple.facetime',
+  'ios:com.apple.reminders', 'ios:com.apple.MobileAddressBook', 'ios:com.apple.DocumentsApp', 'ios:com.apple.shortcuts',
+];
+function orderedHomeApps() {
+  const apps = homeApps();
+  const rank = (id: string) => (FIRST.includes(id) ? FIRST.indexOf(id) : FIRST.length);
+  return [...apps].sort((a, b) => rank(a.id) - rank(b.id) || a.name.localeCompare(b.name));
+}
+
+/** Apple's smaller apps, kept together in one folder. */
+const UTILITIES = [
+  'com.apple.Magnifier', 'com.apple.measure', 'com.apple.tips', 'com.apple.Translate', 'com.apple.findmy',
+  'com.apple.Bridge', 'com.apple.Home', 'com.apple.Passbook', 'com.apple.freeform', 'com.apple.Health',
+  'com.apple.Fitness', 'com.apple.stocks', 'com.apple.MobileStore', 'com.apple.iBooks', 'com.apple.podcasts', 'com.apple.tv',
+];
+
+/** First run on the phone: page 1 widgets, then folders, then the real apps (added below). */
+function hostDefaultLayout(): HomeItem[] {
+  const layout = DEFAULT_LAYOUT.filter((item) => item.page === 0);
+  const installed = getNativeApps();
+  const folder = (id: string, name: string, bundleIds: string[]) => {
+    const apps = bundleIds.filter((bid) => installed.some((app) => app.bundleId === bid)).map(nativeAppId);
+    if (apps.length < 2) return;
+    const slot = firstFreeSlot(layout, { w: 1, h: 1 }, 1, ICON_ROWS);
+    if (slot) layout.push({ ...slot, id: `folder:${id}`, kind: 'folder', ref: id, folder: { name, apps } });
+  };
+  folder('utilities', 'Utilities', UTILITIES);
+  folder('jailbreak', 'Jailbreak', installed.filter((app) => app.source === 'jailbreak' || app.source === 'trollstore' || /troll|dopamine/i.test(app.name)).map((app) => app.bundleId));
+  return layout;
+}
+
+// The real app list arrived or changed (install, remove): lay out again.
+if (HOSTED) subscribeToNativeApps(() => listeners.forEach((listener) => listener()));
+
 /** The layout saved on this device, or the default one. */
 export function loadLayout(): HomeItem[] {
-  let layout = DEFAULT_LAYOUT;
+  let layout = HOSTED ? (getNativeApps().length ? hostDefaultLayout() : DEFAULT_LAYOUT.filter((item) => item.page === 0)) : DEFAULT_LAYOUT;
   try {
     const saved: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
     if (Array.isArray(saved)) {
       // Drop anything that no longer exists (e.g. an app removed from the registry).
       const valid = (saved as HomeItem[]).filter(isValid);
       if (valid.length > 0) layout = valid;
+      // Host mode: the first saved layout before the apps arrived had no folders yet.
+      else if (HOSTED && getNativeApps().length) layout = hostDefaultLayout();
     }
   } catch {
     // Broken or blocked storage: use the default.

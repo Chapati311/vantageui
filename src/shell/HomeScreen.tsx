@@ -1,4 +1,6 @@
 import { useVantage } from '../vantage/bridge';
+import { AppLibrary } from './home/AppLibrary';
+import { isHosted } from '../system/nativeBridge';
 import { Toast } from '../components/kit/Toast';
 import { motion, useMotionValue, useMotionValueEvent } from 'motion/react';
 import { homePageProgress } from './home/homeMotion';
@@ -25,6 +27,9 @@ import { loadLayout, saveLayout, subscribeToLayout } from './home/layoutStore';
 import { slotRect, useGridMetrics } from './home/useGridMetrics';
 import { useHomeGestures } from './home/useHomeGestures';
 import styles from './HomeScreen.module.css';
+
+/** Host mode: Vantage OS is the phone's real home screen (App Library, real apps). */
+const HOSTED = isHosted();
 
 interface HomeScreenProps {
   /** An app icon was tapped. `from` is where the icon is on screen. */
@@ -90,6 +95,9 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
 
   // In edit mode there is one extra empty page to drag things onto.
   const pageCount = Math.min(MAX_PAGES, countPages(layout) + (editing ? 1 : 0));
+  // Host mode: the App Library is one more page after the last one (not while editing).
+  const withLibrary = HOSTED && !editing;
+  const swipePages = pageCount + (withLibrary ? 1 : 0);
 
   /** Applies a new layout and saves it on the device. */
   const commit = (next: HomeItem[]) => {
@@ -122,8 +130,8 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
 
   // If the page we are on disappears (e.g. the extra edit page), go to the last one.
   useEffect(() => {
-    if (page > pageCount - 1) setPage(pageCount - 1);
-  }, [page, pageCount]);
+    if (page > swipePages - 1) setPage(swipePages - 1);
+  }, [page, swipePages]);
 
   const moveItem = (id: string, to: { page: number; col: number; row: number }): HomeItem => {
     const current = layoutRef.current.find((item) => item.id === id)!;
@@ -247,7 +255,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
     metrics,
     layout,
     page,
-    pageCount,
+    pageCount: swipePages,
     minPage: editing ? 0 : -1,
     editing,
     trackX,
@@ -291,6 +299,16 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
               aria-hidden={page !== -1}
             >
               <TodayView onOpenApp={(appId) => onOpenApp?.(appId, null)} />
+            </div>
+          )}
+          {/* App Library: one page to the right of the last page */}
+          {metrics && withLibrary && (
+            <div
+              className={styles.todayPage}
+              style={{ transform: `translate3d(${pageCount * metrics.pitch}px, 0, 0)`, width: metrics.pitch - 2 * metrics.originX }}
+              aria-hidden={page !== pageCount}
+            >
+              <AppLibrary onOpenApp={(appId, from) => onOpenApp?.(appId, from)} onOpenGroup={(group) => setOpenFolder(group)} />
             </div>
           )}
           {metrics &&

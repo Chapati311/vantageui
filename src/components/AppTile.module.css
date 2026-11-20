@@ -41,6 +41,22 @@
 
 .mini {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  /* A fixed square per app, so real app icons (images) can't grow past it */
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+/* A real app (host mode): its real icon, as a small rounded square */
+.mini :global(.native-app-icon) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 28%;
 }
 
 .mini svg {

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Row, Section as KitSection, SegmentedControl, Slider, Toggle } from '../../components/kit';
 import { runAction } from '../../system/actions';
-import { DOCK_APP_IDS, HOME_APPS } from '../../system/appRegistry';
+import { dockAppIds, homeApps } from '../../system/appRegistry';
 import { useSettings, type Settings } from '../../system/settingsStore';
 import { Section, SettingsPage } from '../settings/SettingsPage';
 
@@ -61,7 +61,7 @@ export function HomeScreenPage({ onBack }: { onBack: () => void }) {
         note="Hidden apps are still found by search. Hold the home screen to move, resize, add or remove widgets."
       >
         <KitSection>
-          {HOME_APPS.filter((app) => !DOCK_APP_IDS.includes(app.id)).map((app) => (
+          {homeApps().filter((app) => !dockAppIds().includes(app.id)).map((app) => (
             <Switch
               key={app.id}
               title={app.name}

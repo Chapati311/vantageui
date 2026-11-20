@@ -1,4 +1,6 @@
 import { SoundIcon } from '../components/glyphs';
+import { isHosted } from './nativeBridge';
+import { bundleIdOf, getNativeApp, getNativeApps, isNativeAppId, nativeAppId } from './nativeApps';
 import { lazy, Suspense, type ComponentType } from 'react';
 import { EmptyState } from '../components/kit/EmptyState';
 import {
@@ -89,6 +91,8 @@ export interface AppDefinition {
   hidden?: boolean;
   /** The original iPhone app (for "App styles: Original") */
   bundleId?: string;
+  /** A real app installed on the phone (host mode): tapping it opens the real app */
+  native?: boolean;
 }
 
 /**
@@ -150,5 +154,73 @@ export const HOME_APPS = APPS.filter((app) => !app.hidden);
 export const DOCK_APP_IDS = ['vantage', 'phone', 'messages', 'clock'];
 
 export function getApp(id: string): AppDefinition | undefined {
+  if (isNativeAppId(id)) return nativeDefinition(bundleIdOf(id));
   return APPS.find((app) => app.id === id);
+}
+
+// ---- Host mode: the phone's real apps (REAL_OS_PROMPT Part 1) ---------------------------
+
+/**
+ * Vantage's own apps that stay in host mode: they use real data and are as
+ * good as the originals. Every other Vantage app (Phone, Messages, Mail,
+ * Browser, Camera, Photos, Settings, Maps, Music, Calendar, Contacts, ...)
+ * gives way to the REAL iPhone app.
+ */
+export const HOST_VANTAGE_APPS = ['vantage', 'customise', 'clock', 'weather', 'calculator', 'compass', 'recorder', 'notes', 'arcade'];
+
+/** Real apps that a kept Vantage app already covers: in the App Library, not on the home pages. */
+const COVERED_BY_VANTAGE = ['com.apple.mobiletimer', 'com.apple.weather', 'com.apple.calculator', 'com.apple.compass', 'com.apple.VoiceMemos'];
+
+/** One definition per real app, made once and reused (stable icons, no re-renders). */
+const nativeDefs = new Map<string, { icon: string; badge: unknown; def: AppDefinition }>();
+
+function nativeDefinition(bundleId: string): AppDefinition | undefined {
+  const app = getNativeApp(bundleId);
+  if (!app) return undefined;
+  const cached = nativeDefs.get(bundleId);
+  if (cached && cached.icon === app.icon && cached.badge === app.badge && cached.def.name === app.name) return cached.def;
+  const src = `data:image/png;base64,${app.icon}`;
+  function NativeIcon() {
+    return <img className="native-app-icon" src={src} alt="" draggable={false} decoding="async" />;
+  }
+  const def: AppDefinition = {
+    id: nativeAppId(bundleId),
+    name: app.name,
+    icon: NativeIcon,
+    keywords: [app.category ?? '', app.source === 'jailbreak' ? 'jailbreak tweak' : ''].filter(Boolean),
+    component: () => null,
+    bundleId,
+    native: true,
+  };
+  nativeDefs.set(bundleId, { icon: app.icon, badge: app.badge, def });
+  return def;
+}
+
+const keptVantageApps = () => HOST_VANTAGE_APPS.map((id) => APPS.find((app) => app.id === id)).filter((app): app is AppDefinition => !!app);
+const realApps = () => getNativeApps().map((app) => nativeDefinition(app.bundleId)).filter((app): app is AppDefinition => !!app);
+
+/** Vantage apps that are an option next to the real one: App Library and search only. */
+const OPTION_ONLY = ['notes'];
+
+/** Apps that get a place on the home pages. */
+export function homeApps(): AppDefinition[] {
+  if (!isHosted()) return HOME_APPS;
+  return [
+    ...keptVantageApps().filter((app) => !OPTION_ONLY.includes(app.id)),
+    ...realApps().filter((app) => !COVERED_BY_VANTAGE.includes(app.bundleId ?? '')),
+  ];
+}
+
+/** Every app (search, App Library): in host mode the kept Vantage apps plus every real app. */
+export function allApps(): AppDefinition[] {
+  if (!isHosted()) return HOME_APPS;
+  return [...keptVantageApps(), ...realApps()];
+}
+
+/** The 4 dock apps, left to right. Host mode: Vantage, Phone, WhatsApp (or Messages), Camera. */
+export function dockAppIds(): string[] {
+  if (!isHosted()) return DOCK_APP_IDS;
+  const has = (bundleId: string) => !!getNativeApp(bundleId);
+  const messenger = has('net.whatsapp.WhatsApp') ? 'net.whatsapp.WhatsApp' : 'com.apple.MobileSMS';
+  return ['vantage', ...['com.apple.mobilephone', messenger, 'com.apple.camera'].filter(has).map(nativeAppId)];
 }
