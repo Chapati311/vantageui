@@ -1,0 +1,78 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding-bottom: var(--space-16);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.icon {
+  flex: none;
+  width: calc(var(--space-32) * 2);
+  height: calc(var(--space-32) * 2);
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--serif-34, 34px);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.sub {
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-13);
+  color: var(--text-secondary);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-8) var(--space-16);
+  margin: 0;
+  font-size: var(--text-15);
+}
+
+.facts dt {
+  color: var(--text-secondary);
+}
+
+.facts dd {
+  margin: 0;
+  text-align: right;
+  min-width: 0;
+}
+
+.id {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-13);
+  color: var(--text-secondary);
+}
+
+.question {
+  margin: 0;
+  font-size: var(--text-17);
+  line-height: 1.35;
+}
+
+.error {
+  margin: 0;
+  color: var(--status-bad);
+}
+
+.buttons {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.buttons > * {
+  flex: 1;
+}

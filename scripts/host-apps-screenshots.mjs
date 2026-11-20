@@ -40,6 +40,16 @@ await context.addInitScript(({ list, icons }) => {
     setBrightness: () => Promise.resolve(),
     setFlashlight: () => Promise.resolve(),
     onVolumeChord: () => Promise.resolve(() => {}),
+    // Notes' real quick actions and info, as read from the iPhone
+    getShortcuts: () => Promise.resolve([
+      { type: 'com.apple.notes.newNote', title: 'New Note' },
+      { type: 'com.apple.notes.checklist', title: 'New Checklist' },
+      { type: 'com.apple.notes.photo', title: 'New Photo' },
+      { type: 'com.apple.notes.scanDocument', title: 'Scan Document' },
+    ]),
+    runShortcut: (id, type) => (opened.push(`${id}#${type}`), Promise.resolve()),
+    getAppInfo: (id) => Promise.resolve({ name: 'Notes', bundleId: id, source: 'appstore', version: '2.10', build: '2225', minimumOS: '16.3', shortcuts: 4 }),
+    uninstallApp: (id, confirmed) => (confirmed ? (opened.push(`removed ${id}`), Promise.resolve()) : Promise.reject(new Error('not confirmed'))),
   };
 }, { list: apps, icons: ICONS });
 
@@ -68,10 +78,39 @@ await page.locator('input[aria-label="Search all apps"]').fill('s');
 await wait(400);
 await shot('library-search');
 
+// Long-press a real app: its real quick actions, App info, Remove app
+await go('home/2');
+await wait(700);
+// (the App Library, just off-screen, has a Notes icon too: take the visible one)
+let notes = null;
+for (const box of await Promise.all((await page.locator('[data-app-icon="ios:com.apple.mobilenotes"]').all()).map((l) => l.boundingBox()))) {
+  if (box && box.x >= 0 && box.x + box.width <= 375) notes = box;
+}
+if (notes) {
+  await page.mouse.move(notes.x + notes.width / 2, notes.y + notes.height / 2);
+  await page.mouse.down();
+  await wait(900);
+  await page.mouse.up();
+  await wait(700);
+  await shot('longpress-menu');
+  await page.getByText('App info').click();
+  await wait(900);
+  await shot('app-info');
+  await page.getByRole('button', { name: 'Remove app' }).click();
+  await wait(500);
+  await shot('app-remove-confirm');
+  await page.getByRole('button', { name: 'Cancel' }).click(); // back to App info
+  await wait(500);
+  await page.mouse.click(187, 60); // tap the dimmed area: the sheet closes
+  await wait(700);
+} else problems.push('Notes icon not found on page 2');
+
 // Tapping a real app opens it for real (through the bridge)
+await go('home/9');
+await wait(800);
 await page.locator('input[aria-label="Search all apps"]').fill('Safari');
 await wait(300);
-await page.getByRole('button', { name: 'Safari' }).first().click();
+await page.locator('input[aria-label="Search all apps"] ~ div button').first().click(); // the search result row
 await wait(300);
 const opened = await page.evaluate(() => window.__opened);
 console.log('opened through the bridge:', opened.join(', ') || 'nothing');

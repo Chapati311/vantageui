@@ -1,4 +1,6 @@
 import { useVantage } from '../vantage/bridge';
+import { NativeAppSheet } from './home/NativeAppSheet';
+import { getAppShortcuts, runAppShortcut, type AppShortcut } from '../system/nativeBridge';
 import { AppLibrary } from './home/AppLibrary';
 import { isHosted } from '../system/nativeBridge';
 import { Toast } from '../components/kit/Toast';
@@ -196,11 +198,24 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
   const [toast, setToast] = useState<string | null>(null);
   const clearToast = useCallback(() => setToast(null), []);
   const [openFolder, setOpenFolder] = useState<{ name: string; apps: string[] } | null>(null);
+  // Real apps: their quick actions (loaded when the menu opens) and the info / remove sheet
+  const [shortcuts, setShortcuts] = useState<AppShortcut[]>([]);
+  const [appSheet, setAppSheet] = useState<{ appId: string; remove: boolean } | null>(null);
 
   const menuItem = menu ? layoutRef.current.find((item) => item.id === menu.id) : undefined;
   const menuWidget = menuItem?.kind === 'widget' ? getWidget(menuItem.ref) : undefined;
   const menuApp = menuItem?.kind === 'app' ? getApp(menuItem.ref) : undefined;
+  const menuBundle = menuApp?.native ? menuApp.bundleId : undefined;
   const menuActions: ItemMenuAction[] = [];
+  useEffect(() => {
+    setShortcuts([]);
+    if (!menuBundle) return;
+    let alive = true;
+    void getAppShortcuts(menuBundle).then((list) => alive && setShortcuts(list.slice(0, 4)));
+    return () => {
+      alive = false;
+    };
+  }, [menuBundle]);
   if (menuItem && menuWidget) {
     if (menuWidget.appId)
       menuActions.push({
@@ -232,7 +247,15 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
       onSelect: () => void runAction('home.removeWidget', { itemId: menuItem.id }),
     });
   }
-  if (menuItem && menuApp) {
+  if (menuItem && menuApp?.native && menuApp.bundleId) {
+    // A real app: its real quick actions, App info, Remove app (asks first)
+    const bundleId = menuApp.bundleId;
+    for (const shortcut of shortcuts) {
+      menuActions.push({ label: shortcut.title, onSelect: () => void runAppShortcut(bundleId, shortcut.type) });
+    }
+    menuActions.push({ label: 'App info', icon: EditIcon, onSelect: () => setAppSheet({ appId: menuApp.id, remove: false }) });
+    menuActions.push({ label: 'Remove app', icon: TrashIcon, destructive: true, onSelect: () => setAppSheet({ appId: menuApp.id, remove: true }) });
+  } else if (menuItem && menuApp) {
     for (const action of QUICK_ACTIONS[menuApp.id] ?? []) {
       menuActions.push({
         label: action.label,
@@ -377,6 +400,12 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
         onClose={() => setMenu(null)}
       />
       <FolderView folder={openFolder} onOpenApp={(appId, from) => onOpenApp?.(appId, from)} onClose={() => setOpenFolder(null)} />
+      <NativeAppSheet
+        appId={appSheet?.appId ?? null}
+        confirmRemove={appSheet?.remove}
+        onClose={() => setAppSheet(null)}
+        onRemoved={(name) => setToast(`${name} removed`)}
+      />
       <Toast message={toast} kind="success" onDone={clearToast} />
     </div>
   );

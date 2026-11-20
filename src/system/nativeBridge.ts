@@ -35,6 +35,25 @@ export interface HostInfo {
   model: string;
 }
 
+/** One of an app's real quick actions (long-press). */
+export interface AppShortcut {
+  type: string;
+  title: string;
+  subtitle?: string;
+}
+
+/** What the phone knows about an installed app. */
+export interface AppInfo {
+  name: string;
+  bundleId: string;
+  source: 'system' | 'appstore' | 'trollstore' | 'jailbreak';
+  category?: string;
+  version?: string;
+  build?: string;
+  minimumOS?: string;
+  shortcuts: number;
+}
+
 /** How a request was carried out. */
 export type BridgeResult =
   | { ok: true; via: 'bridge' | 'url' | 'shortcut' }
@@ -59,6 +78,10 @@ interface VantageNative {
   getInfo?: () => Promise<HostInfo>;
   version?: string;
   iosVersion?: string;
+  getShortcuts?: (bundleId: string) => Promise<AppShortcut[]>;
+  runShortcut?: (bundleId: string, type: string) => Promise<void>;
+  getAppInfo?: (bundleId: string) => Promise<AppInfo>;
+  uninstallApp?: (bundleId: string, confirmed: boolean) => Promise<void>;
   /** Sends a text message (after the user confirmed it on an action card). */
   sendMessage?: (to: string, body: string) => Promise<void>;
 }
@@ -336,4 +359,47 @@ export async function sendMessage(to: string, body: string): Promise<BridgeResul
     }
   }
   return message(to, body);
+}
+
+// ---- Real apps (host mode): quick actions, info, removing ------------------------------
+
+/** The app's real quick actions (empty without the bridge). */
+export async function getAppShortcuts(bundleId: string): Promise<AppShortcut[]> {
+  try {
+    return (await native()?.getShortcuts?.(bundleId)) ?? [];
+  } catch {
+    return [];
+  }
+}
+
+/** Opens the app with one of its quick actions. */
+export async function runAppShortcut(bundleId: string, type: string): Promise<BridgeResult> {
+  const bridge = native();
+  if (!bridge?.runShortcut) return { ok: false, reason: 'unavailable' };
+  try {
+    await bridge.runShortcut(bundleId, type);
+    return { ok: true, via: 'bridge' };
+  } catch {
+    return { ok: false, reason: 'failed' };
+  }
+}
+
+export async function getAppInfo(bundleId: string): Promise<AppInfo | null> {
+  try {
+    return (await native()?.getAppInfo?.(bundleId)) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Removes an app from the phone. Only call after the user confirmed it on screen. */
+export async function uninstallApp(bundleId: string): Promise<BridgeResult> {
+  const bridge = native();
+  if (!bridge?.uninstallApp) return { ok: false, reason: 'unavailable' };
+  try {
+    await bridge.uninstallApp(bundleId, true);
+    return { ok: true, via: 'bridge' };
+  } catch {
+    return { ok: false, reason: 'failed' };
+  }
 }

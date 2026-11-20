@@ -44,10 +44,24 @@ function SheetPanel({ onClose, title, action, children }: Omit<SheetProps, 'open
     animate(y, 0, SPRING.sheet);
   }, [y]);
 
-  // Slide out when closed from outside (AnimatePresence waits for this)
+  // Slide out when closed from outside (AnimatePresence waits for this).
+  // Taps inside the sheet can leave a spring running on `y`, and the content
+  // may have changed height since it opened: stop it, measure again, and never
+  // wait forever for the animation's "done" (the sheet stayed on screen after
+  // Remove app > Cancel).
   useEffect(() => {
     if (isPresent) return;
-    void animate(y, height.current, SPRING.sheet).then(() => safeToRemove?.());
+    y.stop();
+    height.current = panel.current?.offsetHeight ?? height.current;
+    let removed = false;
+    const remove = () => {
+      if (removed) return;
+      removed = true;
+      safeToRemove?.();
+    };
+    const fallback = window.setTimeout(remove, 700);
+    void animate(y, height.current, SPRING.sheet).then(remove);
+    return () => window.clearTimeout(fallback);
   }, [isPresent, safeToRemove, y]);
 
   useEffect(() => {
@@ -83,11 +97,17 @@ function SheetPanel({ onClose, title, action, children }: Omit<SheetProps, 'open
       else animate(y, 0, SPRING.sheet);
       return memo;
     },
-    { axis: 'y', filterTaps: true, pointer: { touch: true } },
+    // Pointer events (not touch-only) and no pointer capture: with touch-only
+    // listening, WebKit with touch never turned a tap on a button inside the
+    // sheet into a click (found with Playwright's iPhone profile).
+    { axis: 'y', filterTaps: true, pointer: { capture: false } },
   );
 
   return (
-    <div className={styles.layer}>
+    // data-no-gesture: the home screen's swipe code must never take a sheet's
+    // touches (it grabbed the pointer, and WebKit then dropped the click on
+    // buttons inside the sheet).
+    <div className={styles.layer} data-no-gesture>
       <motion.div className={styles.backdrop} style={{ opacity: backdrop }} onClick={onClose} />
       <motion.div
         ref={panel}
