@@ -110,7 +110,7 @@ export const APPS: AppDefinition[] = [
   { id: 'calendar', name: 'Calendar', icon: CalendarIcon, keywords: ['events', 'agenda', 'date', 'month'], component: CalendarApp, bundleId: 'com.apple.mobilecal' },
   { id: 'reminders', name: 'Reminders', icon: RemindersIcon, keywords: ['tasks', 'todo', 'list'], component: RemindersApp, bundleId: 'com.apple.reminders' },
   { id: 'music', name: 'Music', icon: MusicIcon, keywords: ['songs', 'player', 'audio'], component: MusicApp, bundleId: 'com.apple.Music' },
-  { id: 'camera', name: 'Camera', icon: CameraIcon, keywords: ['photo', 'picture', 'selfie'], component: CameraApp },
+  { id: 'camera', name: 'Camera', icon: CameraIcon, keywords: ['photo', 'picture', 'selfie'], component: CameraApp, bundleId: 'com.apple.camera' },
   { id: 'photos', name: 'Photos', icon: PhotosIcon, keywords: ['pictures', 'gallery', 'images'], component: PhotosApp, bundleId: 'com.apple.mobileslideshow' },
   { id: 'maps', name: 'Maps', icon: MapsIcon, keywords: ['navigation', 'directions', 'places'], component: MapsApp, bundleId: 'com.apple.Maps' },
   { id: 'calculator', name: 'Calculator', icon: CalculatorIcon, keywords: ['math', 'sum'], component: CalculatorApp },
@@ -204,7 +204,6 @@ const OPTION_ONLY = ['notes'];
 
 /** Real apps that Vantage has its own glyph for (glyph, block and pixel icon packs). */
 const EXTRA_TWINS: Record<string, string> = {
-  'com.apple.camera': 'camera',
   'com.apple.mobiletimer': 'clock',
   'com.apple.calculator': 'calculator',
   'com.apple.compass': 'compass',

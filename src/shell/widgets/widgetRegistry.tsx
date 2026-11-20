@@ -1,4 +1,5 @@
 import { openGame, type GameId } from '../../apps/arcade/arcadeStore';
+import { isHosted } from '../../system/nativeBridge';
 import { runAction } from '../../system/actions';
 import { getSettings } from '../../system/settingsStore';
 import { playSound } from '../../system/sounds';
@@ -201,9 +202,13 @@ function labDefinition(id: string): WidgetDefinition | undefined {
   return definition;
 }
 
+/** Widgets that would show made-up data on the real phone until the bridge has it (Part 2). */
+const NOT_REAL_YET_ON_PHONE = ['airpods', 'devices'];
+
 /** Every widget, including the ones you made in the Widget Lab. */
 export function allWidgets(): WidgetDefinition[] {
-  return [...WIDGETS, ...getLabWidgets().map((widget) => labDefinition(widget.id)!).filter(Boolean)];
+  const widgets = isHosted() ? WIDGETS.filter((widget) => !NOT_REAL_YET_ON_PHONE.includes(widget.id)) : WIDGETS;
+  return [...widgets, ...getLabWidgets().map((widget) => labDefinition(widget.id)!).filter(Boolean)];
 }
 
 export function getWidget(id: string): WidgetDefinition | undefined {

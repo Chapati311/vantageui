@@ -1,4 +1,5 @@
 import { useDrag } from '@use-gesture/react';
+import { isHosted } from '../system/nativeBridge';
 import { animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable } from '../components/Pressable';
@@ -138,7 +139,8 @@ export function NotificationCenter({ open, onClose }: NotificationCenterProps) {
               );
             })
           )}
-          <p className={styles.note}>Notifications from other apps: available after unlock.</p>
+          {/* On the phone (host mode) nothing is "after unlock": real notifications come in Part 3 */}
+          {!isHosted() && <p className={styles.note}>Notifications from other apps: available after unlock.</p>}
         </div>
 
         <span className={styles.handle} />

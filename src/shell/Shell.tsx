@@ -3,7 +3,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { SPRING } from '../theme/tokens';
 import { BellIcon, GridIcon, LockIcon, SoundIcon, WifiIcon } from '../components/glyphs';
 import { registerShell, runAction } from '../system/actions';
-import { getApp, type AppDefinition } from '../system/appRegistry';
+import { getApp, HOST_VANTAGE_APPS, type AppDefinition } from '../system/appRegistry';
+import { getNativeApp, nativeAppId } from '../system/nativeApps';
 import { hasPasscode } from '../system/passcode';
 import { getSettings, useSetting } from '../system/settingsStore';
 import { useTheme } from '../system/theme';
@@ -153,7 +154,13 @@ export function Shell() {
   const controls = useRef({
     openApp: (requested: string, from?: ScreenRect | null) => {
       // Once Vantage is connected, Lock In lives inside it: its widgets and shortcuts open Vantage
-      const appId = requested === 'lockin' && isVantageConnected() ? 'vantage' : requested;
+      let appId = requested === 'lockin' && isVantageConnected() ? 'vantage' : requested;
+      // Host mode: a Vantage app that gave way to the real one (widgets, search,
+      // Today, quick actions still name it) opens the REAL app instead.
+      const asked = getApp(appId);
+      if (HOSTED && asked && !asked.native && !HOST_VANTAGE_APPS.includes(appId) && asked.bundleId && getNativeApp(asked.bundleId)) {
+        appId = nativeAppId(asked.bundleId);
+      }
       const app = getApp(appId);
       if (!app) return;
       closeAllOverlays();
