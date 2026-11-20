@@ -1,0 +1,21 @@
+/* The card that zooms between an icon and the full screen around a real app launch */
+.card {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  pointer-events: none;
+  will-change: clip-path, opacity;
+}
+
+/* The app's real icon, centered and small, like a launch screen */
+.icon {
+  width: min(28%, 96px);
+  aspect-ratio: 1;
+  border-radius: 22%;
+  object-fit: cover;
+}

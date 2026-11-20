@@ -18,6 +18,7 @@ import { useCustomModeSchedule } from '../system/customModes';
 import { morningSummary, useWindDownSchedule } from './windDownSchedule';
 import { AppSwitcher } from './AppSwitcher';
 import { AppView, shapeOf, type ScreenRect } from './AppView';
+import { NativeLaunch, launchNativeApp } from './NativeLaunch';
 import { Boot } from './Boot';
 import { FirstSetup } from './setup/FirstSetup';
 import { GameBoyBoot } from './GameBoyBoot';
@@ -156,9 +157,9 @@ export function Shell() {
       const app = getApp(appId);
       if (!app) return;
       closeAllOverlays();
-      // Host mode: a real installed app opens for real (iOS animates it in)
+      // Host mode: a real installed app opens for real (its icon grows, then iOS takes over)
       if (app.native && app.bundleId) {
-        void openNativeApp(app.bundleId);
+        launchNativeApp(appId, from ?? findIconRect(appId));
         return;
       }
       // App styles: "Original" opens the real iPhone app instead
@@ -419,6 +420,7 @@ export function Shell() {
         {/* A new phone: the first-boot setup, after the boot animation */}
         <AnimatePresence>{!setupDone && !booting && <FirstSetup key="setup" />}</AnimatePresence>
         <GameBoyBoot />
+        <NativeLaunch />
         <VantageOverlay />
         {booting && <Boot onDone={() => setBooting(false)} />}
       </div>
