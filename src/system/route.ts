@@ -9,7 +9,7 @@
  *   app/<id>[/<sub>]          open an app; sub = Clock tab or Customise page
  *                             (app/clock/timer, app/customise/themes)
  *   customise/<page>          same as app/customise/<page>
- *   lock | controls | notifications | search | switcher
+ *   lock | unlock | controls | notifications | search | switcher
  */
 import { runAction } from './actions';
 import { setCustomiseSection } from '../apps/customise/customiseNav';
@@ -40,6 +40,9 @@ export async function goToRoute(route: string): Promise<boolean> {
       return second ? openApp(second, third) : false;
     case 'lock':
       await runAction('shell.lock', {});
+      return true;
+    case 'unlock':
+      await runAction('shell.unlock', {});
       return true;
     case 'controls':
       await runAction('shell.openControlCenter', {});
