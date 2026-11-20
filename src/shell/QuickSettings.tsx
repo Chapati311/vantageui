@@ -22,7 +22,12 @@ import {
   SoundIcon,
   SunIcon,
   WifiIcon,
+  AirplaneIcon,
+  CellularIcon,
+  RotationLockIcon,
+  BellOffIcon,
 } from '../components/glyphs';
+import { hasRealControls, mediaCommand, setControl, useControls, type PhoneControls } from '../system/phoneControls';
 import { CalculatorIcon, LockInIcon } from '../system/appIcons';
 import { runAction } from '../system/actions';
 import { keepAwakeSupported, useKeepAwake } from '../system/keepAwake';
@@ -88,6 +93,28 @@ function MusicTile() {
   );
 }
 
+/** Music on the real phone: whatever app is playing (Spotify, Music, podcasts...). */
+function NowPlayingTile({ playing }: { playing: PhoneControls['nowPlaying'] }) {
+  return (
+    <div className={styles.music}>
+      {playing?.artwork && <img className={styles.musicArt} src={`data:image/jpeg;base64,${playing.artwork}`} alt="" />}
+      <span className={styles.musicText}>
+        <span className={styles.musicTitle}>{playing?.title ?? 'Not playing'}</span>
+        <span className={styles.musicArtist}>{playing ? playing.artist || playing.album || '' : 'Play something in any app'}</span>
+      </span>
+      <Pressable className={styles.musicButton} aria-label="Previous song" disabled={!playing} onClick={() => void mediaCommand('previous')}>
+        <SkipPreviousIcon />
+      </Pressable>
+      <Pressable className={styles.musicButton} aria-label={playing?.playing ? 'Pause' : 'Play'} disabled={!playing} onClick={() => void mediaCommand('toggle')}>
+        {playing?.playing ? <PauseIcon /> : <PlayIcon />}
+      </Pressable>
+      <Pressable className={styles.musicButton} aria-label="Next song" disabled={!playing} onClick={() => void mediaCommand('next')}>
+        <SkipNextIcon />
+      </Pressable>
+    </div>
+  );
+}
+
 /** A small round shortcut button with a name under it. */
 function Shortcut({ label, icon: Glyph, on, onPress }: { label: string; icon: () => ReactNode; on?: boolean; onPress: () => void }) {
   return (
@@ -107,7 +134,11 @@ function Shortcut({ label, icon: Glyph, on, onPress }: { label: string; icon: ()
  */
 export function QuickSettings({ open, onClose }: QuickSettingsProps) {
   const settings = useSettings();
-  const [brightness] = useSetting('brightness');
+  // On the phone (host mode) every toggle, dial and slider is the REAL one
+  const real = hasRealControls();
+  const controls = useControls();
+  const [savedBrightness] = useSetting('brightness');
+  const brightness = real && controls.brightness !== undefined ? controls.brightness : savedBrightness;
   const [controlStyle] = useSetting('controlStyle');
   const theme = useTheme();
   const awake = useKeepAwake();
@@ -161,6 +192,26 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
   const tile = (id: string): ReactNode => {
     switch (id) {
       case 'toggles':
+        if (real) {
+          // Only what iOS really reports is shown (Part 2: nothing faked)
+          const on = (value: boolean | undefined) => value === true;
+          return (
+            <div className={styles.toggleRows}>
+              <div className={styles.toggles}>
+                {controls.wifi && <RoundToggle label={controls.wifi.on && controls.wifi.network ? controls.wifi.network : 'Wi-Fi'} icon={WifiIcon} on={controls.wifi.on} onChange={(v) => void setControl('wifi', v)} />}
+                {controls.bluetooth && <RoundToggle label="Bluetooth" icon={BluetoothIcon} on={controls.bluetooth.on} onChange={(v) => void setControl('bluetooth', v)} />}
+                {controls.flashlight !== undefined && <RoundToggle label="Light" icon={FlashlightIcon} on={controls.flashlight > 0} onChange={(v) => void setControl('flashlight', v)} />}
+                {controls.dnd !== undefined && <RoundToggle label="Focus" icon={MoonIcon} on={on(controls.dnd)} onChange={(v) => void setControl('dnd', v)} />}
+              </div>
+              <div className={styles.toggles}>
+                {controls.airplane !== undefined && <RoundToggle label="Airplane" icon={AirplaneIcon} on={on(controls.airplane)} onChange={(v) => void setControl('airplane', v)} />}
+                {controls.cellular !== undefined && <RoundToggle label="Cellular" icon={CellularIcon} on={on(controls.cellular)} onChange={(v) => void setControl('cellular', v)} />}
+                {controls.rotationLock !== undefined && <RoundToggle label="Rotation" icon={RotationLockIcon} on={on(controls.rotationLock)} onChange={(v) => void setControl('rotationLock', v)} />}
+                {controls.silent !== undefined && <RoundToggle label="Silent" icon={BellOffIcon} on={on(controls.silent)} onChange={(v) => void setControl('silent', v)} />}
+              </div>
+            </div>
+          );
+        }
         return (
           <div className={styles.toggles}>
             <RoundToggle label="Wi-Fi" icon={WifiIcon} on={settings.wifi} onChange={toggle('wifi')} />
@@ -170,7 +221,7 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
           </div>
         );
       case 'music':
-        return <MusicTile />;
+        return real ? <NowPlayingTile playing={controls.nowPlaying} /> : <MusicTile />;
       case 'dials':
         return controlStyle === 'dial' ? (
           <div className={styles.dials}>
@@ -178,15 +229,17 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
               label="Brightness"
               icon={SunIcon}
               value={brightness}
-              onChange={(level) => void runAction('controls.setBrightness', { level })}
+              onInput={(level) => real && void setControl('brightness', level)}
+              onChange={(level) => (real ? void setControl('brightness', level) : void runAction('controls.setBrightness', { level }))}
             />
             <Dial
               label="Volume"
               plain
               icon={SoundIcon}
-              value={volume}
-              onInput={(level) => setVolume(level)}
+              value={real && controls.volume !== undefined ? controls.volume : volume}
+              onInput={(level) => (real ? void setControl('volume', level) : setVolume(level))}
               onChange={(level) => {
+                if (real) return void setControl('volume', level);
                 setVolume(level);
                 void runAction('music.setVolume', { level });
               }}
@@ -200,15 +253,16 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
               min={0}
               max={100}
               step={1}
-              onChange={(value) => void runAction('controls.setBrightness', { level: value / 100 })}
+              onChange={(value) => (real ? void setControl('brightness', value / 100) : void runAction('controls.setBrightness', { level: value / 100 }))}
             />
             <Slider
               label="Volume"
-              value={Math.round(volume * 100)}
+              value={Math.round((real && controls.volume !== undefined ? controls.volume : volume) * 100)}
               min={0}
               max={100}
               step={1}
               onChange={(value) => {
+                if (real) return void setControl('volume', value / 100);
                 setVolume(value / 100);
                 void runAction('music.setVolume', { level: value / 100 });
               }}

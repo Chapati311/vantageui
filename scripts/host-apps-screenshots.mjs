@@ -26,6 +26,12 @@ await context.addInitScript(({ list, icons }) => {
     sessionStorage.setItem('seeded', '1');
   }
   const opened = [];
+  window.__controls = {
+    wifi: { on: true, network: 'FibreBox_X6-160A57', bars: 2 }, bluetooth: { on: true, devices: [] }, airplane: false, cellular: true,
+    brightness: 0.47, volume: 0.5, ringerVolume: 0.5, silent: true, dnd: false, rotationLock: false, lowPower: false, flashlight: 0,
+    battery: { level: 0.91, charging: true, health: 0.87 }, accessories: [],
+    nowPlaying: { title: 'Midnight City', artist: 'M83', playing: true, app: 'com.spotify.client' },
+  };
   window.__opened = opened;
   window.vantageNative = {
     version: '0.3.0',
@@ -40,6 +46,16 @@ await context.addInitScript(({ list, icons }) => {
     setBrightness: () => Promise.resolve(),
     setFlashlight: () => Promise.resolve(),
     onVolumeChord: () => Promise.resolve(() => {}),
+    // The phone's real controls, as read from the iPhone (Part 2)
+    getControls: () => Promise.resolve(window.__controls),
+    setControl: (name, value) => {
+      const c = window.__controls;
+      if (name === 'wifi' || name === 'bluetooth') c[name] = { ...c[name], on: value };
+      else c[name] = name === 'flashlight' ? (value === true ? 1 : value === false ? 0 : value) : value;
+      opened.push(`control ${name}=${value}`);
+      return Promise.resolve();
+    },
+    media: (command) => (opened.push(`media ${command}`), Promise.resolve()),
     // Notes' real quick actions and info, as read from the iPhone
     getShortcuts: () => Promise.resolve([
       { type: 'com.apple.notes.newNote', title: 'New Note' },
@@ -77,6 +93,21 @@ await shot('library');
 await page.locator('input[aria-label="Search all apps"]').fill('s');
 await wait(400);
 await shot('library-search');
+
+// Control Center with the phone's real controls: flip Wi-Fi and the flashlight
+await go('controls');
+await wait(900);
+await shot('controls');
+await page.getByRole('button', { name: /FibreBox|Wi-Fi/ }).first().click().catch(() => problems.push('no real Wi-Fi toggle'));
+await page.getByRole('button', { name: 'Light', exact: true }).first().click().catch(() => problems.push('no real Light toggle'));
+await page.getByRole('button', { name: 'Pause' }).first().click().catch(() => problems.push('no now-playing pause'));
+await wait(400);
+await shot('controls-after');
+const sent = await page.evaluate(() => window.__opened.filter((x) => x.startsWith('control') || x.startsWith('media')));
+console.log('real controls sent:', sent.join(', '));
+for (const want of ['control wifi=false', 'control flashlight=true', 'media toggle']) if (!sent.includes(want)) problems.push(`not sent: ${want}`);
+await go('home/1');
+await wait(500);
 
 // Long-press a real app: its real quick actions, App info, Remove app
 await go('home/2');

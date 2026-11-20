@@ -1,5 +1,7 @@
+import { isHosted } from '../../system/nativeBridge';
 import { useState, type ComponentType } from 'react';
 import {
+  BluetoothIcon,
   BellIcon,
   BoltIcon,
   FlagIcon,
@@ -108,6 +110,21 @@ const SYSTEM: SectionDef[] = [
 ];
 
 const MODE_NAMES = { clean: 'Clean', focus: 'Focus', retro: 'Retro', winddown: 'Wind Down' } as const;
+/** Real iOS Settings pages, opened from SpringBoard (prefs URLs). */
+const PHONE_SETTINGS = [
+  { name: 'Wi-Fi', url: 'App-prefs:WIFI', icon: WifiIcon },
+  { name: 'Bluetooth', url: 'App-prefs:Bluetooth', icon: BluetoothIcon },
+  { name: 'Display', url: 'App-prefs:DISPLAY', icon: SunIcon },
+  { name: 'Notifications', url: 'App-prefs:NOTIFICATIONS_ID', icon: BellIcon },
+  { name: 'Battery', url: 'App-prefs:BATTERY_USAGE', icon: BoltIcon },
+  { name: 'General', url: 'App-prefs:General', icon: GridIcon },
+];
+
+/** Opens a page of the real iOS Settings app (VantageHost hands App-prefs: URLs to iOS). */
+function openIosSettings(url: string) {
+  window.location.href = url;
+}
+
 const STYLE_NAMES = { solid: 'Solid', glass: 'Glass', outline: 'Outline', tinted: 'Tinted', glossy: 'Glossy', pill: 'Black', colorblock: 'Color block', paper: 'Paper', line: 'Line' } as const;
 const APPEARANCE_NAMES = { dark: 'Dark', light: 'Light', auto: 'Automatic' } as const;
 const BATTERY_NAMES = { percent: 'Battery number', ring: 'Battery ring', bar: 'Battery bar', pixel: 'Pixel battery' } as const;
@@ -226,6 +243,23 @@ export function CustomiseApp() {
       </div>
       {grid('Look', LOOK)}
       {grid('System', SYSTEM)}
+      {/* On the phone: shortcuts into the REAL iOS Settings (Part 2) */}
+      {isHosted() && (
+        <section className={styles.group}>
+          <h2 className="label">Phone settings</h2>
+          <div className={styles.grid}>
+            {PHONE_SETTINGS.map(({ name, url, icon: Glyph }) => (
+              <Pressable key={url} className={styles.tile} onClick={() => void openIosSettings(url)}>
+                <span className={styles.tileIcon}>
+                  <Glyph />
+                </span>
+                <span className={styles.tileName}>{name}</span>
+                <span className={styles.tileValue}>Settings</span>
+              </Pressable>
+            ))}
+          </div>
+        </section>
+      )}
     </AppShell>
   );
 }

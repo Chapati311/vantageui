@@ -175,8 +175,8 @@ export const WIDGETS: WidgetDefinition[] = [
 
   // ---- Devices
   { id: 'battery', appId: 'settings', name: 'Battery ring', category: 'devices', description: "This phone's battery.", component: BatteryWidget, sizes: ['1x1', '2x2'] },
-  { id: 'airpods', appId: 'earbuds', name: 'AirPods', category: 'devices', description: 'Left, right and case (after unlock).', component: AirPodsWidget, sizes: ['2x2', '2x1'] },
-  { id: 'devices', appId: 'settings', name: 'Connected devices', category: 'devices', description: 'Bluetooth devices (after unlock).', component: ConnectedDevicesWidget, sizes: ['2x1', '2x2'] },
+  { id: 'airpods', appId: 'earbuds', name: 'AirPods', category: 'devices', description: 'Left, right and case battery.', component: AirPodsWidget, sizes: ['2x2', '2x1'] },
+  { id: 'devices', appId: 'settings', name: 'Connected devices', category: 'devices', description: 'Connected Bluetooth devices.', component: ConnectedDevicesWidget, sizes: ['2x1', '2x2'] },
   { id: 'storage', appId: 'files', name: 'Storage', category: 'devices', description: 'What Vantage stores on the phone.', component: StorageWidget, sizes: ['2x1', '2x2'] },
 ];
 
@@ -202,8 +202,8 @@ function labDefinition(id: string): WidgetDefinition | undefined {
   return definition;
 }
 
-/** Widgets that would show made-up data on the real phone until the bridge has it (Part 2). */
-const NOT_REAL_YET_ON_PHONE = ['airpods', 'devices'];
+/** Widgets that would show made-up data on the real phone (none left: Part 2 made AirPods and devices real). */
+const NOT_REAL_YET_ON_PHONE: string[] = [];
 
 /** Every widget, including the ones you made in the Widget Lab. */
 export function allWidgets(): WidgetDefinition[] {

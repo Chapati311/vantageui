@@ -309,3 +309,37 @@ export function ChevronDownIcon() {
     </Icon>
   );
 }
+
+export function AirplaneIcon() {
+  return (
+    <Icon>
+      <path d="M12 3.5c.9 0 1.4 1 1.4 2.4V10l6.6 4v1.8l-6.6-2v4.1l2 1.6V21L12 20l-3.4 1v-1.5l2-1.6v-4.1l-6.6 2V14l6.6-4V5.9c0-1.4.5-2.4 1.4-2.4Z" />
+    </Icon>
+  );
+}
+
+export function CellularIcon() {
+  return (
+    <Icon>
+      <path d="M5 18v-2M9.7 18v-5M14.3 18v-8M19 18V6" />
+    </Icon>
+  );
+}
+
+export function RotationLockIcon() {
+  return (
+    <Icon>
+      <path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 4.5v3.5H16" />
+      <rect x="9.5" y="11" width="5" height="4.5" rx="1" />
+      <path d="M10.6 11V9.8a1.4 1.4 0 0 1 2.8 0V11" />
+    </Icon>
+  );
+}
+
+export function BellOffIcon() {
+  return (
+    <Icon>
+      <path d="M8.5 5.4A5.5 5.5 0 0 1 17.5 9.5v3.2l1.5 2.8H9M6.6 8.3a5.6 5.6 0 0 0-.1 1.2v3.2L5 15.5h4M10 18.5a2 2 0 0 0 4 0M4 4l16 16" />
+    </Icon>
+  );
+}

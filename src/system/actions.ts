@@ -1,3 +1,4 @@
+import { getControls, hasRealControls, setControl } from './phoneControls';
 import {
   addLap,
   pauseTimer,
@@ -220,11 +221,15 @@ const ACTIONS = {
   'controls.toggle': define<{ control: Toggleable; on?: boolean }>(
     'Turn Wi-Fi, Bluetooth, the flashlight or Do Not Disturb on or off.',
     ({ control, on }) => {
+      // On the phone (host mode): the REAL switch (Part 2)
+      if (hasRealControls()) {
+        const real = getControls();
+        const current = { wifi: real.wifi?.on, bluetooth: real.bluetooth?.on, flashlight: (real.flashlight ?? 0) > 0, doNotDisturb: real.dnd }[control];
+        void setControl(control === 'doNotDisturb' ? 'dnd' : control, on ?? !current);
+        return;
+      }
       const next = on ?? !getSettings()[control];
       updateSettings({ [control]: next } as Partial<Settings>);
-      // For now these switches only change how they look (as asked). Connecting
-      // them to the phone goes through nativeBridge.ts (setFlashlight,
-      // toggleDoNotDisturb) once that is wanted.
     },
   ),
   'device.flashlight': define<{ on?: boolean }>(
@@ -294,7 +299,7 @@ const ACTIONS = {
     updateSettings({ lockClockStyle: styles[(index + 1) % styles.length] });
   }),
   'controls.setBrightness': define<{ level: number }>('Set the brightness from 0 to 1.', ({ level }) =>
-    updateSettings({ brightness: level }),
+    hasRealControls() ? void setControl('brightness', Math.min(1, Math.max(0, level))) : updateSettings({ brightness: level }),
   ),
 
   // ---- Clock

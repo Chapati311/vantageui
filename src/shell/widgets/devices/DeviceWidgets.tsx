@@ -3,6 +3,7 @@ import { Widget } from '../../../components/Widget';
 import { BluetoothIcon } from '../../../components/glyphs';
 import { Icon } from '../../../components/Icon';
 import { hasBridge } from '../../../system/nativeBridge';
+import { hasRealControls, useControls } from '../../../system/phoneControls';
 import styles from './DeviceWidgets.module.css';
 
 function AirPodsGlyph() {
@@ -23,12 +24,58 @@ function EmptyRing({ label }: { label: string }) {
   );
 }
 
+/** A ring filled to the real battery level, the percent inside. */
+function LevelRing({ label, level, charging }: { label: string; level: number; charging: boolean }) {
+  const percent = Math.round(Math.max(0, Math.min(1, level)) * 100);
+  return (
+    <div className={styles.ringItem}>
+      <span
+        className={`${styles.ring} ${styles.ringFilled}`}
+        style={{ background: `conic-gradient(var(--color-accent) ${percent}%, var(--color-hairline) 0)` }}
+        aria-label={`${label} ${percent}%${charging ? ', charging' : ''}`}
+      >
+        <span className={styles.ringValue}>{percent}</span>
+      </span>
+      <span className={styles.ringLabel}>{label}</span>
+    </div>
+  );
+}
+
+/** "Aaryan's AirPods Pro - Left" -> "Left" (short names under the rings). */
+const shortName = (name: string) => {
+  const part = name.match(/\b(left|right|case)\b/i)?.[1];
+  return part ? part[0].toUpperCase() + part.slice(1).toLowerCase() : name.split(/\s+/).slice(-1)[0];
+};
+
 /**
- * AirPods battery (left, right, case). iOS only tells this to native code,
- * so until the jailbreak bridge exists the widget says so instead of
+ * AirPods battery (left, right, case). On the phone the numbers come from
+ * iOS (Part 2, BatteryCenter); before that the widget says so instead of
  * guessing numbers.
  */
 export function AirPodsWidget() {
+  const controls = useControls();
+  if (hasRealControls()) {
+    const parts = (controls.accessories ?? []).slice(0, 3);
+    return (
+      <Widget shape="rounded">
+        <div className={styles.device}>
+          <div className={styles.head}>
+            <AirPodsGlyph />
+            <span className={styles.title}>AirPods</span>
+          </div>
+          {parts.length ? (
+            <div className={styles.rings}>
+              {parts.map((part) => (
+                <LevelRing key={part.name} label={shortName(part.name)} level={part.level} charging={part.charging} />
+              ))}
+            </div>
+          ) : (
+            <span className={styles.note}>Not connected</span>
+          )}
+        </div>
+      </Widget>
+    );
+  }
   return (
     <Widget shape="rounded">
       <div className={styles.device}>
@@ -49,6 +96,34 @@ export function AirPodsWidget() {
 
 /** Bluetooth devices that are connected. Needs the native bridge. */
 export function ConnectedDevicesWidget() {
+  const controls = useControls();
+  if (hasRealControls()) {
+    const devices = controls.bluetooth?.devices ?? [];
+    return (
+      <Widget shape="rounded">
+        <div className={styles.device}>
+          <div className={styles.head}>
+            <BluetoothIcon />
+            <span className={styles.title}>Devices</span>
+          </div>
+          {controls.bluetooth && !controls.bluetooth.on ? (
+            <span className={styles.note}>Bluetooth off</span>
+          ) : devices.length ? (
+            <ul className={styles.list}>
+              {devices.slice(0, 3).map((device) => (
+                <li key={device.name} className={styles.listRow}>
+                  <span className={styles.listName}>{device.name}</span>
+                  {device.battery !== undefined && <span className={styles.listValue}>{Math.round(device.battery * 100)}%</span>}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <span className={styles.note}>Nothing connected</span>
+          )}
+        </div>
+      </Widget>
+    );
+  }
   return (
     <Widget shape="rounded">
       <div className={styles.device}>
