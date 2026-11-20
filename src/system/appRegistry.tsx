@@ -202,6 +202,19 @@ const realApps = () => getNativeApps().map((app) => nativeDefinition(app.bundleI
 /** Vantage apps that are an option next to the real one: App Library and search only. */
 const OPTION_ONLY = ['notes'];
 
+/** Real apps that Vantage has its own glyph for (glyph, block and pixel icon packs). */
+const EXTRA_TWINS: Record<string, string> = {
+  'com.apple.camera': 'camera',
+  'com.apple.mobiletimer': 'clock',
+  'com.apple.calculator': 'calculator',
+  'com.apple.compass': 'compass',
+};
+export function vantageTwinOf(bundleId: string | undefined): AppDefinition | undefined {
+  if (!bundleId) return undefined;
+  const id = EXTRA_TWINS[bundleId];
+  return id ? APPS.find((app) => app.id === id) : APPS.find((app) => app.bundleId === bundleId);
+}
+
 /** Apps that get a place on the home pages. */
 export function homeApps(): AppDefinition[] {
   if (!isHosted()) return HOME_APPS;

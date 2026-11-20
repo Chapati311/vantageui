@@ -7,7 +7,9 @@ import { mkdirSync, readFileSync } from 'node:fs';
 import { browserType, ENGINE } from './_browser.mjs';
 
 const URL = process.env.APP_URL ?? 'http://localhost:5173';
-const OUT = `screenshots/host-apps/${ENGINE}/`;
+// ICONS=tinted or ICONS=glyph to check the icon packs with the real apps
+const ICONS = process.env.ICONS ?? '';
+const OUT = `screenshots/host-apps/${ENGINE}${ICONS ? `-${ICONS}` : ''}/`;
 mkdirSync(OUT, { recursive: true });
 const apps = JSON.parse(readFileSync(new globalThis.URL('./fixtures/phone-apps.json', import.meta.url), 'utf8'));
 
@@ -17,10 +19,10 @@ const context = await browser.newContext({
   deviceScaleFactor: 2,
   userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 VantageOSHost/0.3.0',
 });
-await context.addInitScript((list) => {
+await context.addInitScript(({ list, icons }) => {
   if (!sessionStorage.getItem('seeded')) {
     localStorage.clear();
-    localStorage.setItem('vantage.settings.v1', JSON.stringify({ setupDone: true, bootAnimation: false }));
+    localStorage.setItem('vantage.settings.v1', JSON.stringify({ setupDone: true, bootAnimation: false, ...(icons === 'tinted' ? { iconStyle: 'tinted' } : icons ? { iconPack: icons } : {}) }));
     sessionStorage.setItem('seeded', '1');
   }
   const opened = [];
@@ -39,7 +41,7 @@ await context.addInitScript((list) => {
     setFlashlight: () => Promise.resolve(),
     onVolumeChord: () => Promise.resolve(() => {}),
   };
-}, apps);
+}, { list: apps, icons: ICONS });
 
 const page = await context.newPage();
 const problems = [];

@@ -1,6 +1,6 @@
 import { useSetting } from '../system/settingsStore';
 import { getApp, type AppDefinition } from '../system/appRegistry';
-import { AppIcon } from './AppIcon';
+import { AppGlyph, AppIcon } from './AppIcon';
 import styles from './AppTile.module.css';
 
 /**
@@ -28,10 +28,9 @@ export function FolderTile({ name, apps }: { name: string; apps: string[] }) {
       {apps.slice(0, 4).map((id) => {
         const app = getApp(id);
         if (!app) return null;
-        const Glyph = app.icon;
         return (
           <span key={id} className={styles.mini}>
-            <Glyph />
+            <AppGlyph app={app} />
           </span>
         );
       })}

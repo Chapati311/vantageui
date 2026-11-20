@@ -108,7 +108,10 @@ export function IconsPage({ onBack }: { onBack: () => void }) {
           ]}
         />
       </Section>
-      <Section label="Pack" note="Glyph: white in solid black circles. Pixel: pixel glyphs. Color block: every app on its own color.">
+      <Section
+        label="Pack"
+        note="Glyph: white in solid black circles. Pixel: pixel glyphs. Color block: every app on its own color. The phone's real apps: Line shows their original icons (Tinted style: in your accent); the other packs use Vantage glyphs where there is one."
+      >
         <Choice
           label="Icon pack"
           value={s.iconPack}
