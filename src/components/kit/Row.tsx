@@ -54,7 +54,7 @@ export function Row({ title, detail, value, icon, trailing, onPress, onDelete, d
       animate(x, open ? -DELETE_WIDTH : 0, SPRING.ui);
       return memo;
     },
-    { axis: 'x', filterTaps: true, enabled: Boolean(onDelete) && !disabled, pointer: { touch: true } },
+    { axis: 'x', filterTaps: true, enabled: Boolean(onDelete) && !disabled, pointer: { capture: false } /* pointer events: touch-only listening ate taps on WebKit (see Sheet.tsx) */ },
   );
 
   const tappable = Boolean(onPress) && !disabled;

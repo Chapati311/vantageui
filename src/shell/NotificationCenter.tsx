@@ -8,7 +8,7 @@ import { BellIcon } from '../components/glyphs';
 import { Button, EmptyState, Row, Section } from '../components/kit';
 import { runAction } from '../system/actions';
 import { getApp } from '../system/appRegistry';
-import { timeAgo, useNotifications } from '../system/notifications';
+import { isRealNotification, openRealNotification, timeAgo, useNotifications } from '../system/notifications';
 import { MOTION, SPRING, rubberBand } from '../theme/tokens';
 import styles from './NotificationCenter.module.css';
 
@@ -76,8 +76,10 @@ export function NotificationCenter({ open, onClose }: NotificationCenterProps) {
   );
 
   const openFrom = (appId: string, id: string) => {
-    void runAction('notifications.dismiss', { id });
     onClose();
+    // A real notification opens what it is about (the chat, the email...) through iOS
+    if (isRealNotification(id)) return openRealNotification(id);
+    void runAction('notifications.dismiss', { id });
     void runAction('app.open', { appId });
   };
 
@@ -91,7 +93,7 @@ export function NotificationCenter({ open, onClose }: NotificationCenterProps) {
 
         <div className={styles.list} data-notification-list>
           {notifications.length === 0 ? (
-            <EmptyState icon={BellIcon} title="All quiet" message="Timers and reminders from your Vantage apps show up here." />
+            <EmptyState icon={BellIcon} title="All quiet" message={isHosted() ? 'New notifications from your apps show up here.' : 'Timers and reminders from your Vantage apps show up here.'} />
           ) : (
             groups.map(([appId, items]) => {
               const app = getApp(appId);

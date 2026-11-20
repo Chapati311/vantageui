@@ -14,6 +14,7 @@ import { installRoutes } from './system/route';
 import { installFpsMeter } from './system/fpsMeter';
 import { installNativeApps } from './system/nativeApps';
 import { installPhoneControls } from './system/phoneControls';
+import { installRealNotifications } from './system/notifications';
 
 preventZoom();
 // Battery: CSS animations pause while the app is in the background (see global.css)
@@ -29,6 +30,8 @@ installRoutes();
 installNativeApps();
 // Host mode: the phone's real controls (Wi-Fi, brightness, now playing...)
 installPhoneControls();
+// Host mode: real notifications from every app
+installRealNotifications();
 // Hidden FPS meter (?fps=1, `make fps` on the phone): frame times to the log
 installFpsMeter();
 // Coming back from the Spotify sign-in page: finish connecting

@@ -108,7 +108,7 @@ function Card({ appId, onOpen, onRemove }: { appId: string; onOpen: AppSwitcherP
       if (flick || up < -120) void animate(y, -700, SPRING.ui).then(() => onRemove(appId));
       else animate(y, 0, SPRING.ui);
     },
-    { axis: 'y', filterTaps: true, pointer: { touch: true } },
+    { axis: 'y', filterTaps: true, pointer: { capture: false } /* pointer events: touch-only listening ate taps on WebKit (see Sheet.tsx) */ },
   );
 
   if (!app) return null;

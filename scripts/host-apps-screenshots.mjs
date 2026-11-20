@@ -46,6 +46,14 @@ await context.addInitScript(({ list, icons }) => {
     setBrightness: () => Promise.resolve(),
     setFlashlight: () => Promise.resolve(),
     onVolumeChord: () => Promise.resolve(() => {}),
+    // Real notifications (sample content in the shape SpringBoard sends, Part 3.2)
+    getNotifications: () => Promise.resolve([
+      { id: 'n1', app: 'com.apple.MobileSMS', appName: 'Messages', title: 'Sam', message: 'Are we still on for 7?', date: Date.now() - 120000, actions: [{ id: 'reply', title: 'Reply', text: true }] },
+      { id: 'n2', app: 'com.apple.tips', appName: 'Tips', title: 'Be prepared', message: 'See tips about emergency features.', date: Date.now() - 3600000, actions: [] },
+    ]),
+    openNotification: (id) => (opened.push(`notification ${id}`), Promise.resolve()),
+    dismissNotification: (id) => (opened.push(`dismiss ${id}`), Promise.resolve()),
+    clearNotifications: () => Promise.resolve(),
     // The phone's real controls, as read from the iPhone (Part 2)
     getControls: () => Promise.resolve(window.__controls),
     setControl: (name, value) => {
@@ -106,6 +114,16 @@ await shot('controls-after');
 const sent = await page.evaluate(() => window.__opened.filter((x) => x.startsWith('control') || x.startsWith('media')));
 console.log('real controls sent:', sent.join(', '));
 for (const want of ['control wifi=false', 'control flashlight=true', 'media toggle']) if (!sent.includes(want)) problems.push(`not sent: ${want}`);
+await go('home/1');
+await wait(500);
+
+// Real notifications in the notification center; tapping one opens it through iOS
+await go('notifications');
+await wait(900);
+await shot('notifications');
+await page.getByText('Are we still on for 7?').first().click({ timeout: 5000 }).catch((e) => problems.push('real notification tap failed: ' + String(e.message).split('\n').slice(0, 6).join(' | ')));
+await wait(500);
+if (!(await page.evaluate(() => window.__opened.includes('notification n1')))) problems.push('tapping a real notification did not open it');
 await go('home/1');
 await wait(500);
 

@@ -141,3 +141,14 @@ select {
   /* Buttons inside a block are black with cream text (not black on black) */
   --color-bg: #f6f1e4;
 }
+
+/* A real app's icon (host mode) used as a small glyph (notification rows, lists):
+   icon-sized by default; home icons, folders and the App Library size it themselves */
+img.native-app-icon {
+  display: block;
+  width: var(--icon-size, 24px);
+  height: var(--icon-size, 24px);
+  border-radius: 28%;
+  object-fit: cover;
+  flex: none;
+}

@@ -48,7 +48,7 @@ export function SwipeToDelete({ onDelete, children, label = 'Delete' }: { onDele
       animate(x, open ? -WIDTH : 0, SPRING.ui);
       return memo;
     },
-    { axis: 'x', filterTaps: true, pointer: { touch: true } },
+    { axis: 'x', filterTaps: true, pointer: { capture: false } /* pointer events: touch-only listening ate taps on WebKit (see Sheet.tsx) */ },
   );
 
   return (
