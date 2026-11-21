@@ -11,6 +11,7 @@ import { LivePixel } from './LivePixel';
 import { LiveStarfield } from './LiveStarfield';
 import { LiveSundown } from './LiveSundown';
 import { LiveCodeRain } from './LiveCodeRain';
+import { LiveGlobe, LiveNetGraph, LiveRadar } from './LiveHacker';
 import { LiveWaves } from './LiveWaves';
 import { WeatherLayer } from './WeatherLayer';
 import styles from './Wallpaper.module.css';
@@ -83,6 +84,15 @@ export function Wallpaper({ place, config, paused = false, progress }: Wallpaper
           break;
         case 'coderain':
           layer = <LiveCodeRain paused={paused || place === 'preview'} />;
+          break;
+        case 'globe':
+          layer = <LiveGlobe paused={paused || place === 'preview'} />;
+          break;
+        case 'radar':
+          layer = <LiveRadar paused={paused || place === 'preview'} />;
+          break;
+        case 'netgraph':
+          layer = <LiveNetGraph paused={paused || place === 'preview'} />;
           break;
         case 'pixel':
           layer = <LivePixel />;

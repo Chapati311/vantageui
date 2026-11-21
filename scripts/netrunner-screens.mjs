@@ -65,7 +65,7 @@ const page = await context.newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
-await page.route('https://ipinfo.io/**', (r) => r.fulfill({ contentType: 'application/json', body: JSON.stringify({ city: 'Menlo Park', country: 'US', org: 'AS32934 Facebook, Inc.' }) }));
+await page.route('https://ipinfo.io/**', (r) => r.fulfill({ contentType: 'application/json', body: JSON.stringify({ city: 'Menlo Park', country: 'US', org: 'AS32934 Facebook, Inc.', loc: `${20 + Math.random() * 40},${-120 + Math.random() * 240}` }) }));
 await page.goto(URL); await page.waitForTimeout(2500); await page.reload(); await page.waitForTimeout(2500);
 const shots = [];
 const process_routes = !!process.env.ROUTES;

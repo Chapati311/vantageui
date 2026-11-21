@@ -47,7 +47,7 @@ export function LiveCodeRain({ paused }: { paused?: boolean }) {
   useEffect(() => {
     const el = canvas.current;
     const ctx = el?.getContext('2d');
-    if (!el || !ctx || paused) return;
+    if (!el || !ctx) return;
     const scale = Math.min(2, window.devicePixelRatio || 1);
     const size = 14;
     const resize = () => {
@@ -56,6 +56,7 @@ export function LiveCodeRain({ paused }: { paused?: boolean }) {
       ctx.setTransform(scale, 0, 0, scale, 0, 0);
     };
     resize();
+    window.addEventListener('resize', resize);
     const columns = Math.ceil(el.clientWidth / size);
     const drops = Array.from({ length: columns }, () => Math.random() * -40);
     const speeds = Array.from({ length: columns }, () => 0.35 + Math.random() * 0.65);
@@ -68,12 +69,26 @@ export function LiveCodeRain({ paused }: { paused?: boolean }) {
     ctx.font = `${size - 2}px ui-monospace, Menlo, monospace`;
     let last = 0;
     let frame = 0;
+    // Paused (or a preview tile): a still frame of rain, drawn once
+    if (paused) {
+      for (let i = 0; i < columns; i++) {
+        const length = 4 + Math.floor(Math.random() * 14);
+        const top = Math.random() * el.clientHeight;
+        for (let j = 0; j < length; j++) {
+          ctx.globalAlpha = (j + 1) / length * 0.8;
+          ctx.fillStyle = accent;
+          ctx.fillText(words.current[(offsets[i] + j) % words.current.length] ?? '0', i * size, top + j * size);
+        }
+      }
+      ctx.globalAlpha = 1;
+      return () => window.removeEventListener('resize', resize);
+    }
     const draw = (t: number) => {
       frame = requestAnimationFrame(draw);
       if (t - last < 50) return; // ~20 fps
       last = t;
       // Fade the old characters into the background (the trail)
-      ctx.globalAlpha = 0.14;
+      ctx.globalAlpha = 0.1;
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, el.clientWidth, el.clientHeight);
       ctx.globalAlpha = 1;
@@ -84,7 +99,7 @@ export function LiveCodeRain({ paused }: { paused?: boolean }) {
           const char = text[(offsets[i] + Math.floor(drops[i])) % text.length];
           // The head of each column is brighter
           ctx.fillStyle = accent;
-          ctx.globalAlpha = 0.85;
+          ctx.globalAlpha = 1;
           ctx.fillText(char === ' ' ? '·' : char, i * size, y);
           ctx.globalAlpha = 1;
         }
@@ -96,7 +111,6 @@ export function LiveCodeRain({ paused }: { paused?: boolean }) {
       }
     };
     frame = requestAnimationFrame(draw);
-    window.addEventListener('resize', resize);
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', resize);

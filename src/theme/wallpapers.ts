@@ -9,7 +9,7 @@
  *              scripts/gen-wallpapers.mjs)
  */
 
-export type LiveId = 'orbit' | 'starfield' | 'aurora' | 'waves' | 'sundown' | 'pixel' | 'coderain';
+export type LiveId = 'orbit' | 'starfield' | 'aurora' | 'waves' | 'sundown' | 'pixel' | 'coderain' | 'globe' | 'radar' | 'netgraph';
 export type GradientId = 'theme' | 'night' | 'ocean' | 'sunset' | 'dusk' | 'forest' | 'paper';
 
 export type WallpaperConfig =
@@ -43,6 +43,9 @@ export const LIVE_WALLPAPERS: { id: LiveId; name: string }[] = [
   { id: 'sundown', name: 'Sundown' },
   { id: 'pixel', name: 'Pixel LCD' },
   { id: 'coderain', name: 'Code Rain' },
+  { id: 'globe', name: 'Live Globe' },
+  { id: 'radar', name: 'BT Radar' },
+  { id: 'netgraph', name: 'Network' },
 ];
 
 /** Color stops from top to bottom. */

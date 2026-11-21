@@ -33,6 +33,9 @@ const ROUTES = [
   'customise/themes', 'customise/colors', 'customise/wallpapers', 'customise/lock', 'customise/home',
   'customise/icons', 'customise/statusbar', 'customise/controls', 'customise/fonts', 'customise/widgets',
   'customise/widgetlab', 'customise/sounds', 'customise/modes', 'customise/access', 'customise/motion',
+  'app/netrunner', 'app/netrunner/connection', 'app/netrunner/map', 'app/netrunner/ping', 'app/netrunner/dns', 'app/netrunner/speed',
+  'app/netrunner/privacy', 'app/netrunner/packets', 'app/netrunner/ble', 'app/netrunner/security', 'app/netrunner/toolbox',
+  'app/netrunner/terminal', 'app/netrunner/learn',
   'app/vantage', 'app/weather', 'app/calculator', 'app/compass', 'app/recorder', 'app/notes', 'app/arcade',
   ...(HOST ? ['home/9'] : ['app/phone', 'app/messages', 'app/music', 'app/files', 'app/calendar', 'app/reminders', 'app/maps', 'app/settings', 'app/lockin', 'app/photos', 'app/contacts', 'app/mail']),
 ];
@@ -50,10 +53,10 @@ await context.route('**/*', (route) => {
   if (url.startsWith(URL) || url.startsWith('data:') || url.startsWith('blob:') || /open-meteo|fonts\.g/.test(url)) return route.continue();
   return route.abort();
 });
-await context.addInitScript(({ host, list }) => {
+await context.addInitScript(({ host, list, settings }) => {
   if (!sessionStorage.getItem('seeded')) {
     localStorage.clear();
-    localStorage.setItem('vantage.settings.v1', JSON.stringify({ setupDone: true, bootAnimation: false }));
+    localStorage.setItem('vantage.settings.v1', JSON.stringify({ setupDone: true, bootAnimation: false, ...settings }));
     sessionStorage.setItem('seeded', '1');
   }
   window.open = () => null;
@@ -74,8 +77,21 @@ await context.addInitScript(({ host, list }) => {
     setBrightness: () => Promise.resolve(),
     setFlashlight: () => Promise.resolve(),
     onVolumeChord: () => Promise.resolve(() => {}),
+    // Netrunner's root helper: every tool answers with a little sample output
+    runTool: (tool) => {
+      const id = `r${Math.random().toString(36).slice(2, 8)}`;
+      setTimeout(() => window.dispatchEvent(new CustomEvent('vantage:tool', { detail: { id, message: { t: 'o', d: `${tool}: sample line` } } })), 30);
+      setTimeout(() => window.dispatchEvent(new CustomEvent('vantage:tool', { detail: { id, message: { t: 'x', c: 0 } } })), 60);
+      return Promise.resolve(id);
+    },
+    cancelTool: () => Promise.resolve(),
+    askTool: (op, tool) => Promise.resolve({ code: 0, out: tool === 'publicip' ? ['{"ip":"85.3.12.45","country":"CH"}'] : [], err: [], data: op === 'tools' ? { tools: { nmap: true }, terminal: false } : tool === 'stats' ? { cpu: { user: 1, system: 1, idle: 8, nice: 0 }, memory: { total: 3e9, free: 1e9, active: 1e9, wired: 5e8, compressed: 1e8 }, bootTime: 1, now: 100000, interfaces: { en0: { ipv4: '192.168.1.238', netmask: '255.255.255.0', rx: 10, tx: 5 } } } : null }),
+    bleScan: () => Promise.resolve('scanning'),
+    setNativeTheme: () => Promise.resolve(),
+    getControls: () => Promise.resolve({ wifi: { on: true, network: 'HomeNet', bars: 3 }, brightness: 0.5, volume: 0.5 }),
+    setControl: () => Promise.resolve(),
   };
-}, { host: HOST, list: apps });
+}, { host: HOST, list: apps, settings: JSON.parse(process.env.SETTINGS ?? '{}') });
 
 const page = await context.newPage();
 page.on('dialog', (dialog) => void dialog.dismiss());
