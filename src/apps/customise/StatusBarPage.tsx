@@ -3,6 +3,7 @@ import { Row, Section as KitSection } from '../../components/kit';
 import { runAction } from '../../system/actions';
 import { useSetting, type BatteryStyle } from '../../system/settingsStore';
 import { BatteryIndicator } from '../../shell/BatteryIndicator';
+import { hasBridge } from '../../system/nativeBridge';
 import { Section, SettingsPage } from '../settings/SettingsPage';
 import styles from './StatusBarPage.module.css';
 
@@ -20,7 +21,7 @@ export function StatusBarPage({ onBack }: { onBack: () => void }) {
     <SettingsPage title="Status bar" onBack={onBack}>
       <Section
         label="Battery"
-        note="Safari doesn't tell web apps the battery level on iPhone, so it shows -- until the native bridge is connected."
+        note={hasBridge() ? undefined : "Safari doesn't tell web apps the battery level on iPhone, so it shows -- until the native bridge is connected."}
       >
         <KitSection>
           {STYLES.map(({ id, name }) => (
