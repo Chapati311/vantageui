@@ -1,4 +1,4 @@
-import { hexToRgb, mix, rgbToHex, type RGB } from './color';
+import { contrast, hexToRgb, mix, rgbToHex, type RGB } from './color';
 import type { WallpaperConfig } from './wallpapers';
 
 /**
@@ -430,9 +430,22 @@ export function paletteOf(preset: ThemePreset): Palette {
     surface3: mix(raised, text, dark ? 0.07 : 0.1),
     text,
     text2,
-    text3: mix(text2, bg, dark ? 0.45 : 0.4),
+    text3: readableFaint(text2, bg, dark ? 0.45 : 0.4),
     accent: hexToRgb(preset.accent),
   };
+}
+
+/**
+ * The faint (third) text color: text2 mixed toward the background, but never
+ * so far that it falls below 4.5:1 contrast (WCAG AA for text; DEVICE_QA Step 2
+ * found 2.6:1 labels on the phone). If text2 itself is below that, text2.
+ */
+function readableFaint(text2: RGB, bg: RGB, most: number): RGB {
+  for (let t = most; t > 0; t -= 0.05) {
+    const candidate = mix(text2, bg, t);
+    if (contrast(candidate, bg) >= 4.5) return candidate;
+  }
+  return text2;
 }
 
 function luminanceOf([r, g, b]: RGB): number {

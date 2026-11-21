@@ -108,12 +108,12 @@ export function NotificationCenter({ open, onClose }: NotificationCenterProps) {
                       {items.length > 1 ? ` · ${items.length}` : ''}
                     </span>
                     {action && (
-                      <Pressable className={`label ${styles.groupButton}`} onClick={action.run}>
+                      <Pressable className={`label hit-44 ${styles.groupButton}`} onClick={action.run}>
                         {action.label}
                       </Pressable>
                     )}
                     <Pressable
-                      className={`label ${styles.groupButton}`}
+                      className={`label hit-44 ${styles.groupButton}`}
                       onClick={() => items.forEach((item) => void runAction('notifications.dismiss', { id: item.id }))}
                     >
                       Clear
@@ -133,7 +133,7 @@ export function NotificationCenter({ open, onClose }: NotificationCenterProps) {
                     ))}
                   </Section>
                   {folded && (
-                    <Pressable className={`label ${styles.more}`} onClick={() => setExpanded((list) => [...list, appId])}>
+                    <Pressable className={`label hit-44 ${styles.more}`} onClick={() => setExpanded((list) => [...list, appId])}>
                       Show {items.length - 2} more
                     </Pressable>
                   )}

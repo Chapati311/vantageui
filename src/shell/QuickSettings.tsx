@@ -367,7 +367,7 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
       <motion.div ref={panel} className={styles.panel} style={{ y, visibility }} {...(bind() as object)}>
         <div className={styles.head}>
           <span className="label">{editing ? 'Edit controls' : 'Controls'}</span>
-          <Pressable className={`label ${styles.edit}`} data-no-drag onClick={() => setEditing((value) => !value)}>
+          <Pressable className={`label hit-44 ${styles.edit}`} data-no-drag onClick={() => setEditing((value) => !value)}>
             {editing ? 'Done' : 'Edit'}
           </Pressable>
         </div>

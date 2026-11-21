@@ -232,3 +232,19 @@ img.native-app-icon {
   object-fit: cover;
   flex: none;
 }
+
+/* Small-looking buttons with a full 44 x 44 pt touch area (Apple's minimum):
+   an invisible layer around them catches the finger (DEVICE_QA Step 2). */
+.hit-44 {
+  position: relative;
+}
+
+.hit-44::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
