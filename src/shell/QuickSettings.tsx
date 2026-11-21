@@ -28,7 +28,7 @@ import {
   BellOffIcon,
 } from '../components/glyphs';
 import { hasRealControls, mediaCommand, setControl, useControls, type PhoneControls } from '../system/phoneControls';
-import { CalculatorIcon, LockInIcon } from '../system/appIcons';
+import { CalculatorIcon, VantageIcon } from '../system/appIcons';
 import { runAction } from '../system/actions';
 import { keepAwakeSupported, useKeepAwake } from '../system/keepAwake';
 import { currentTrack, getMusicVolume, usePlayer } from '../system/musicPlayer';
@@ -154,6 +154,8 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
   const shown = useMotionValue(open ? 1 : 0);
   const y = useTransform(shown, (value) => `${(value - 1) * 100}%`);
   const backdrop = useTransform(shown, [0, 1], [0, 0.6]);
+  // Closed = not drawn at all (nothing can peek in under the status bar)
+  const visibility = useTransform(shown, (value) => (value <= 0.002 ? 'hidden' : 'visible'));
 
   useEffect(() => {
     animate(shown, open ? 1 : 0, SPRING.sheet);
@@ -307,11 +309,11 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
         return (
           <div className={styles.shortcuts}>
             <Shortcut
-              label="Lock in"
-              icon={LockInIcon}
+              label="Vantage"
+              icon={VantageIcon}
               onPress={() => {
-                void runAction('focus.start', {});
-                setToast('Focus started: 25 min');
+                onClose();
+                void runAction('app.open', { appId: 'vantage' });
               }}
             />
             <Shortcut
@@ -360,9 +362,9 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
   return (
     <div className={`${styles.layer} ${open ? styles.open : ''}`} aria-hidden={!open}>
       {/* Dark area below the panel: tap it to close */}
-      <motion.div className={styles.backdrop} style={{ opacity: backdrop }} onClick={onClose} />
+      <motion.div className={styles.backdrop} style={{ opacity: backdrop, visibility }} onClick={onClose} />
 
-      <motion.div ref={panel} className={styles.panel} style={{ y }} {...(bind() as object)}>
+      <motion.div ref={panel} className={styles.panel} style={{ y, visibility }} {...(bind() as object)}>
         <div className={styles.head}>
           <span className="label">{editing ? 'Edit controls' : 'Controls'}</span>
           <Pressable className={`label ${styles.edit}`} data-no-drag onClick={() => setEditing((value) => !value)}>

@@ -15,7 +15,7 @@ import styles from './NotificationCenter.module.css';
 /** One quick action per app, shown on its group (e.g. Clock: another 5 minutes). */
 const GROUP_ACTIONS: Record<string, { label: string; run: () => void }> = {
   clock: { label: '+5 min', run: () => void runAction('timer.quick', { minutes: 5 }) },
-  lockin: { label: 'Lock in', run: () => void runAction('focus.start', {}) },
+  lockin: { label: 'Focus again', run: () => void runAction('focus.start', {}) },
   weather: { label: 'Refresh', run: () => void runAction('weather.refresh', {}) },
 };
 

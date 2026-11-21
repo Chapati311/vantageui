@@ -184,7 +184,7 @@ export function ExamsView() {
   return (
     <>
       {upcoming.length === 0 ? (
-        <EmptyState title="No exams" message="Add one and Lock In plans your study sessions." action={{ label: 'Add an exam', onPress: () => setAdding(true) }} />
+        <EmptyState title="No exams" message="Add one and Focus plans your study sessions." action={{ label: 'Add an exam', onPress: () => setAdding(true) }} />
       ) : (
         upcoming.map((exam) => {
           const subject = data.subjects.find((entry) => entry.id === exam.subjectId);

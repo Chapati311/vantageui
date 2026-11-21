@@ -41,10 +41,12 @@
   align-content: start;
   gap: var(--space-16) var(--grid-gap);
   overflow-y: auto;
-  padding-bottom: calc(var(--grid-cell) + var(--space-32));
   scrollbar-width: none;
   overscroll-behavior: contain;
   touch-action: pan-y;
+  /* Tiles fade out above the page dots instead of being sliced off (DEVICE_QA P1-10) */
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - var(--space-32) - var(--space-16)), transparent);
+  mask-image: linear-gradient(180deg, #000 calc(100% - var(--space-32) - var(--space-16)), transparent);
 }
 
 .groups::-webkit-scrollbar {
@@ -113,7 +115,6 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding-bottom: calc(var(--grid-cell) + var(--space-32));
   overscroll-behavior: contain;
   touch-action: pan-y;
 }
@@ -145,4 +146,17 @@
   margin: var(--space-32) 0;
   text-align: center;
   color: var(--text-secondary);
+}
+
+/* Room at the end of the lists. Spacers, not padding: iOS 16 Safari ignores
+   the bottom padding of scrolling flex/grid containers. */
+.groups::after,
+.list::after {
+  content: '';
+  height: calc(var(--grid-cell) + var(--space-32));
+  flex: none;
+}
+
+.groups::after {
+  grid-column: 1 / -1;
 }

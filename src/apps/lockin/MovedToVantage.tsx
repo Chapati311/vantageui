@@ -14,14 +14,14 @@ import { getSessions } from './lockInStats';
 export function MovedToVantage({ onStay }: { onStay: () => void }) {
   const [sent, setSent] = useState(false);
   return (
-    <AppShell title="Lock In" fixed>
+    <AppShell title="Focus" fixed>
       <EmptyState
         icon={VantageIcon}
         title="Now in Vantage"
         message={
           sent
-            ? 'Your Lock In data was sent. Vantage keeps it once you sign in there.'
-            : 'Focus, grades, homework and stats moved into Vantage. Your Lock In data is still on this phone.'
+            ? 'Your focus data was sent. Vantage keeps it once you sign in there.'
+            : 'Focus, grades, homework and stats moved into Vantage. Your focus data is still on this phone.'
         }
         action={{
           label: sent ? 'Open Vantage' : 'Send my data to Vantage',
@@ -35,7 +35,7 @@ export function MovedToVantage({ onStay }: { onStay: () => void }) {
           },
         }}
       />
-      <Button onPress={onStay}>Keep using Lock In here</Button>
+      <Button onPress={onStay}>Keep using Focus here</Button>
     </AppShell>
   );
 }

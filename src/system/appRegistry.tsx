@@ -105,7 +105,7 @@ export const APPS: AppDefinition[] = [
   { id: 'messages', name: 'Messages', icon: MessagesIcon, keywords: ['sms', 'text', 'chat'], component: MessagesApp, bundleId: 'com.apple.MobileSMS' },
   { id: 'notes', name: 'Notes', icon: NotesIcon, keywords: ['write', 'memo', 'todo', 'checklist', 'list'], component: NotesApp, bundleId: 'com.apple.mobilenotes' },
   { id: 'clock', name: 'Clock', icon: ClockIcon, keywords: ['alarm', 'timer', 'stopwatch', 'world', 'time'], component: ClockApp },
-  { id: 'lockin', name: 'Lock In', icon: LockInIcon, keywords: ['focus', 'study', 'school', 'grades', 'homework', 'pomodoro', 'work'], component: LockInApp },
+  { id: 'lockin', name: 'Focus', icon: LockInIcon, keywords: ['lock in', 'focus', 'study', 'school', 'grades', 'homework', 'pomodoro', 'work'], component: LockInApp },
   { id: 'weather', name: 'Weather', icon: WeatherIcon, keywords: ['forecast', 'rain', 'temperature'], component: WeatherApp, bundleId: 'com.apple.weather' },
   { id: 'calendar', name: 'Calendar', icon: CalendarIcon, keywords: ['events', 'agenda', 'date', 'month'], component: CalendarApp, bundleId: 'com.apple.mobilecal' },
   { id: 'reminders', name: 'Reminders', icon: RemindersIcon, keywords: ['tasks', 'todo', 'list'], component: RemindersApp, bundleId: 'com.apple.reminders' },

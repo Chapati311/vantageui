@@ -40,11 +40,15 @@ export function LockInRingWidget({ size }: WidgetProps) {
         </svg>
         <div className={styles.lockinCenter}>
           {session ? (
-            <DotNumber value={small ? String(Math.ceil(left / 60_000)) : `${String(Math.floor(left / 60_000)).padStart(2, '0')}:${String(Math.floor((left % 60_000) / 1000)).padStart(2, '0')}`} size={small ? 28 : 28} />
+            <>
+              <DotNumber value={small ? String(Math.ceil(left / 60_000)) : `${String(Math.floor(left / 60_000)).padStart(2, '0')}:${String(Math.floor((left % 60_000) / 1000)).padStart(2, '0')}`} size={small ? 28 : 28} />
+              {small && <span className={styles.ringCaption}>min left</span>}
+            </>
           ) : (
             <>
               <DotNumber value={small ? String(Math.min(99, Math.round(fraction * 100))) : String(streakDays())} size={28} />
-              {!small && <span className="label">day streak</span>}
+              {/* Says what the number is (DEVICE_QA P1-13): today's focus goal in %, or the streak */}
+              {small ? <span className={styles.ringCaption}>focus %</span> : <span className="label">day streak</span>}
             </>
           )}
         </div>
@@ -57,7 +61,7 @@ export function LockInRingWidget({ size }: WidgetProps) {
               startSession({ type: 'pomodoro', work: pomodoro.work, rest: pomodoro.rest, rounds: pomodoro.rounds, longRest: pomodoro.longRest, tag: '', goal: '', strict: false });
             }}
           >
-            Lock in
+            Focus
           </button>
         )}
       </div>
@@ -123,7 +127,7 @@ export function NextLessonWidget() {
             </span>
           </>
         ) : (
-          <span className={styles.infoDetail}>Add your week in Lock In</span>
+          <span className={styles.infoDetail}>Add your week in Focus</span>
         )}
       </div>
     </Widget>

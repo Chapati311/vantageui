@@ -79,15 +79,18 @@ export function IconsPage({ onBack }: { onBack: () => void }) {
   const s = useSettings();
   return (
     <Page title="Icons" onBack={onBack}>
-      <Section label="Shape">
+      <Section
+        label="App icons"
+        note="Original: every app's real icon in the iOS shape. Vantage glyph: every app as a glyph in a circle. Tinted: every icon in your accent color."
+      >
         <Choice
-          label="Icon shape"
-          value={s.iconShape}
-          onChange={(value) => set('iconShape', value)}
+          label="App icons"
+          value={s.iconLook}
+          onChange={(value) => set('iconLook', value)}
           options={[
-            { id: 'circle', label: 'Circle' },
-            { id: 'squircle', label: 'Squircle' },
-            { id: 'square', label: 'Square' },
+            { id: 'original', label: 'Original' },
+            { id: 'glyph', label: 'Vantage glyph' },
+            { id: 'tinted', label: 'Tinted' },
           ]}
         />
       </Section>
@@ -96,34 +99,50 @@ export function IconsPage({ onBack }: { onBack: () => void }) {
           <Switch title="Show names under icons" on={s.iconLabels} onChange={(on) => set('iconLabels', on)} />
         </KitSection>
       </Section>
-      <Section label="Style" note="Tinted uses your accent color.">
-        <Choice
-          label="Icon style"
-          value={s.iconStyle}
-          onChange={(value) => set('iconStyle', value)}
-          options={[
-            { id: 'outline', label: 'Outline' },
-            { id: 'filled', label: 'Filled' },
-            { id: 'tinted', label: 'Tinted' },
-          ]}
-        />
-      </Section>
-      <Section
-        label="Pack"
-        note="Glyph: white in solid black circles. Pixel: pixel glyphs. Color block: every app on its own color. The phone's real apps: Line shows their original icons (Tinted style: in your accent); the other packs use Vantage glyphs where there is one."
-      >
-        <Choice
-          label="Icon pack"
-          value={s.iconPack}
-          onChange={(value) => set('iconPack', value)}
-          options={[
-            { id: 'line', label: 'Line' },
-            { id: 'glyph', label: 'Glyph' },
-            { id: 'pixel', label: 'Pixel' },
-            { id: 'colorblock', label: 'Blocks' },
-          ]}
-        />
-      </Section>
+      {s.iconLook === 'glyph' && (
+        <>
+          <Section label="Glyph shape">
+            <Choice
+              label="Icon shape"
+              value={s.iconShape}
+              onChange={(value) => set('iconShape', value)}
+              options={[
+                { id: 'circle', label: 'Circle' },
+                { id: 'squircle', label: 'Squircle' },
+                { id: 'square', label: 'Square' },
+              ]}
+            />
+          </Section>
+          <Section label="Glyph style" note="Tinted uses your accent color.">
+            <Choice
+              label="Icon style"
+              value={s.iconStyle}
+              onChange={(value) => set('iconStyle', value)}
+              options={[
+                { id: 'outline', label: 'Outline' },
+                { id: 'filled', label: 'Filled' },
+                { id: 'tinted', label: 'Tinted' },
+              ]}
+            />
+          </Section>
+          <Section
+            label="Pack"
+            note="Line: thin glyphs. Glyph: white in solid black circles. Pixel: pixel glyphs. Blocks: every app on its own color. Real apps without a Vantage glyph get a clean silhouette of their icon."
+          >
+            <Choice
+              label="Icon pack"
+              value={s.iconPack}
+              onChange={(value) => set('iconPack', value)}
+              options={[
+                { id: 'line', label: 'Line' },
+                { id: 'glyph', label: 'Glyph' },
+                { id: 'pixel', label: 'Pixel' },
+                { id: 'colorblock', label: 'Blocks' },
+              ]}
+            />
+          </Section>
+        </>
+      )}
     </Page>
   );
 }

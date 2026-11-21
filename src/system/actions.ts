@@ -256,7 +256,7 @@ const ACTIONS = {
     startTimer();
   }),
   'focus.start': define<{ minutes?: number }>(
-    'Start a Lock In focus session (a 25 minute Pomodoro unless told otherwise).',
+    'Start a focus session (a 25 minute Pomodoro unless told otherwise).',
     ({ minutes }) => {
       const pomodoro = SESSION_TYPES[0];
       startSession({

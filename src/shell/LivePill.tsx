@@ -185,7 +185,7 @@ export function LivePill({ compact, unlockFirst }: { compact?: boolean; unlockFi
             transition={SPRING.ui}
             aria-label={
               activity.kind === 'focus'
-                ? `Lock In ${activity.text}. Open Lock In`
+                ? `Focus ${activity.text}. Open Focus`
                 : activity.kind === 'recording'
                   ? `Recording ${activity.text}. Tap to stop`
                   : activity.kind === 'music'

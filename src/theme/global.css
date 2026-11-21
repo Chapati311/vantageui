@@ -58,22 +58,22 @@ button {
   font-variant-numeric: tabular-nums;
 }
 
-/* ---- Customise > Icons: shape and style of every app icon */
-:root[data-icon-shape='squircle'] [data-app-icon] {
+/* ---- Customise > Icons: shape, style and pack of the glyph icons (look "Vantage glyph") */
+:root[data-icon-shape='squircle'] [data-app-icon][data-icon-face='glyph'] {
   border-radius: 32%;
 }
 
-:root[data-icon-shape='square'] [data-app-icon] {
+:root[data-icon-shape='square'] [data-app-icon][data-icon-face='glyph'] {
   border-radius: calc(var(--radius-widget) * 0.5);
 }
 
-:root[data-icon-style='filled'] [data-app-icon] {
+:root[data-icon-style='filled'] [data-app-icon][data-icon-face='glyph'] {
   border-color: transparent;
   background: var(--text-primary);
   color: var(--color-bg);
 }
 
-:root[data-icon-style='tinted'] [data-app-icon] {
+:root[data-icon-style='tinted'] [data-app-icon][data-icon-face='glyph'] {
   border-color: rgb(var(--accent-rgb) / 0.35);
   background: rgb(var(--accent-rgb) / 0.14);
   color: var(--color-accent);
@@ -83,8 +83,8 @@ button {
 /* Color block widgets: each item's color is set on it (HomeItemView), see --block-color */
 
 /* Icon pack "glyph": a white glyph in a solid glossy black circle */
-:root[data-icon-pack='glyph'] [data-app-icon],
-:root[data-icon-pack='pixel'] [data-app-icon] {
+:root[data-icon-pack='glyph'] [data-app-icon][data-icon-face='glyph'],
+:root[data-icon-pack='pixel'] [data-app-icon][data-icon-face='glyph'] {
   border: 1px solid rgb(255 255 255 / 0.08);
   background: radial-gradient(120% 80% at 50% 0%, rgb(255 255 255 / 0.12), transparent 60%), #0b0b0b;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
@@ -92,7 +92,7 @@ button {
 }
 
 /* Icon pack "color block": each app on its own flat color, black glyph */
-:root[data-icon-pack='colorblock'] [data-app-icon] {
+:root[data-icon-pack='colorblock'] [data-app-icon][data-icon-face='glyph'] {
   border: 0;
   background: var(--icon-block, #f2694a);
   box-shadow: none;
@@ -100,7 +100,7 @@ button {
 }
 
 /* Pixel icons follow the icon's own color (white in the glossy circle) */
-:root[data-icon-pack='pixel'] [data-app-icon] rect {
+:root[data-icon-pack='pixel'] [data-app-icon][data-icon-face='glyph'] rect {
   fill: currentColor;
 }
 
@@ -140,6 +140,72 @@ select {
   --home-surface: var(--block-color, #f2694a);
   /* Buttons inside a block are black with cream text (not black on black) */
   --color-bg: #f6f1e4;
+}
+
+/* ---- App icons, one system (DEVICE_QA P0-3; components/AppIcon.tsx) ------
+   .vo-face: the iOS app icon shape (continuous-corner squircle), drawn by the
+   picture itself, so it is identical on home, dock, folders and App Library. */
+.vo-face {
+  display: block;
+  width: 100%;
+  height: 100%;
+  -webkit-mask: var(--squircle) center / 100% 100% no-repeat;
+  mask: var(--squircle) center / 100% 100% no-repeat;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+:root {
+  --squircle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0C89.5 0 100 10.5 100 50S89.5 100 50 100 0 89.5 0 50 10.5 0 50 0Z'/%3E%3C/svg%3E");
+}
+
+/* Real icons: full picture, no crop, no tint, no filter, no border radius of their own.
+   They fill their slot (beats the small-glyph size of img.native-app-icon below). */
+img.native-app-icon.vo-face,
+img.vo-face {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0 !important;
+  filter: none;
+}
+
+/* Vantage's own apps in "Original": a full-color face with a white glyph */
+.vo-face-color,
+.vo-face-tint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(180deg, var(--face-from), var(--face-to));
+}
+
+.vo-face-light {
+  color: #1b1d21;
+}
+
+/* "Tinted": dark face, glyph in the accent */
+.vo-face-tint {
+  color: var(--color-accent);
+  background: linear-gradient(180deg, #1d232b, #0b0e12);
+}
+
+.vo-face-color svg,
+.vo-face-tint svg {
+  width: 52%;
+  height: 52%;
+}
+
+/* "Vantage glyph" for a real app without a hand-made glyph: its silhouette in the glyph color */
+.vo-silhouette {
+  display: block;
+  width: calc(var(--icon-size, 24px) * 1.5);
+  height: calc(var(--icon-size, 24px) * 1.5);
+  max-width: 76%;
+  max-height: 76%;
+  background: currentColor;
+  -webkit-mask: var(--mask) center / contain no-repeat;
+  mask: var(--mask) center / contain no-repeat;
 }
 
 /* A real app's icon (host mode) used as a small glyph (notification rows, lists):

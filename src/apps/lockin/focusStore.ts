@@ -192,7 +192,7 @@ function tick(): void {
     if (last && session.plan.type !== 'pomodoro') {
       update({ session: { ...session, focusedMs } });
       playSound('timerDone');
-      pushNotification({ appId: 'lockin', title: 'Lock In', body: `Session done: ${Math.round(focusedMs / 60_000)} minutes of focus.` });
+      pushNotification({ appId: 'lockin', title: 'Focus', body: `Session done: ${Math.round(focusedMs / 60_000)} minutes of focus.` });
       endSession(true);
       return;
     }
@@ -207,7 +207,7 @@ function tick(): void {
     }
     update({ session: { ...session, phase: 'work', round: session.round + 1, phaseStartedAt: now, phaseEndsAt: now + minutes(session.plan.work) } });
     playSound('unlock');
-    pushNotification({ appId: 'lockin', title: 'Lock In', body: `Round ${session.round + 1}: back to focus.` });
+    pushNotification({ appId: 'lockin', title: 'Focus', body: `Round ${session.round + 1}: back to focus.` });
   }
 }
 

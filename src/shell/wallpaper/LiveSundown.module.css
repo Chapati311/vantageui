@@ -4,16 +4,17 @@
   overflow: hidden;
 }
 
-/* A warm glow rising from the horizon */
+/* Full-screen sky: dark at the top, warm toward the horizon */
 .sky {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     180deg,
-    transparent 30%,
-    rgb(var(--accent-rgb) / 0.1) 58%,
-    rgb(var(--accent-rgb) / 0.22) 68%,
-    transparent 68.2%
+    var(--color-bg) 0%,
+    rgb(var(--accent-rgb) / 0.08) 35%,
+    rgb(var(--accent-rgb) / 0.26) 74%,
+    rgb(var(--accent-rgb) / 0.14) 74.2%,
+    var(--color-bg) 100%
   );
 }
 
@@ -21,7 +22,7 @@
 .sun {
   position: absolute;
   left: 50%;
-  top: 68%;
+  top: 74%;
   width: 62vw;
   aspect-ratio: 1;
   margin-left: -31vw;
@@ -63,24 +64,24 @@
   animation: sink 70s ease-in-out infinite alternate;
 }
 
-/* Everything below the horizon is the background color, so the sun "sets" behind it */
+/* The water below the horizon: tinted by the sun, fading to the background (full-bleed, no flat block) */
 .horizon {
   position: absolute;
   left: 0;
   right: 0;
-  top: 68%;
+  top: 74%;
   bottom: 0;
-  background: var(--color-bg);
-  border-top: 1px solid var(--color-hairline);
+  background: linear-gradient(180deg, rgb(var(--accent-rgb) / 0.16) 0%, var(--color-bg) 100%), var(--color-bg);
+  border-top: 1px solid rgb(var(--accent-rgb) / 0.35);
 }
 
 /* Thin lines on the "water", catching the light */
 .reflection {
   position: absolute;
-  left: 25%;
-  right: 25%;
-  top: 70%;
-  height: 12%;
+  left: 10%;
+  right: 10%;
+  top: 75%;
+  height: 22%;
   background: repeating-linear-gradient(
     180deg,
     rgb(var(--accent-rgb) / 0.25) 0 1px,

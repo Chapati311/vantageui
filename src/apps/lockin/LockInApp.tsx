@@ -35,7 +35,7 @@ export function LockInApp() {
   if (blocking) return <BlockingPage onBack={() => setBlocking(false)} />;
 
   const student = data.role === 'student';
-  const titles: Record<Tab, string> = { focus: 'Lock In', school: student ? 'School' : 'Work', winddown: 'Wind Down', stats: 'Stats' };
+  const titles: Record<Tab, string> = { focus: 'Focus', school: student ? 'School' : 'Work', winddown: 'Wind Down', stats: 'Stats' };
 
   return (
     <AppShell

@@ -141,7 +141,13 @@
 
 .quote {
   margin: 0;
-  padding: 0 var(--space-4);
+  /* Legibility scrim (DEVICE_QA P1-8): the quote sits on a soft glass card,
+     so busy wallpaper art (the Sundown sun) never runs through the text */
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-widget);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   font-family: var(--font-serif);
   font-size: var(--text-17);
   line-height: 1.3;

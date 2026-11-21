@@ -97,6 +97,11 @@
 
 .connect {
   height: var(--space-32);
+  padding: 0 var(--space-12);
+  /* One line, always (a 2-line label overflowed the pill on the phone) */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--text-primary);

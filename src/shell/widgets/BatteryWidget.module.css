@@ -28,6 +28,17 @@
 .percent {
   position: relative;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.caption {
+  font-size: var(--text-11);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--widget-text-secondary, var(--text-secondary));
 }
 
 /* Charging: dots ride around the ring in a wave, brightest at the front */

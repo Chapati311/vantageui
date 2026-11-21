@@ -25,6 +25,8 @@
   flex-direction: column;
   gap: var(--space-16);
   max-height: 100%;
+  /* Taller content must not spill out below the panel (it would peek in when closed) */
+  overflow: hidden;
   padding: var(--top-inset) var(--grid-margin) var(--space-12);
   border-bottom: var(--border-widget);
   border-radius: 0 0 var(--radius-widget) var(--radius-widget);

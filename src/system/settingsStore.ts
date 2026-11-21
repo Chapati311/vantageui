@@ -16,6 +16,9 @@ export type WidgetStyle = (typeof WIDGET_STYLES)[number];
 /** How app icons are drawn: line glyphs, glyph in a solid circle, pixel glyphs, or on color blocks */
 export const ICON_PACKS = ['line', 'glyph', 'pixel', 'colorblock'] as const;
 export type IconPack = (typeof ICON_PACKS)[number];
+/** Every app's icon, one consistent look: real icons in the iOS squircle, Vantage glyphs in circles, or all in the accent */
+export const ICON_LOOKS = ['original', 'glyph', 'tinted'] as const;
+export type IconLook = (typeof ICON_LOOKS)[number];
 /** How numbers are drawn everywhere: dot matrix, big serif numerals, or a segmented mono */
 export const NUMERAL_STYLES = ['dot', 'serif', 'segment'] as const;
 export type NumeralStyle = (typeof NUMERAL_STYLES)[number];
@@ -102,6 +105,8 @@ export interface Settings {
   iconLabels: boolean;
   iconStyle: IconStyle;
   iconPack: IconPack;
+  /** Original (default): real icons, iOS squircle. Glyph: Vantage glyphs in circles. Tinted: everything in the accent. */
+  iconLook: IconLook;
   numerals: NumeralStyle;
   uiFont: UiFont;
 
@@ -205,6 +210,7 @@ export const DEFAULT_SETTINGS: Settings = {
   iconLabels: true,
   iconStyle: 'outline',
   iconPack: 'line',
+  iconLook: 'original',
   numerals: 'dot',
   uiFont: 'inter',
   bootAnimation: true,
@@ -335,6 +341,7 @@ export function sanitizeSettings(input: unknown): Settings {
     iconShape: oneOf(raw.iconShape, ['circle', 'squircle', 'square'] as const, d.iconShape),
     iconStyle: oneOf(raw.iconStyle, ['outline', 'filled', 'tinted'] as const, d.iconStyle),
     iconPack: oneOf(raw.iconPack, ICON_PACKS, d.iconPack),
+    iconLook: oneOf(raw.iconLook, ICON_LOOKS, d.iconLook),
     numerals: oneOf(raw.numerals, NUMERAL_STYLES, d.numerals),
     uiFont: oneOf(raw.uiFont, ['inter', 'system', 'serif', 'mono'] as const, d.uiFont),
     bootAnimation: bool(raw.bootAnimation, d.bootAnimation),

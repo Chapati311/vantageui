@@ -57,7 +57,7 @@ export function SettingsApp() {
         <Row icon={<SettingsIcon />} title="App styles" detail="Vantage or the original iPhone app" value={originals ? `${originals} original` : 'All Vantage'} onPress={() => setPage('appstyles')} />
         <Row icon={<BoltIcon />} title="Sound" value={settings.soundsEnabled ? `${Math.round(settings.soundVolume * 100)}%` : 'Off'} onPress={() => setPage('sound')} />
         <Row title="Accessibility" value={`${Math.round(settings.textScale * 100)}% text`} onPress={() => setPage('access')} />
-        <Row title="Lock In and app blocking" onPress={() => void runAction('app.open', { appId: 'lockin' })} />
+        <Row title="Focus and app blocking" onPress={() => void runAction('app.open', { appId: 'lockin' })} />
       </Section>
       <Section label="About">
         <Row title="Vantage OS" value="1.0" />

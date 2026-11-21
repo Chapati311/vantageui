@@ -8,7 +8,8 @@
 
 .layer {
   position: absolute;
-  inset: 0;
+  /* Bigger than the screen on every side: parallax, scale and blur never show an edge */
+  inset: calc(-2 * var(--space-32));
   will-change: transform, opacity;
 }
 

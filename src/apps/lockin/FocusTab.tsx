@@ -125,7 +125,7 @@ function Plan() {
         <Row title="Strict" detail="No pausing; ending early takes a 60 s wait" trailing={<Toggle label="Strict" on={strict} onChange={setStrict} />} />
       </Section>
       <Button kind="primary" wide onPress={() => startSession(plan)}>
-        Lock in
+        Start focus
       </Button>
       <AmbientPicker />
     </>

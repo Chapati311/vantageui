@@ -64,7 +64,20 @@
   overscroll-behavior: contain;
   touch-action: pan-y;
   scrollbar-width: none;
-  padding-bottom: var(--space-32);
+}
+
+/* Room at the end of a scrolling page. A spacer, not padding: iOS 16 Safari
+   ignores the bottom padding of a scrolling flex column, so the last cards
+   were cut off on the phone (DEVICE_QA P1-9). */
+.body::after {
+  content: '';
+  flex: none;
+  height: var(--body-end, var(--space-32));
+  margin-top: calc(-1 * var(--space-24)); /* the gap before it doesn't count */
+}
+
+.fixed::after {
+  display: none;
 }
 
 /* In a scrolling page nothing may be squeezed: the page scrolls instead */
@@ -88,7 +101,7 @@
 /* Leave room under the content for the floating tab bar (the last card can
    always be scrolled fully above it) */
 .withTabs .body {
-  padding-bottom: calc(var(--space-32) * 3 + var(--space-16));
+  --body-end: calc(var(--space-32) * 3 + var(--space-16));
 }
 
 .withTabs .fixed {

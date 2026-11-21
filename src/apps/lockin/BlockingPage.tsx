@@ -83,7 +83,7 @@ export function BlockingPage({ onBack }: { onBack: () => void }) {
           ]}
         />
       </Section>
-      <Section label="Rules" note="Shortcuts: make two iOS Shortcuts named FocusOn and FocusOff that turn a Focus on and off. Lock In runs them at the start and end of each session.">
+      <Section label="Rules" note="Shortcuts: make two iOS Shortcuts named FocusOn and FocusOff that turn a Focus on and off. Focus runs them at the start and end of each session.">
         <Row title="Strict mode" detail="No emergency unlock" trailing={<Toggle label="Strict mode" on={blocking.strict} onChange={(on) => set({ strict: on })} />} />
         <Row title="Silence notifications" detail="Runs FocusOn / FocusOff" trailing={<Toggle label="Silence notifications" on={blocking.useFocusShortcuts} onChange={(on) => set({ useFocusShortcuts: on })} />} />
       </Section>

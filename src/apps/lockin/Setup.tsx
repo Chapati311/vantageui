@@ -8,7 +8,7 @@ import { GRADING_SYSTEMS } from './grading';
 import { SetupArt } from './SetupArt';
 import styles from './Setup.module.css';
 
-const STEPS = ['Lock In', 'Where', 'Distractions', 'Your goal'];
+const STEPS = ['Focus', 'Where', 'Distractions', 'Your goal'];
 
 /**
  * First launch: student or working, country (sets the grading system),

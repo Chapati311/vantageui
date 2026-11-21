@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react';
 
 const cache = new Map<string, string>();
-const SIZE = 120;
+const SIZE = 180;
 
 function hexToRgb(hex: string): [number, number, number] | null {
   const m = hex.trim().match(/^#?([0-9a-f]{6})$/i);

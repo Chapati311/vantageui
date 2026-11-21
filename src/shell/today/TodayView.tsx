@@ -213,7 +213,7 @@ export function TodayView({ onOpenApp }: { onOpenApp: (appId: string) => void })
               ))}
             </ol>
             {homework.length === 0 && (
-              <p className={styles.detail}>No open homework, so the plan only has your fixed times. Add homework in Lock In.</p>
+              <p className={styles.detail}>No open homework, so the plan only has your fixed times. Add homework in Focus.</p>
             )}
           </motion.div>
         )}

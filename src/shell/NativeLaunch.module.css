@@ -9,13 +9,14 @@
   justify-content: center;
   background: var(--color-bg);
   pointer-events: none;
-  will-change: clip-path, opacity;
+  will-change: opacity;
 }
 
 /* The app's real icon, centered and small, like a launch screen */
 .icon {
-  width: min(28%, 96px);
-  aspect-ratio: 1;
-  border-radius: 22%;
+  width: 96px;
+  height: 96px;
+  border-radius: 22.5%;
   object-fit: cover;
+  will-change: transform;
 }

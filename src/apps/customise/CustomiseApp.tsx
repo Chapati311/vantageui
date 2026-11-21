@@ -188,7 +188,7 @@ export function CustomiseApp() {
     lock: LOCK_CLOCK_NAMES[settings.lockClockStyle],
     statusbar: BATTERY_NAMES[settings.batteryStyle],
     home: { dots: 'Page dots', numbers: 'Page numbers', hidden: 'No indicator' }[settings.pageDots],
-    icons: `${settings.iconShape[0].toUpperCase()}${settings.iconShape.slice(1)}, ${settings.iconStyle}`,
+    icons: settings.iconLook === 'glyph' ? `Vantage glyph, ${settings.iconShape}` : settings.iconLook === 'tinted' ? 'Tinted' : 'Original',
     fonts: { inter: 'Inter', system: 'System', serif: 'Serif', mono: 'Mono' }[settings.uiFont],
     widgetlab: labCount ? `${labCount} made` : 'Build your own',
     controls: settings.controlStyle === 'dial' ? 'Round dial' : 'Slider',

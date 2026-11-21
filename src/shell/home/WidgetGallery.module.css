@@ -69,8 +69,14 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  padding-bottom: calc(var(--safe-bottom) + var(--space-32));
   scrollbar-width: none;
+}
+
+/* Room at the end (a spacer: iOS 16 Safari ignores bottom padding here) */
+.list::after {
+  content: '';
+  flex: none;
+  height: calc(var(--safe-bottom) + var(--space-32) - var(--space-16));
 }
 
 .list::-webkit-scrollbar {

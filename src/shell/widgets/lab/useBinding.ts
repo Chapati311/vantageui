@@ -23,7 +23,7 @@ export const BINDINGS: { id: Binding; name: string }[] = [
   { id: 'dayProgress', name: 'Day so far' },
   { id: 'monthProgress', name: 'Month so far' },
   { id: 'yearProgress', name: 'Year so far' },
-  { id: 'focusToday', name: 'Focus today (Lock In)' },
+  { id: 'focusToday', name: 'Focus today' },
   { id: 'nowPlaying', name: 'Now playing (Music)' },
   { id: 'custom', name: 'My own text' },
 ];

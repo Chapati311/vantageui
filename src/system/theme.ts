@@ -488,6 +488,7 @@ function apply() {
     root.dataset.iconShape = s.iconShape;
     root.dataset.iconStyle = s.iconStyle;
     root.dataset.iconPack = next.retro ? 'line' : s.iconPack;
+    root.dataset.iconLook = next.retro ? 'glyph' : s.iconLook;
     root.dataset.widgetStyle = next.retro ? 'retro' : s.widgetStyle;
     setRetroMotion(next.retro !== null);
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next.bg);

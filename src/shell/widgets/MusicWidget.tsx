@@ -5,6 +5,7 @@ import { setCustomiseSection } from '../../apps/customise/customiseNav';
 import { runAction } from '../../system/actions';
 import { currentTrack, getAnalyser, next, previous, togglePlay, usePlayer } from '../../system/musicPlayer';
 import { connectSpotify, spotifyControl, useSpotify } from '../../system/spotify';
+import { hasRealControls, mediaCommand, useControls } from '../../system/phoneControls';
 import styles from './MusicWidget.module.css';
 
 const COLUMNS = 9;
@@ -71,13 +72,44 @@ function Controls({ playing, onToggle, onNext, onPrevious }: { playing: boolean;
 }
 
 /**
- * Now playing: Spotify (when connected), otherwise your own music (the last
- * song you played), otherwise a "Connect Spotify" button.
+ * Now playing. On the phone (host mode): whatever ANY app is playing (Music,
+ * Spotify, YouTube...), with real controls. Otherwise Spotify (when
+ * connected), your own music (the last song you played), or a Connect button.
  */
 export function MusicWidget() {
   const spotify = useSpotify();
   const player = usePlayer();
   const own = currentTrack(player) ?? (player.tracks.length ? player.tracks[0] : undefined);
+  const controls = useControls();
+  const real = hasRealControls();
+  const playing = controls.nowPlaying;
+
+  if (real && playing && !player.playing) {
+    return (
+      <Widget shape="rounded">
+        <div className={styles.music}>
+          <div className={styles.head}>
+            {playing.artwork ? (
+              <img className={styles.cover} src={`data:image/jpeg;base64,${playing.artwork}`} alt="" />
+            ) : (
+              <span className="label">{playing.playing ? 'Now playing' : 'Paused'}</span>
+            )}
+            <Dots playing={playing.playing} live={false} />
+          </div>
+          <div className={styles.text}>
+            <span className={styles.title}>{playing.title}</span>
+            {playing.artist && <span className={styles.note}>{playing.artist}</span>}
+          </div>
+          <Controls
+            playing={playing.playing}
+            onToggle={() => void mediaCommand('toggle')}
+            onNext={() => void mediaCommand('next')}
+            onPrevious={() => void mediaCommand('previous')}
+          />
+        </div>
+      </Widget>
+    );
+  }
 
   if (spotify.connected && spotify.track) {
     const track = spotify.track;
@@ -130,7 +162,7 @@ export function MusicWidget() {
         </div>
         <div className={styles.text}>
           <span className={styles.title}>Nothing playing</span>
-          <span className={styles.note}>Connect Spotify, or add your own songs in Music.</span>
+          <span className={styles.note}>{real ? 'Play something in any app and it shows here.' : 'Connect Spotify, or add your own songs in Music.'}</span>
         </div>
         <button
           type="button"
@@ -144,8 +176,9 @@ export function MusicWidget() {
             setCustomiseSection('music');
             void runAction('app.open', { appId: 'customise' });
           }}
+          aria-label="Connect Spotify"
         >
-          Connect Spotify
+          Connect
         </button>
       </div>
     </Widget>

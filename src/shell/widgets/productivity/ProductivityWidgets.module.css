@@ -251,3 +251,11 @@
 .lockinSmall .lockinCenter {
   margin-top: 0;
 }
+
+.ringCaption {
+  font-size: var(--text-11);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--widget-text-secondary, var(--text-secondary));
+}
