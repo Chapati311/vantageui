@@ -242,3 +242,17 @@
 .handsCenter {
   fill: #ff3b30;
 }
+
+/* Terminal: "root@vantage:~$ date", then the time */
+.prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-8);
+}
+
+.promptLine {
+  font-family: var(--font-mono);
+  font-size: var(--text-15);
+  color: var(--color-accent);
+}

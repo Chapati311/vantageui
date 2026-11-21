@@ -22,7 +22,7 @@ export type IconLook = (typeof ICON_LOOKS)[number];
 /** How numbers are drawn everywhere: dot matrix, big serif numerals, or a segmented mono */
 export const NUMERAL_STYLES = ['dot', 'serif', 'segment'] as const;
 export type NumeralStyle = (typeof NUMERAL_STYLES)[number];
-export const LOCK_CLOCK_STYLES = ['dot', 'pixel', 'serif', 'vertical', 'analog', 'flip', 'binary', 'word', 'segment', 'numeral', 'hands'] as const;
+export const LOCK_CLOCK_STYLES = ['dot', 'pixel', 'serif', 'vertical', 'analog', 'flip', 'binary', 'word', 'segment', 'numeral', 'hands', 'prompt'] as const;
 export type LockClockStyle = (typeof LOCK_CLOCK_STYLES)[number];
 /** The one set of names for the lock clock styles (setup, Customise, everywhere). */
 export const LOCK_CLOCK_NAMES: Record<LockClockStyle, string> = {
@@ -37,6 +37,7 @@ export const LOCK_CLOCK_NAMES: Record<LockClockStyle, string> = {
   segment: 'Segment',
   numeral: 'Numeral',
   hands: 'Three hands',
+  prompt: 'Terminal',
 };
 export type BatteryStyle = 'percent' | 'ring' | 'bar' | 'pixel';
 export type UiFont = 'inter' | 'system' | 'serif' | 'mono';

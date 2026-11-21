@@ -510,7 +510,7 @@ function apply() {
       retro: next.retro !== null,
       preset: next.presetId,
       clock: s.lockClockStyle,
-      terminal: /terminal|matrix|hacker|amber|cyan|redteam|ghost/i.test(next.presetId),
+      terminal: s.mode === 'hacker' || s.lockClockStyle === 'prompt',
     });
   };
 

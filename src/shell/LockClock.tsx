@@ -64,6 +64,15 @@ export function LockClock({ style }: LockClockProps) {
     case 'hands':
       clock = <HandsClock size={large ? 220 : 156} />;
       break;
+    case 'prompt':
+      // Hacker look: the time as the answer to a terminal command
+      clock = (
+        <span className={styles.prompt}>
+          <span className={styles.promptLine}>root@vantage:~$ date</span>
+          <DotNumber value={formatTime(now)} size={dotSize} clock blinkColon />
+        </span>
+      );
+      break;
     default:
       clock = <DotNumber value={formatTime(now)} size={dotSize} clock blinkColon />;
   }
