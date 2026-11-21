@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { ChoiceList } from '../../components/ChoiceList';
-import { Button, Row, Section as KitSection, SegmentedControl, SwipeToDelete } from '../../components/kit';
+import { Button, Row, Section as KitSection, SegmentedControl, SwipeToDelete, Toggle } from '../../components/kit';
 import { runAction } from '../../system/actions';
 import { deleteMode, endMode, saveMode, startMode, useCustomModes } from '../../system/customModes';
 import { useSettings, type ModeId } from '../../system/settingsStore';
-import { getPreset } from '../../theme/presets';
+import { getPreset, presetsIn } from '../../theme/presets';
 import { Section, SettingsPage } from './SettingsPage';
 import styles from './SettingsApp.module.css';
 
@@ -29,9 +29,25 @@ export function ModePage({ onBack }: { onBack: () => void }) {
             { id: 'focus', name: 'Focus', detail: 'Grayscale, only Phone, Messages, Music, Notes and Clock, a big clock. Can lock itself.' },
             { id: 'retro', name: 'Retro', detail: `The old-phone experience in ${getPreset(s.retroTheme).name}, with Snake` },
             { id: 'winddown', name: 'Wind Down', detail: 'Warm and dimming, a simple home, distractions locked' },
+            { id: 'hacker', name: 'Hacker', detail: `Terminal colours (${getPreset(s.hackerTheme).name}), monospace, code rain, live network widgets and Netrunner` },
           ]}
         />
       </Section>
+
+      {s.mode === 'hacker' && (
+        <Section label="Hacker" note="Netrunner (the hacker tools) is on the first home page. The CRT effect is a still overlay: it costs no battery.">
+          <ChoiceList<string>
+            label="Hacker theme"
+            value={s.hackerTheme}
+            onChange={(id) => void runAction('theme.apply', { id })}
+            options={presetsIn('hacker').map((preset) => ({ id: preset.id, name: preset.name, detail: preset.accentName }))}
+          />
+          <KitSection>
+            <Row title="CRT effect" detail="Faint scanlines and glowing text" trailing={<Toggle label="CRT effect" on={s.crtEffect} onChange={(on) => void runAction('settings.set', { key: 'crtEffect', value: on })} />} />
+            <Row title="Access granted" detail="A short animation after unlocking" trailing={<Toggle label="Access granted" on={s.accessGranted} onChange={(on) => void runAction('settings.set', { key: 'accessGranted', value: on })} />} />
+          </KitSection>
+        </Section>
+      )}
 
       <Section label="Your modes" note={modes.length ? 'Tap to switch on or off. Swipe left to delete.' : 'Save the look you have now as a mode: theme, wallpaper, accent, widget and icon style, font.'}>
         {modes.length > 0 && (

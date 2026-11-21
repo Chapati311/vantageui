@@ -236,7 +236,7 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
   const Content = app.component;
 
   return (
-    <motion.div ref={ref} className={styles.view} style={{ x, y, scaleX, scaleY, opacity, borderRadius }}>
+    <motion.div ref={ref} className={styles.view} data-app-view style={{ x, y, scaleX, scaleY, opacity, borderRadius }}>
       <OverlayLayer>
         <div className={styles.content}>
           <Content />

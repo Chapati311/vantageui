@@ -8,7 +8,7 @@ import type { WallpaperConfig } from './wallpapers';
  * CSS variables.
  */
 
-export type ThemeGroup = 'dark' | 'light' | 'retro';
+export type ThemeGroup = 'dark' | 'light' | 'retro' | 'hacker';
 
 /** How a retro theme draws the home and lock screens (see src/shell/retro) */
 export type RetroStyle = 'phone' | 'terminal' | 'desktop';
@@ -44,6 +44,77 @@ export interface ThemePreset {
 }
 
 export const PRESETS: ThemePreset[] = [
+  // ---- Hacker mode (HACKER_MODE.md 1): terminal colours on a modern UI ----
+  {
+    id: 'hk-green',
+    name: 'Green Terminal',
+    group: 'hacker',
+    accentName: 'phosphor',
+    bg: '#020A04',
+    surface: '#06140A',
+    raised: '#0B2213',
+    text: '#B8FFCB',
+    text2: '#4FD27A',
+    accent: '#33FF66',
+    wallpaper: { kind: 'live', id: 'coderain' },
+    glow: 1,
+  },
+  {
+    id: 'hk-amber',
+    name: 'Amber CRT',
+    group: 'hacker',
+    accentName: 'amber',
+    bg: '#0A0600',
+    surface: '#150D02',
+    raised: '#241604',
+    text: '#FFE2A8',
+    text2: '#D59A2A',
+    accent: '#FFB000',
+    wallpaper: { kind: 'live', id: 'coderain' },
+    glow: 1,
+  },
+  {
+    id: 'hk-cyan',
+    name: 'Cyan Ice',
+    group: 'hacker',
+    accentName: 'ice',
+    bg: '#02080A',
+    surface: '#061418',
+    raised: '#0B2228',
+    text: '#C9FBFF',
+    text2: '#47BFD0',
+    accent: '#00E5FF',
+    wallpaper: { kind: 'live', id: 'coderain' },
+    glow: 1,
+  },
+  {
+    id: 'hk-red',
+    name: 'Red Team',
+    group: 'hacker',
+    accentName: 'red',
+    bg: '#0A0303',
+    surface: '#170707',
+    raised: '#260C0C',
+    text: '#FFD6D6',
+    text2: '#E06666',
+    accent: '#FF3B3B',
+    wallpaper: { kind: 'live', id: 'coderain' },
+    glow: 1,
+  },
+  {
+    id: 'hk-ghost',
+    name: 'Ghost',
+    group: 'hacker',
+    accentName: 'white',
+    bg: '#000000',
+    surface: '#0A0A0A',
+    raised: '#161616',
+    text: '#FFFFFF',
+    text2: '#A6A6A6',
+    accent: '#FFFFFF',
+    wallpaper: { kind: 'solid', color: 'bg' },
+    glow: 0,
+  },
   // ---- Dark ---------------------------------------------------------------
   {
     id: 'midnight',

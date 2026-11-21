@@ -72,7 +72,8 @@ function useAppPicture(app: AppDefinition) {
   const retro = theme.retro !== null;
   useNativeApps(); // badges and icons update live
   const real = app.native && app.bundleId ? getNativeApp(app.bundleId) : undefined;
-  const look = retro ? 'glyph' : iconLook;
+  // Retro: its pixel glyphs. Hacker mode: everything in the accent (terminal look).
+  const look = retro ? 'glyph' : theme.mode === 'hacker' ? 'tinted' : iconLook;
   const pack = retro ? 'pixel' : iconPack;
   const twin = real ? vantageTwinOf(app.bundleId) : undefined;
   const accent = useMemo(() => currentAccent(), [theme]); // eslint-disable-line react-hooks/exhaustive-deps

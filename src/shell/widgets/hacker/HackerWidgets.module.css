@@ -1,0 +1,96 @@
+/* Hacker widgets: terminal-style text on the widget surface */
+.box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-4);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-12) var(--space-16);
+  font-family: var(--font-mono);
+  color: var(--widget-text, var(--text-primary));
+  overflow: hidden;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: var(--text-11);
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: var(--color-accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.line {
+  font-size: 11px;
+  line-height: 1.35;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.big {
+  font-size: var(--text-17);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dim {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.warn {
+  color: #ffb25b;
+}
+
+.ok {
+  display: inline-block;
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--radius-circle);
+  background: var(--color-accent);
+  box-shadow: 0 0 var(--space-8) var(--color-accent);
+}
+
+.spark {
+  width: 100%;
+  height: var(--space-24);
+  margin-top: var(--space-4);
+}
+
+.radarBox {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.radar {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sweep {
+  transform-origin: 50px 50px;
+  animation: sweep 2.4s linear infinite;
+}
+
+@keyframes sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.radarCount {
+  position: absolute;
+  right: var(--space-12);
+  bottom: var(--space-8);
+  font-family: var(--font-mono);
+  font-size: var(--text-13);
+  color: var(--color-accent);
+}

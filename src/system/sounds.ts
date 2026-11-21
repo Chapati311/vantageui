@@ -62,6 +62,8 @@ const PACKS: Record<Exclude<SoundPack, 'auto'>, { wave: OscillatorType; pitch: n
   glass: { wave: 'triangle', pitch: 1.5, length: 2.2 },
   keys: { wave: 'square', pitch: 0.35, length: 0.6, click: true },
   retro: { wave: 'square', pitch: 1, length: 1 },
+  // Hacker mode: short, high terminal beeps with a key click
+  terminal: { wave: 'square', pitch: 1.6, length: 0.45, click: true },
 };
 
 let noise: AudioBuffer | null = null;
@@ -87,7 +89,8 @@ export function playSound(name: SoundName): void {
   const audio = getContext();
   if (!audio) return;
   // "auto": retro themes bleep like an old phone, modern ones are soft
-  const pack = PACKS[soundPack === 'auto' ? (document.documentElement.dataset.retro ? 'retro' : 'soft') : soundPack];
+  const root = document.documentElement.dataset;
+  const pack = PACKS[soundPack === 'auto' ? (root.retro ? 'retro' : root.mode === 'hacker' ? 'terminal' : 'soft') : soundPack];
 
   for (const note of SOUNDS[name]) {
     const start = audio.currentTime + note.at;

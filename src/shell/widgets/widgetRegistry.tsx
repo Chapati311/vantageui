@@ -47,6 +47,8 @@ import { WorldClocksWidget } from './time/WorldClocksWidget';
 import { getLabWidget, getLabWidgets, useLabWidgets } from './lab/labStore';
 import { LabWidgetView } from './lab/LabWidget';
 import type { WidgetDefinition, WidgetProps, WidgetTapContext } from './types';
+import { DevicesWidget, NetStatusWidget, PortsWidget, RadarWidget, SystemWidget, TrafficWidget } from './hacker/HackerWidgets';
+import { setNetrunnerTool } from '../../apps/netrunner/netrunnerNav';
 
 const openArcade = (game: GameId) => ({ openApp }: WidgetTapContext) => {
   openGame(game);
@@ -69,7 +71,21 @@ const game = (id: GameId, name: string, description: string): WidgetDefinition =
  * folder, add an entry below (category, sizes, a one-line description).
  * It then shows up in the widget gallery (edit mode > Add widget).
  */
+/** Opens Netrunner on one tool. */
+const netrunner = (tool: string) => ({ openApp }: WidgetTapContext) => {
+  setNetrunnerTool(tool);
+  openApp('netrunner');
+};
+
 export const WIDGETS: WidgetDefinition[] = [
+  // ---- Hacker (live numbers from the phone, through Netrunner's root helper)
+  { id: 'hk-net', appId: 'netrunner', name: 'Network status', category: 'hacker', description: 'Wi-Fi, local and public IP, ping.', component: NetStatusWidget, sizes: ['2x2', '2x1'], onTap: netrunner('connection') },
+  { id: 'hk-traffic', appId: 'netrunner', name: 'Live traffic', category: 'hacker', description: 'Down and up speed, last two minutes.', component: TrafficWidget, sizes: ['2x2', '2x1'], onTap: netrunner('connection') },
+  { id: 'hk-system', appId: 'netrunner', name: 'System', category: 'hacker', description: 'CPU, RAM, battery bars and uptime.', component: SystemWidget, sizes: ['2x2'], onTap: netrunner('terminal') },
+  { id: 'hk-ports', appId: 'netrunner', name: 'Open ports', category: 'hacker', description: 'What this phone listens on.', component: PortsWidget, sizes: ['2x2'], onTap: netrunner('security') },
+  { id: 'hk-devices', appId: 'netrunner', name: 'Devices on my Wi-Fi', category: 'hacker', description: 'From the last network map scan.', component: DevicesWidget, sizes: ['2x2', '2x1'], onTap: netrunner('map') },
+  { id: 'hk-radar', appId: 'netrunner', name: 'Bluetooth radar', category: 'hacker', description: 'Nearby Bluetooth devices as blips.', component: RadarWidget, sizes: ['2x2', '1x1'], onTap: netrunner('ble') },
+
   // ---- Time
   { id: 'clock', appId: 'clock', name: 'Dot clock', category: 'time', description: 'Big dot-matrix hours and minutes.', component: ClockWidget, sizes: ['2x2', '2x1'] },
   { id: 'serif-date', appId: 'calendar', name: 'Serif date', category: 'time', description: 'A big serif day number.', component: SerifDateWidget, sizes: ['2x2', '1x1'] },

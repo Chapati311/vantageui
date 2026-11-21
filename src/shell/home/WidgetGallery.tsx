@@ -18,6 +18,7 @@ const CATEGORIES: { id: WidgetCategory; name: string }[] = [
   { id: 'info', name: 'Info' },
   { id: 'fun', name: 'Fun' },
   { id: 'devices', name: 'Devices' },
+  { id: 'hacker', name: 'Hacker' },
   { id: 'lab', name: 'My widgets' },
 ];
 

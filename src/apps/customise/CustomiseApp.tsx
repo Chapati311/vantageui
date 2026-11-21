@@ -109,7 +109,7 @@ const SYSTEM: SectionDef[] = [
   { id: 'setups', name: 'Setups', icon: LayersIcon, page: SetupsPage },
 ];
 
-const MODE_NAMES = { clean: 'Clean', focus: 'Focus', retro: 'Retro', winddown: 'Wind Down' } as const;
+const MODE_NAMES = { clean: 'Clean', focus: 'Focus', retro: 'Retro', winddown: 'Wind Down', hacker: 'Hacker' } as const;
 /** Real iOS Settings pages, opened from SpringBoard (prefs URLs). */
 const PHONE_SETTINGS = [
   { name: 'Wi-Fi', url: 'App-prefs:WIFI', icon: WifiIcon },

@@ -1,0 +1,9 @@
+/* Code rain fills the wallpaper layer */
+.rain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.55;
+}

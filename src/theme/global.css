@@ -248,3 +248,41 @@ img.native-app-icon {
   height: max(100%, 44px);
   transform: translate(-50%, -50%);
 }
+
+/* ---- Hacker mode (HACKER_MODE.md 1) ------------------------------------
+   CRT: faint scanlines over everything plus a soft glow on text. One fixed,
+   pre-drawn layer: nothing animates, so it costs nothing per frame. */
+:root[data-crt] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(180deg, rgb(0 0 0 / 0.16) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 90% at 50% 50%, transparent 60%, rgb(0 0 0 / 0.35) 100%);
+  mix-blend-mode: multiply;
+}
+
+:root[data-crt] #root {
+  text-shadow: 0 0 6px rgb(var(--accent-rgb) / 0.35);
+}
+
+/* Titles read like a prompt in Hacker mode */
+:root[data-mode='hacker'] h1::before {
+  content: '> ';
+  color: var(--color-accent);
+}
+
+/* Opening an app in Hacker mode: a quick glitch (transform + opacity only) */
+@keyframes vo-glitch {
+  0% { transform: translate3d(-6px, 0, 0); opacity: 0.4; }
+  20% { transform: translate3d(5px, 0, 0); opacity: 1; }
+  40% { transform: translate3d(-3px, 0, 0); opacity: 0.7; }
+  60% { transform: translate3d(2px, 0, 0); opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+
+:root[data-mode='hacker'] [data-app-view] > * {
+  animation: vo-glitch 0.18s steps(5, end) both;
+}

@@ -58,6 +58,7 @@ const MODES: { id: ModeId; name: string }[] = [
   { id: 'focus', name: 'Focus' },
   { id: 'retro', name: 'Retro' },
   { id: 'winddown', name: 'Wind Down' },
+  { id: 'hacker', name: 'Hacker' },
 ];
 
 /** Music: the song playing in Vantage, with controls. */

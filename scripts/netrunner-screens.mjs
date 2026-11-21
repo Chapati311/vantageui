@@ -9,10 +9,10 @@ mkdirSync(OUT, { recursive: true });
 const apps = JSON.parse(readFileSync(new globalThis.URL('./fixtures/phone-apps.json', import.meta.url), 'utf8'));
 const browser = await browserType.launch();
 const context = await browser.newContext({ viewport: { width: 375, height: 667 }, deviceScaleFactor: 2, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_3 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 VantageOSHost/0.3.0' });
-await context.addInitScript(({ list }) => {
+await context.addInitScript(({ list, settings }) => {
   if (!sessionStorage.getItem('seeded')) {
     localStorage.clear();
-    localStorage.setItem('vantage.settings.v1', JSON.stringify({ setupDone: true, bootAnimation: false }));
+    localStorage.setItem('vantage.settings.v1', JSON.stringify({ setupDone: true, bootAnimation: false, ...settings }));
     localStorage.setItem('netrunner.trusted.v1', JSON.stringify(['HomeNet']));
     sessionStorage.setItem('seeded', '1');
   }
@@ -60,7 +60,7 @@ await context.addInitScript(({ list }) => {
       return Promise.resolve('scanning');
     },
   };
-}, { list: apps });
+}, { list: apps, settings: JSON.parse(process.env.SETTINGS ?? '{}') });
 const page = await context.newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
@@ -68,10 +68,13 @@ page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
 await page.route('https://ipinfo.io/**', (r) => r.fulfill({ contentType: 'application/json', body: JSON.stringify({ city: 'Menlo Park', country: 'US', org: 'AS32934 Facebook, Inc.' }) }));
 await page.goto(URL); await page.waitForTimeout(2500); await page.reload(); await page.waitForTimeout(2500);
 const shots = [];
-const tools = (process.env.TOOLS ?? 'home connection map ping dns speed privacy packets ble security toolbox terminal learn').split(/\s+/);
+const process_routes = !!process.env.ROUTES;
+const tools = (process.env.ROUTES ?? process.env.TOOLS ?? 'home connection map ping dns speed privacy packets ble security toolbox terminal learn').split(/\s+/);
 const press = async (text) => { const b = page.getByRole('button', { name: text }).first(); if (await b.count()) await b.click().catch(() => {}); };
 for (const tool of tools) {
-  await page.evaluate((t) => window.vantageGo(t === 'home' ? 'app/netrunner' : `app/netrunner/${t}`), tool);
+  // ROUTES=... : any screens (e.g. home/1 controls) instead of Netrunner's tools
+  const route = process_routes ? tool : tool === 'home' ? 'app/netrunner' : `app/netrunner/${tool}`;
+  await page.evaluate((r) => window.vantageGo(r), route);
   await page.waitForTimeout(1200);
   if (tool === 'map') { await press('Scan my network'); await page.waitForTimeout(800); }
   if (tool === 'ping') { await press('Ping'); await page.waitForTimeout(600); }
@@ -81,7 +84,7 @@ for (const tool of tools) {
   if (tool === 'packets') { await press('Capture'); await page.waitForTimeout(900); }
   if (tool === 'terminal') { await press('Who am I'); await page.waitForTimeout(600); }
   if (tool === 'ble') await page.waitForTimeout(600);
-  const f = `${OUT}${tool}.png`;
+  const f = `${OUT}${tool.replace(/\//g, '-')}.png`;
   await page.screenshot({ path: f });
   shots.push([tool, f]);
 }

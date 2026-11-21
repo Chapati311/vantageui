@@ -51,6 +51,7 @@ export function SoundPage({ onBack }: { onBack: () => void }) {
               { id: 'glass', label: 'Glass' },
               { id: 'keys', label: 'Keys' },
               { id: 'retro', label: 'Retro' },
+              { id: 'terminal', label: 'Term' },
             ]}
           />
         </Section>

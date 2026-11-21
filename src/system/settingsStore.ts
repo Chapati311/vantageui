@@ -9,7 +9,7 @@ import {
 } from '../theme/presets';
 import { isWallpaperConfig, type WallpaperConfig } from '../theme/wallpapers';
 
-export type ModeId = 'clean' | 'focus' | 'retro' | 'winddown';
+export type ModeId = 'clean' | 'focus' | 'retro' | 'winddown' | 'hacker';
 export type Appearance = 'dark' | 'light' | 'auto';
 export const WIDGET_STYLES = ['solid', 'glass', 'outline', 'tinted', 'glossy', 'pill', 'colorblock', 'paper', 'line'] as const;
 export type WidgetStyle = (typeof WIDGET_STYLES)[number];
@@ -42,7 +42,7 @@ export type BatteryStyle = 'percent' | 'ring' | 'bar' | 'pixel';
 export type UiFont = 'inter' | 'system' | 'serif' | 'mono';
 export type IconShape = 'circle' | 'squircle' | 'square';
 export type IconStyle = 'outline' | 'filled' | 'tinted';
-export const SOUND_PACKS = ['auto', 'soft', 'glass', 'keys', 'retro'] as const;
+export const SOUND_PACKS = ['auto', 'soft', 'glass', 'keys', 'retro', 'terminal'] as const;
 export type SoundPack = (typeof SOUND_PACKS)[number];
 
 /** A look the user saved under their own name. */
@@ -71,6 +71,12 @@ export interface Settings {
   darkTheme: string;
   lightTheme: string;
   retroTheme: string;
+  /** Hacker mode's theme (Green Terminal, Amber CRT, Cyan Ice, Red Team, Ghost) */
+  hackerTheme: string;
+  /** Hacker mode: faint CRT scanlines and glowing text */
+  crtEffect: boolean;
+  /** Hacker mode: a short ACCESS GRANTED after unlocking */
+  accessGranted: boolean;
   appearance: Appearance;
   /** In automatic mode: follow the sun in Zurich, or fixed hours */
   autoBy: 'sunset' | 'schedule';
@@ -191,6 +197,9 @@ export const DEFAULT_SETTINGS: Settings = {
   darkTheme: DEFAULT_DARK_THEME,
   lightTheme: DEFAULT_LIGHT_THEME,
   retroTheme: DEFAULT_RETRO_THEME,
+  hackerTheme: 'hk-green',
+  crtEffect: true,
+  accessGranted: true,
   appearance: 'dark',
   autoBy: 'sunset',
   lightFrom: 7,
@@ -294,6 +303,7 @@ export function sanitizeSettings(input: unknown): Settings {
   const darkIds = presetsIn('dark').map((preset) => preset.id);
   const lightIds = presetsIn('light').map((preset) => preset.id);
   const retroIds = presetsIn('retro').map((preset) => preset.id);
+  const hackerIds = presetsIn('hacker').map((preset) => preset.id);
   // An older version stored a single "theme"
   const oldTheme = PRESETS.find((preset) => preset.id === raw.theme);
   const customPresets = Array.isArray(raw.customPresets)
@@ -319,6 +329,9 @@ export function sanitizeSettings(input: unknown): Settings {
     darkTheme: oneOf(raw.darkTheme, darkIds, oldTheme?.group === 'dark' ? oldTheme.id : d.darkTheme),
     lightTheme: oneOf(raw.lightTheme, lightIds, oldTheme?.group === 'light' ? oldTheme.id : d.lightTheme),
     retroTheme: oneOf(raw.retroTheme, retroIds, d.retroTheme),
+    hackerTheme: oneOf(raw.hackerTheme, hackerIds, d.hackerTheme),
+    crtEffect: bool(raw.crtEffect, d.crtEffect),
+    accessGranted: bool(raw.accessGranted, d.accessGranted),
     appearance,
     autoBy: oneOf(raw.autoBy, ['sunset', 'schedule'] as const, d.autoBy),
     lightFrom: Math.round(between(raw.lightFrom, 0, 23, d.lightFrom)),
@@ -377,7 +390,7 @@ export function sanitizeSettings(input: unknown): Settings {
     animationSpeed: between(raw.animationSpeed, 0.6, 1.6, d.animationSpeed),
     soundsEnabled: bool(raw.soundsEnabled, d.soundsEnabled),
     soundVolume: between(raw.soundVolume, 0, 1, d.soundVolume),
-    mode: oneOf(raw.mode, ['clean', 'focus', 'retro', 'winddown'] as const, d.mode),
+    mode: oneOf(raw.mode, ['clean', 'focus', 'retro', 'winddown', 'hacker'] as const, d.mode),
     windDownSince: typeof raw.windDownSince === 'number' ? raw.windDownSince : null,
     wifi: bool(raw.wifi, d.wifi),
     bluetooth: bool(raw.bluetooth, d.bluetooth),
@@ -453,6 +466,10 @@ export function applyPreset(id: string): void {
     updateSettings({ ...common, retroTheme: preset.id, mode: 'retro' });
     return;
   }
+  if (preset.group === 'hacker') {
+    updateSettings({ ...common, hackerTheme: preset.id, mode: 'hacker' });
+    return;
+  }
   // A basic theme after a signature pack: the pack's own looks go back to normal
   const fromPack = (['glossy', 'pill', 'colorblock', 'paper', 'line'] as WidgetStyle[]).includes(settings.widgetStyle);
   updateSettings({
@@ -484,7 +501,7 @@ export function applyPack(pack: {
   scrim: number;
 }): void {
   const preset = PRESETS.find((p) => p.id === pack.id);
-  if (!preset || preset.group === 'retro') return;
+  if (!preset || preset.group === 'retro' || preset.group === 'hacker') return;
   updateSettings({
     accent: null,
     matchWallpaper: false,

@@ -97,6 +97,7 @@ export function darkNow(s: Settings, now = new Date()): { dark: boolean; nextSwi
 /** The preset in use right now. */
 export function activePreset(s: Settings, now = new Date()): ThemePreset {
   if (s.mode === 'retro') return getPreset(s.retroTheme);
+  if (s.mode === 'hacker') return getPreset(s.hackerTheme);
   return getPreset(darkNow(s, now).dark ? s.darkTheme : s.lightTheme);
 }
 
@@ -162,6 +163,8 @@ const UI_FONTS = {
   serif: "'Instrument Serif', Georgia, serif",
   mono: "ui-monospace, 'SF Mono', Menlo, monospace",
 } as const;
+
+const HACKER_FONT = "ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace";
 
 export function computeTheme(s: Settings, now = new Date()) {
   const preset = activePreset(s, now);
@@ -336,6 +339,7 @@ export function computeTheme(s: Settings, now = new Date()) {
 
   // Wind Down: the warm layer, and the screen dimming to 80% over 10 minutes
   const windDown = s.mode === 'winddown';
+  const hacker = s.mode === 'hacker';
   const windElapsed = windDown && s.windDownSince ? (now.getTime() - s.windDownSince) / 60_000 : 0;
   const windDim = windDown ? Math.min(1, windElapsed / WIND_DOWN.minutes) * (1 - WIND_DOWN.dimTo) : 0;
 
@@ -399,10 +403,11 @@ export function computeTheme(s: Settings, now = new Date()) {
     '--radius-circle': retro ? '0px' : '50%',
 
     // Fonts: retro uses pixel fonts (VT323 for text, Press Start 2P for labels and titles)
-    '--font-body': retro ? "'VT323', ui-monospace, monospace" : UI_FONTS[s.uiFont],
+    // Hacker mode: the phone's monospace everywhere (titles included)
+    '--font-body': retro ? "'VT323', ui-monospace, monospace" : hacker ? HACKER_FONT : UI_FONTS[s.uiFont],
     '--font-display': retro ? "'Press Start 2P', ui-monospace, monospace" : "'Doto Variable', ui-monospace, monospace",
-    '--font-serif': retro ? "'Press Start 2P', ui-monospace, monospace" : "'Instrument Serif', Georgia, serif",
-    '--font-label': retro ? "'Press Start 2P', ui-monospace, monospace" : UI_FONTS[s.uiFont === 'serif' ? 'inter' : s.uiFont],
+    '--font-serif': retro ? "'Press Start 2P', ui-monospace, monospace" : hacker ? HACKER_FONT : "'Instrument Serif', Georgia, serif",
+    '--font-label': retro ? "'Press Start 2P', ui-monospace, monospace" : hacker ? HACKER_FONT : UI_FONTS[s.uiFont === 'serif' ? 'inter' : s.uiFont],
 
     '--text-11': retro ? '8px' : text(11),
     '--text-13': text(13),
@@ -486,10 +491,11 @@ function apply() {
     root.toggleAttribute('data-bold', s.boldText);
     root.toggleAttribute('data-contrast', s.highContrast);
     root.toggleAttribute('data-reduce-motion', s.reduceMotion);
+    root.toggleAttribute('data-crt', s.mode === 'hacker' && s.crtEffect);
     root.dataset.iconShape = s.iconShape;
     root.dataset.iconStyle = s.iconStyle;
     root.dataset.iconPack = next.retro ? 'line' : s.iconPack;
-    root.dataset.iconLook = next.retro ? 'glyph' : s.iconLook;
+    root.dataset.iconLook = next.retro ? 'glyph' : s.mode === 'hacker' ? 'tinted' : s.iconLook;
     root.dataset.widgetStyle = next.retro ? 'retro' : s.widgetStyle;
     setRetroMotion(next.retro !== null);
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next.bg);

@@ -1,0 +1,40 @@
+/* Hacker mode: ACCESS GRANTED after unlocking (above everything, never catches taps) */
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 0.86);
+  pointer-events: none;
+  animation: out 0.95s ease-in both;
+}
+
+@keyframes out {
+  0%,
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  font-family: var(--font-mono);
+  font-size: var(--text-13);
+  color: var(--text-secondary);
+}
+
+.granted {
+  margin-top: var(--space-12);
+  font-size: var(--text-22);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--color-accent);
+  text-shadow: 0 0 12px var(--color-accent);
+}

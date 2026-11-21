@@ -361,3 +361,16 @@
     width: calc((2 * var(--grid-cell) + var(--grid-gap)) * 0.8);
   }
 }
+
+/* Five modes (with Hacker): one row of five, a little smaller */
+.modes[role='radiogroup'] {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.modes[role='radiogroup'] .chip {
+  font-size: var(--text-13);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

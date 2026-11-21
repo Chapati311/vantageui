@@ -1,0 +1,54 @@
+/* Hacker boot: black screen, scrolling log in the accent, then the V */
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  transition: opacity 0.4s;
+}
+
+.fading {
+  opacity: 0;
+}
+
+.log {
+  position: absolute;
+  left: var(--grid-margin);
+  right: var(--grid-margin);
+  bottom: calc(var(--space-32) * 3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-accent);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.stamp {
+  color: var(--text-tertiary);
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.1em;
+  background: var(--color-accent);
+  animation: blink 0.8s steps(2) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.logo {
+  width: 40%;
+  color: var(--color-accent);
+}

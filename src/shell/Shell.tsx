@@ -38,6 +38,9 @@ import { RetroLock } from './retro/RetroLock';
 import { Search, type SearchAction } from './Search';
 import { TimerBanner } from './TimerBanner';
 import { Wallpaper } from './wallpaper/Wallpaper';
+import { AccessGranted } from './hacker/AccessGranted';
+import { HackerBoot } from './hacker/HackerBoot';
+import { installHackerPage } from './home/layoutStore';
 import styles from './Shell.module.css';
 
 /**
@@ -116,6 +119,13 @@ export function Shell() {
     window.addEventListener('vantage:pack', replay);
     return () => window.removeEventListener('vantage:pack', replay);
   }, []);
+  // On the phone the unlocking happens on iOS's lock screen: SpringBoard says when
+  const [unlocks, setUnlocks] = useState(0);
+  useEffect(() => {
+    const unlocked = () => setUnlocks((n) => n + 1);
+    window.addEventListener('vantage:unlocked', unlocked);
+    return () => window.removeEventListener('vantage:unlocked', unlocked);
+  }, []);
   const [locked, setLocked] = useState(!HOSTED);
   const [openApp, setOpenApp] = useState<OpenApp | null>(null);
   const openAppRef = useRef<string | null>(null);
@@ -137,6 +147,10 @@ export function Shell() {
   const [homeBlur] = useSetting('homeBlur');
   const [mode] = useSetting('mode');
   const theme = useTheme();
+  // The first time Hacker mode is on: its home page with live network widgets
+  useEffect(() => {
+    if (mode === 'hacker') installHackerPage();
+  }, [mode]);
   const searchInput = useRef<HTMLInputElement>(null);
 
   const openSearch = () => {
@@ -195,6 +209,7 @@ export function Shell() {
       else {
         setLocked(false);
         setUnlockCount((count) => count + 1);
+        setUnlocks((count) => count + 1);
         morningSummary();
       }
     },
@@ -413,11 +428,13 @@ export function Shell() {
             setPasscodeOpen(false);
             setLocked(false);
             setUnlockCount((count) => count + 1);
+            setUnlocks((count) => count + 1);
             morningSummary();
           }}
           onCancel={() => setPasscodeOpen(false)}
         />
         <LockedApp appId={lockedApp} onClose={() => setLockedApp(null)} />
+        <AccessGranted trigger={unlocks} />
         {/* Time and battery along the top, above home and apps (the lock screen has its own) */}
         <StatusStrip hidden={retro || locked} />
         <AlarmRinging />
@@ -429,7 +446,7 @@ export function Shell() {
         <GameBoyBoot />
         <NativeLaunch />
         <VantageOverlay />
-        {booting && <Boot onDone={() => setBooting(false)} />}
+        {booting && (mode === 'hacker' ? <HackerBoot onDone={() => setBooting(false)} /> : <Boot onDone={() => setBooting(false)} />)}
       </div>
     </MotionConfig>
   );

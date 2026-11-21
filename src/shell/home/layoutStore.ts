@@ -182,3 +182,37 @@ export function removeHomeItem(id: string): void {
   saveLayout(layout.filter((entry) => entry.id !== id));
   listeners.forEach((listener) => listener());
 }
+
+/**
+ * Hacker mode's home page (HACKER_MODE.md 1): live network widgets and
+ * Netrunner, put in FRONT of the other pages the first time Hacker mode is
+ * turned on (only once; after that it is a normal page you can edit).
+ * Returns false when it was already done or there's no room for a page.
+ */
+export function installHackerPage(): boolean {
+  const FLAG = 'vantage.hackerPage.v1';
+  try {
+    if (localStorage.getItem(FLAG)) return false;
+    localStorage.setItem(FLAG, '1');
+  } catch {
+    return false;
+  }
+  const layout = loadLayout();
+  if (layout.some((item) => item.kind === 'widget' && item.ref.startsWith('hk-'))) return false;
+  if (countPages(layout) >= MAX_PAGES) return false;
+  const stamp = Date.now().toString(36);
+  const widget = (ref: string, col: number, row: number, w: number, h: number): HomeItem => ({ id: `widget:${ref}:${stamp}`, kind: 'widget', ref, page: 0, col, row, w, h });
+  const page: HomeItem[] = [
+    widget('hk-net', 0, 0, 2, 2),
+    widget('hk-system', 2, 0, 2, 2),
+    widget('hk-traffic', 0, 2, 2, 2),
+    widget('hk-devices', 2, 2, 2, 1),
+    widget('hk-radar', 2, 3, 1, 1),
+  ];
+  // Netrunner itself next to the radar (moved off its old page)
+  const rest = layout.filter((item) => !(item.kind === 'app' && item.ref === 'netrunner')).map((item) => ({ ...item, page: item.page + 1 }));
+  page.push({ id: 'app:netrunner', kind: 'app', ref: 'netrunner', page: 0, col: 3, row: 3, w: 1, h: 1 });
+  saveLayout([...page, ...rest]);
+  listeners.forEach((listener) => listener());
+  return true;
+}

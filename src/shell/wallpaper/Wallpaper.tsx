@@ -10,6 +10,7 @@ import { LiveAurora } from './LiveAurora';
 import { LivePixel } from './LivePixel';
 import { LiveStarfield } from './LiveStarfield';
 import { LiveSundown } from './LiveSundown';
+import { LiveCodeRain } from './LiveCodeRain';
 import { LiveWaves } from './LiveWaves';
 import { WeatherLayer } from './WeatherLayer';
 import styles from './Wallpaper.module.css';
@@ -79,6 +80,9 @@ export function Wallpaper({ place, config, paused = false, progress }: Wallpaper
           break;
         case 'sundown':
           layer = <LiveSundown />;
+          break;
+        case 'coderain':
+          layer = <LiveCodeRain paused={paused || place === 'preview'} />;
           break;
         case 'pixel':
           layer = <LivePixel />;
