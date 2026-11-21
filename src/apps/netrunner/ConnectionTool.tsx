@@ -30,7 +30,7 @@ export function ConnectionTool() {
       const [routes, lookup, ip] = await Promise.all([askTool('run', 'routes'), askTool('run', 'dns', ['apple.com', 'A']), askTool('run', 'publicip')]);
       const line = routes.out.find((l) => /^default\s+\d/.test(l) && /en0/.test(l)) ?? routes.out.find((l) => /^default\s+\d/.test(l));
       setRouter(line?.split(/\s+/)[1] ?? null);
-      setDns(((lookup.data as { servers?: string[] } | null)?.servers ?? []).filter(Boolean));
+      setDns(((lookup.data as { servers?: string[] } | null)?.servers ?? []).filter((ip) => ip && ip !== '0.0.0.0'));
       try {
         setPub(JSON.parse(ip.out.join('')) as PublicIp);
       } catch {
