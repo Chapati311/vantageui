@@ -8,7 +8,7 @@ const PALETTE: { label: string; command: string }[] = [
   { label: 'Uptime', command: 'uptime' },
   { label: 'Disk space', command: 'df -h /var /private/preboot 2>/dev/null || df -h' },
   { label: 'Network interfaces', command: 'ifconfig en0' },
-  { label: 'Top processes', command: 'ps -axo pid,%cpu,%mem,comm | sort -k2 -nr | head -15' },
+  { label: 'Listening services', command: 'lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null || netstat -an -p tcp | grep LISTEN' },
   { label: 'Big files in Downloads', command: 'du -sh /var/mobile/Downloads/* 2>/dev/null | sort -hr | head' },
   { label: 'Installed tweaks', command: 'dpkg -l | grep -i tweak | head -30' },
   { label: 'Open connections', command: 'netstat -an -p tcp | grep ESTABLISHED | head -25' },
