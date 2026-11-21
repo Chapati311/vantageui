@@ -353,3 +353,18 @@
     transition: none;
   }
 }
+
+/* "Hold to use" under a lock shortcut after a short tap */
+.holdHint {
+  position: absolute;
+  bottom: calc(100% + var(--space-8));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-4) var(--space-12);
+  border-radius: var(--radius-pill);
+  background: var(--glass-bg);
+  color: var(--text-primary);
+  font-size: var(--text-13);
+  white-space: nowrap;
+  pointer-events: none;
+}

@@ -50,6 +50,8 @@
   --font-body: 'Inter Variable', system-ui, sans-serif;
   --font-display: 'Doto Variable', ui-monospace, monospace;
   --font-serif: 'Instrument Serif', Georgia, serif;
+  /* Terminal text (Netrunner, logs): the phone's own monospace */
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Inter sizes */
   --text-11: 11px; /* labels: uppercase, letter-spaced */

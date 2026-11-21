@@ -46,6 +46,7 @@ const FACE: Record<string, [string, string]> = {
   kit: ['#7C8592', '#3E4550'],
   vantage: ['#2DD4BF', '#0E8F8A'],
   earbuds: ['#E9ECF0', '#B5BBC4'],
+  netrunner: ['#0F2A1C', '#020805'],
 };
 const FALLBACK_FACES: [string, string][] = [['#5BB8FF', '#1F6FE0'], ['#FF8A5B', '#E2457A'], ['#7EE0A0', '#2FAE6A'], ['#B07CFF', '#6E3BEA']];
 const faceOf = (id: string) => FACE[id] ?? FALLBACK_FACES[[...id].reduce((sum, char) => sum + char.charCodeAt(0), 0) % FALLBACK_FACES.length];

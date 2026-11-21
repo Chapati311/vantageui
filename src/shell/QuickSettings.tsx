@@ -200,14 +200,14 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
           return (
             <div className={styles.toggleRows}>
               <div className={styles.toggles}>
-                {controls.wifi && <RoundToggle label={controls.wifi.on && controls.wifi.network ? controls.wifi.network : 'Wi-Fi'} icon={WifiIcon} on={controls.wifi.on} onChange={(v) => void setControl('wifi', v)} />}
-                {controls.bluetooth && <RoundToggle label="Bluetooth" icon={BluetoothIcon} on={controls.bluetooth.on} onChange={(v) => void setControl('bluetooth', v)} />}
+                {controls.wifi && <RoundToggle risky label={controls.wifi.on && controls.wifi.network ? `Wi-Fi, ${controls.wifi.network}` : 'Wi-Fi'} icon={WifiIcon} on={controls.wifi.on} onChange={(v) => void setControl('wifi', v)} />}
+                {controls.bluetooth && <RoundToggle risky label="Bluetooth" icon={BluetoothIcon} on={controls.bluetooth.on} onChange={(v) => void setControl('bluetooth', v)} />}
                 {controls.flashlight !== undefined && <RoundToggle label="Light" icon={FlashlightIcon} on={controls.flashlight > 0} onChange={(v) => void setControl('flashlight', v)} />}
                 {controls.dnd !== undefined && <RoundToggle label="Focus" icon={MoonIcon} on={on(controls.dnd)} onChange={(v) => void setControl('dnd', v)} />}
               </div>
               <div className={styles.toggles}>
-                {controls.airplane !== undefined && <RoundToggle label="Airplane" icon={AirplaneIcon} on={on(controls.airplane)} onChange={(v) => void setControl('airplane', v)} />}
-                {controls.cellular !== undefined && <RoundToggle label="Cellular" icon={CellularIcon} on={on(controls.cellular)} onChange={(v) => void setControl('cellular', v)} />}
+                {controls.airplane !== undefined && <RoundToggle risky label="Airplane" icon={AirplaneIcon} on={on(controls.airplane)} onChange={(v) => void setControl('airplane', v)} />}
+                {controls.cellular !== undefined && <RoundToggle risky label="Cellular" icon={CellularIcon} on={on(controls.cellular)} onChange={(v) => void setControl('cellular', v)} />}
                 {controls.rotationLock !== undefined && <RoundToggle label="Rotation" icon={RotationLockIcon} on={on(controls.rotationLock)} onChange={(v) => void setControl('rotationLock', v)} />}
                 {controls.silent !== undefined && <RoundToggle label="Silent" icon={BellOffIcon} on={on(controls.silent)} onChange={(v) => void setControl('silent', v)} />}
               </div>
@@ -216,7 +216,7 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
         }
         return (
           <div className={styles.toggles}>
-            <RoundToggle label="Wi-Fi" icon={WifiIcon} on={settings.wifi} onChange={toggle('wifi')} />
+            <RoundToggle risky label="Wi-Fi" icon={WifiIcon} on={settings.wifi} onChange={toggle('wifi')} />
             <RoundToggle label="Bluetooth" icon={BluetoothIcon} on={settings.bluetooth} onChange={toggle('bluetooth')} />
             <RoundToggle label="Light" icon={FlashlightIcon} on={settings.flashlight} onChange={toggle('flashlight')} />
             <RoundToggle label="DND" icon={MoonIcon} on={settings.doNotDisturb} onChange={toggle('doNotDisturb')} />

@@ -166,7 +166,7 @@ export function MusicWidget() {
         </div>
         <button
           type="button"
-          className={styles.connect}
+          className={`hit-44 ${styles.connect}`}
           onClick={() => {
             if (spotify.clientId) {
               void connectSpotify().catch(() => undefined);

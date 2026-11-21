@@ -416,21 +416,25 @@ export function paletteOf(preset: ThemePreset): Palette {
   const surface = hexToRgb(preset.surface);
   const raised = hexToRgb(preset.raised);
   const text = hexToRgb(preset.text);
-  const text2 = hexToRgb(preset.text2);
   const dark = preset.group === 'light' ? false : luminanceOf(bg) < 0.4;
+  const surfaceTop = dark ? mix(surface, raised, 0.5) : raised;
+  const surfaceBottom = dark ? mix(surface, bg, 0.15) : surface;
+  // Secondary and faint text stay readable (4.5:1) on the background AND on cards
+  const grounds = [bg, surface, surfaceTop, surfaceBottom, raised];
+  const text2Readable = readableOn(hexToRgb(preset.text2), text, grounds);
   return {
     dark,
     bg,
     // Dark: from between surface and raised down to just above surface.
     // Light: from white-ish raised down to surface.
-    surfaceTop: dark ? mix(surface, raised, 0.5) : raised,
-    surfaceBottom: dark ? mix(surface, bg, 0.15) : surface,
+    surfaceTop,
+    surfaceBottom,
     surface,
     raised,
     surface3: mix(raised, text, dark ? 0.07 : 0.1),
     text,
-    text2,
-    text3: readableFaint(text2, bg, dark ? 0.45 : 0.4),
+    text2: text2Readable,
+    text3: readableFaint(text2Readable, grounds, dark ? 0.45 : 0.4),
     accent: hexToRgb(preset.accent),
   };
 }
@@ -440,12 +444,21 @@ export function paletteOf(preset: ThemePreset): Palette {
  * so far that it falls below 4.5:1 contrast (WCAG AA for text; DEVICE_QA Step 2
  * found 2.6:1 labels on the phone). If text2 itself is below that, text2.
  */
-function readableFaint(text2: RGB, bg: RGB, most: number): RGB {
+function readableFaint(text2: RGB, grounds: RGB[], most: number): RGB {
   for (let t = most; t > 0; t -= 0.05) {
-    const candidate = mix(text2, bg, t);
-    if (contrast(candidate, bg) >= 4.5) return candidate;
+    const candidate = mix(text2, grounds[0], t);
+    if (grounds.every((ground) => contrast(candidate, ground) >= 4.5)) return candidate;
   }
   return text2;
+}
+
+/** A text color moved toward the main text color until it reads at 4.5:1 on every ground. */
+function readableOn(color: RGB, toward: RGB, grounds: RGB[]): RGB {
+  for (let t = 0; t <= 1; t += 0.05) {
+    const candidate = mix(color, toward, t);
+    if (grounds.every((ground) => contrast(candidate, ground) >= 4.5)) return candidate;
+  }
+  return toward;
 }
 
 function luminanceOf([r, g, b]: RGB): number {

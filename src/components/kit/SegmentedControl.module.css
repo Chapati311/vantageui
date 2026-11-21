@@ -13,7 +13,7 @@
   position: relative;
   flex: 1;
   min-width: 0;
-  height: calc(var(--space-32) + var(--space-4));
+  height: calc(var(--space-32) + var(--space-12)); /* 44 pt: Apple's minimum touch size */
   padding: 0 var(--space-8);
   border: 0;
   border-radius: var(--radius-pill);

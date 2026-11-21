@@ -160,20 +160,20 @@ export function CalculatorApp() {
         >
           <div className={styles.displayTop}>
             <div className={styles.tools}>
-              <Pressable className={`label ${styles.tool}`} onClick={() => setSheet('history')}>
+              <Pressable className={`label hit-44 ${styles.tool}`} onClick={() => setSheet('history')}>
                 History
               </Pressable>
-              <Pressable className={`label ${styles.tool}`} onClick={() => setSheet('convert')}>
+              <Pressable className={`label hit-44 ${styles.tool}`} onClick={() => setSheet('convert')}>
                 Convert
               </Pressable>
-              <Pressable className={`label ${styles.tool}`} onClick={() => setSheet('scientific')}>
+              <Pressable className={`label hit-44 ${styles.tool}`} onClick={() => setSheet('scientific')}>
                 Scientific
               </Pressable>
             </div>
             <span className="label">{state.error ?? (state.operator ? `${state.operator === '^' ? 'xʸ' : state.operator}` : ' ')}</span>
           </div>
           {/* The tape: the last sum, small and grey, above the display */}
-          <Pressable className={styles.tape} aria-label="History" onClick={() => setSheet('history')}>
+          <Pressable className={`hit-44 ${styles.tape}`} aria-label="History" onClick={() => setSheet('history')}>
             {last ? `${last.sum} = ${last.result}` : ' '}
           </Pressable>
           <DotNumber value={state.display} size={size} instant />

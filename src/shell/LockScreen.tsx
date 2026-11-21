@@ -33,6 +33,7 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
   // Vantage's own notifications (other apps' need the native bridge)
   const notificationCount = useNotifications().length;
   const [clockPosition] = useSetting('lockClockPosition');
+  const [lockClockStyle] = useSetting('lockClockStyle');
   const [lockNotifications] = useSetting('lockNotifications');
   const [lockWallpaper] = useSetting('lockWallpaper');
   const ref = useRef<HTMLDivElement>(null);
@@ -107,7 +108,7 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
         <div
           className={styles.clock}
           role="button"
-          aria-label="Change clock style"
+          aria-label={`Change clock style (now ${lockClockStyle})`}
           onClick={() => {
             void runAction('lock.nextClockStyle', {});
             // The 8th step brings the clock back to the style it had before the 7 taps

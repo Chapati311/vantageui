@@ -9,10 +9,12 @@
  *   app/<id>[/<sub>]          open an app; sub = Clock tab or Customise page
  *                             (app/clock/timer, app/customise/themes)
  *   customise/<page>          same as app/customise/<page>
+ *   app/netrunner/<tool>      a Netrunner tool (map, ping, dns, privacy...)
  *   lock | unlock | controls | notifications | search | switcher
  */
 import { runAction } from './actions';
 import { setCustomiseSection } from '../apps/customise/customiseNav';
+import { setNetrunnerTool } from '../apps/netrunner/netrunnerNav';
 
 const CLOCK_TABS = ['alarm', 'world', 'stopwatch', 'timer'] as const;
 const pause = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
@@ -64,6 +66,7 @@ export async function goToRoute(route: string): Promise<boolean> {
 
 async function openApp(appId: string, sub?: string): Promise<boolean> {
   if (appId === 'customise') setCustomiseSection(sub ?? null);
+  if (appId === 'netrunner') setNetrunnerTool(sub ?? null);
   await runAction('app.open', { appId });
   if (appId === 'clock' && sub && (CLOCK_TABS as readonly string[]).includes(sub)) {
     await runAction('clock.showTab', { tab: sub as (typeof CLOCK_TABS)[number] });
