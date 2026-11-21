@@ -209,6 +209,12 @@ for (step = 1; step <= STEPS; step++) {
       await wait(220);
     }
     // Health: the app must still be drawn
+    // tel:, sms:, shortcuts:// links leave the page in a test browser (the phone hands them to iOS): go back.
+    if (!page.url().startsWith(URL)) {
+      note('left the page (external link): back');
+      await page.goto(URL);
+      await wait(1500);
+    }
     if (step % 25 === 0) {
       const blank = await page.evaluate(() => (document.getElementById('root')?.childElementCount ?? 0) === 0);
       if (blank) {

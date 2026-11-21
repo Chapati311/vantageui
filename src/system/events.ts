@@ -35,13 +35,15 @@ function update(events: CalendarEvent[]): void {
 
 async function load(): Promise<void> {
   try {
-    update(await dbGetAll<CalendarEvent>('events'));
+    // An event with a broken date (an old bug) would crash date formatting: skip it.
+    update((await dbGetAll<CalendarEvent>('events')).filter((event) => /^\d{4}-\d{2}-\d{2}$/.test(event.date)));
   } catch {
     update([]);
   }
 }
 
 export async function saveEvent(event: CalendarEvent): Promise<void> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(event.date)) return;
   update([...state.events.filter((item) => item.id !== event.id), event]);
   await dbPut('events', event);
 }

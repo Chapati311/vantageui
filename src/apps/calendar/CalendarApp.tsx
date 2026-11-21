@@ -127,10 +127,10 @@ function EventEditor({ event, onClose }: { event: CalendarEvent | null; onClose:
       {current && (
         <>
           <input className={styles.input} placeholder="Title" aria-label="Title" value={current.title} maxLength={60} onChange={(e) => setDraft({ ...current, title: e.target.value })} />
-          <input className={styles.input} type="date" aria-label="Date" value={current.date} onChange={(e) => e.target.value && setDraft({ ...current, date: e.target.value })} />
+          <input className={styles.input} type="date" aria-label="Date" value={current.date} onChange={(e) => /^\d{4}-\d{2}-\d{2}$/.test(e.target.value) && setDraft({ ...current, date: e.target.value })} />
           <Row title="All day" trailing={<Toggle label="All day" on={current.time === null} onChange={(on) => setDraft({ ...current, time: on ? null : '09:00' })} />} />
           {current.time !== null && (
-            <input className={styles.input} type="time" aria-label="Time" value={current.time} onChange={(e) => setDraft({ ...current, time: e.target.value || '09:00' })} />
+            <input className={styles.input} type="time" aria-label="Time" value={current.time} onChange={(e) => setDraft({ ...current, time: /^\d{2}:\d{2}/.test(e.target.value) ? e.target.value.slice(0, 5) : '09:00' })} />
           )}
           <input className={styles.input} placeholder="Note" aria-label="Note" value={current.note} maxLength={120} onChange={(e) => setDraft({ ...current, note: e.target.value })} />
         </>
