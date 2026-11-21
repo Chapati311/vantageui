@@ -124,8 +124,8 @@
 }
 
 .swatch.selected {
-  outline: 2px solid var(--text-primary);
-  outline-offset: 2px;
+  /* A ring that follows the round shape: iOS 16.3 Safari draws outlines as square boxes */
+  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--text-primary);
 }
 
 /* "Any color": a rainbow ring with the browser's color picker hidden inside */
@@ -175,8 +175,8 @@
 }
 
 .tile.selected .tileFrame {
-  outline: 2px solid var(--text-primary);
-  outline-offset: 2px;
+  /* A ring that follows the round shape: iOS 16.3 Safari draws outlines as square boxes */
+  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--text-primary);
 }
 
 .tileName {

@@ -86,7 +86,11 @@ export function TimerTab() {
         </div>
         <div className={styles.buttons}>
           <CircleButton label={vertical ? 'Numbers flat' : 'Numbers on their side'} small onClick={() => setTimerVertical(!vertical)}>
-            <span className={styles.orientation}>{vertical ? '↕' : '↔'}</span>
+            {/* A clear "turn" icon instead of an arrow character */}
+            <svg className={styles.orientation} viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x={vertical ? 4 : 7} y={vertical ? 7 : 4} width={vertical ? 16 : 10} height={vertical ? 10 : 16} rx="2.5" />
+              <path d="M18.5 3.5a5 5 0 0 1 2 4M20.5 7.5l-1.8-.6M20.5 7.5l.6-1.8" />
+            </svg>
           </CircleButton>
           <CircleButton label="Start" onClick={() => void runAction('timer.start', {})}>
             <PlayIcon />

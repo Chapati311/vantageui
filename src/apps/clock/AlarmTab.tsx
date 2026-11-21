@@ -42,7 +42,9 @@ export function AlarmTab() {
         </Button>
       </div>
 
-      {/* Bedtime: sleep target, wake-up alarm, and the sleep in between */}
+      {/* Bedtime: sleep target, wake-up alarm, and the sleep in between.
+          Only with a real morning alarm (no "--:--" placeholders). */}
+      {firstMorning && (
       <div className={styles.bedtime}>
         <span className={styles.bedtimePart}>
           <span className="label">Sleep</span>
@@ -61,6 +63,7 @@ export function AlarmTab() {
           {sleepMinutes !== null ? `${Math.floor(sleepMinutes / 60)} h ${sleepMinutes % 60} min of sleep` : 'No morning alarm on'}
         </span>
       </div>
+      )}
 
       {alarms.length === 0 ? (
         <EmptyState

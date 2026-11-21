@@ -85,9 +85,10 @@
   padding-bottom: 0;
 }
 
-/* Leave room under the content for the floating tab bar */
+/* Leave room under the content for the floating tab bar (the last card can
+   always be scrolled fully above it) */
 .withTabs .body {
-  padding-bottom: calc(var(--space-32) * 2 + var(--space-24));
+  padding-bottom: calc(var(--space-32) * 3 + var(--space-16));
 }
 
 .withTabs .fixed {

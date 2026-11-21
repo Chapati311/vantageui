@@ -98,6 +98,23 @@ function hostDefaultLayout(): HomeItem[] {
   };
   folder('utilities', 'Utilities', UTILITIES);
   folder('jailbreak', 'Jailbreak', installed.filter((app) => app.source === 'jailbreak' || app.source === 'trollstore' || /troll|dopamine/i.test(app.name)).map((app) => app.bundleId));
+
+  // The apps, spread EVENLY over the icon pages (not 16 + 6): pages look balanced.
+  const placed = new Set<string>(dockAppIds());
+  layout.forEach((item) => item.kind === 'folder' && item.folder?.apps.forEach((id) => placed.add(id)));
+  const apps = orderedHomeApps().filter((app) => !placed.has(app.id));
+  const onFirst = layout.filter((item) => item.page === 1).length; // the folders
+  const capacity = COLS * ICON_ROWS;
+  const total = apps.length + onFirst;
+  const pages = Math.max(1, Math.min(MAX_PAGES - 1, Math.ceil(total / capacity)));
+  const perPage = Math.ceil(total / pages);
+  let page = 1;
+  for (const app of apps) {
+    while (layout.filter((item) => item.page === page).length >= perPage && page < MAX_PAGES - 1) page++;
+    const slot = firstFreeSlot(layout.filter((item) => item.page === page), { w: 1, h: 1 }, page, ICON_ROWS);
+    if (!slot || slot.page !== page) continue;
+    layout.push({ ...slot, id: `app:${app.id}`, kind: 'app', ref: app.id });
+  }
   return layout;
 }
 
