@@ -348,3 +348,16 @@
   border-radius: var(--space-8);
   object-fit: cover;
 }
+
+/* Short screens (iPhone SE, 667 pt): everything must fit, down to the shortcut row
+   and the handle (on the phone the last row was cut in half). Tighter gaps and
+   smaller dials; buttons keep their 44 pt. */
+@media (max-height: 700px) {
+  .panel {
+    gap: var(--space-8);
+  }
+
+  .dials > * {
+    width: calc((2 * var(--grid-cell) + var(--grid-gap)) * 0.8);
+  }
+}
