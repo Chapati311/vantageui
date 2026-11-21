@@ -197,6 +197,19 @@ img.vo-face {
   height: 52%;
 }
 
+/* Folders match the icons: an iOS-style frosted squircle in looks "Original"
+   and "Tinted" (a circle with the glyph look) */
+:root:not([data-icon-look='glyph']) [data-folder-tile] {
+  padding: 16%;
+  gap: 10%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: rgb(255 255 255 / 0.16);
+  -webkit-mask: var(--squircle) center / 100% 100% no-repeat;
+  mask: var(--squircle) center / 100% 100% no-repeat;
+}
+
 /* "Vantage glyph" for a real app without a hand-made glyph: its silhouette in the glyph color */
 .vo-silhouette {
   display: block;

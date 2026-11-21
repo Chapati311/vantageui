@@ -24,7 +24,7 @@ export function AppTile({ app }: { app: AppDefinition }) {
 export function FolderTile({ name, apps }: { name: string; apps: string[] }) {
   const [labels] = useSetting('iconLabels');
   const circle = (
-    <div className={styles.folder} role="img" aria-label={`${name} folder, ${apps.length} apps`}>
+    <div className={styles.folder} data-folder-tile role="img" aria-label={`${name} folder, ${apps.length} apps`}>
       {apps.slice(0, 4).map((id) => {
         const app = getApp(id);
         if (!app) return null;
