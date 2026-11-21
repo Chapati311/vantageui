@@ -1,3 +1,4 @@
+import { exportThemeToPhone } from './nativeTheme';
 import { useSyncExternalStore } from 'react';
 import {
   contrast,
@@ -492,6 +493,19 @@ function apply() {
     root.dataset.widgetStyle = next.retro ? 'retro' : s.widgetStyle;
     setRetroMotion(next.retro !== null);
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next.bg);
+    // The lock screen iOS draws wears the theme too
+    exportThemeToPhone({
+      bg: vars['--color-bg'],
+      surface: vars['--color-surface'],
+      text: vars['--text-primary'],
+      text2: vars['--text-secondary'],
+      accent: vars['--color-accent'],
+      dark: next.dark,
+      retro: next.retro !== null,
+      preset: next.presetId,
+      clock: s.lockClockStyle,
+      terminal: /terminal|matrix|hacker|amber|cyan|redteam|ghost/i.test(next.presetId),
+    });
   };
 
   const doc = document as Document & { startViewTransition?: (callback: () => void) => { ready: Promise<void> } };
