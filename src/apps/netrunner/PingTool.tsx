@@ -3,6 +3,7 @@ import { Button, Row, Section } from '../../components/kit';
 import { isPrivateIp, useToolRun } from '../../system/rootTools';
 import { sparkPath } from './netStats';
 import { Output } from './Output';
+import { takeNetrunnerTarget } from './netrunnerNav';
 import styles from './Netrunner.module.css';
 
 const QUICK = ['1.1.1.1', '8.8.8.8', 'apple.com', 'google.com'];
@@ -31,10 +32,17 @@ function placeOf(ip: string): Promise<string> {
 
 /** 3. Ping & Trace: a live ping graph, and the route to a host hop by hop. */
 export function PingTool() {
-  const [host, setHost] = useState('1.1.1.1');
+  const [start] = useState(takeNetrunnerTarget);
+  const [host, setHost] = useState(start?.value ?? '1.1.1.1');
   const ping = useToolRun();
   const trace = useToolRun();
   const [hops, setHops] = useState<Hop[]>([]);
+  // Opened from Search / Vantage with a host ("ping apple.com", "trace 1.1.1.1"): go
+  useEffect(() => {
+    if (!start) return;
+    if (start.action === 'trace') void trace.start('traceroute', [start.value]);
+    else void ping.start('ping', [start.value, 20]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const times = ping.lines.map((l) => l.text.match(/time[=<]([\d.]+) ?ms/)).filter(Boolean).map((m) => Number(m![1]));
   const sent = ping.lines.filter((l) => /bytes from|Request timeout|timeout/i.test(l.text)).length;

@@ -156,7 +156,9 @@ export type Command =
   | { type: 'alarm'; hour: number; minute: number }
   | { type: 'note'; text: string }
   | { type: 'reminder'; text: string }
-  | { type: 'theme'; id: string };
+  | { type: 'theme'; id: string }
+  /** Netrunner: open a hacker tool, maybe with a host ("ping apple.com", "whois x.com", "my ip") */
+  | { type: 'net'; tool: string; target?: string; action?: string; label: string };
 
 /** Understands a few spoken-style commands. */
 export function parseCommand(input: string, themeIds: string[] = []): Command | null {
@@ -177,6 +179,22 @@ export function parseCommand(input: string, themeIds: string[] = []): Command | 
   if (match) return { type: 'note', text: match[1].trim() };
   match = /^(?:remind\s+me\s+(?:to\s+)?|reminder[:\s]+)(.+)$/i.exec(input.trim());
   if (match) return { type: 'reminder', text: match[1].trim() };
+  // Netrunner commands
+  const host = '([a-z0-9][a-z0-9.:-]*[a-z0-9])';
+  match = new RegExp(`^ping\\s+${host}$`).exec(text);
+  if (match) return { type: 'net', tool: 'ping', target: match[1], label: `Ping ${match[1]}` };
+  match = new RegExp(`^(?:trace(?:route)?)\\s+${host}$`).exec(text);
+  if (match) return { type: 'net', tool: 'ping', target: match[1], action: 'trace', label: `Trace the route to ${match[1]}` };
+  match = new RegExp(`^(dns|dig|nslookup|lookup|whois)\\s+${host}$`).exec(text);
+  if (match) return { type: 'net', tool: 'dns', target: match[2], action: match[1] === 'whois' ? 'whois' : 'dns', label: `${match[1] === 'whois' ? 'Whois' : 'DNS records of'} ${match[2]}` };
+  if (/^(?:what'?s\s+)?my\s+(?:public\s+)?ip(?:\s+address)?\??$|^ip\s+address$/.test(text)) return { type: 'net', tool: 'connection', label: 'My IP and connection' };
+  if (/^(?:who'?s|who\s+is)\s+on\s+my\s+(?:wi-?fi|network)\??$|^scan\s+(?:my\s+)?(?:network|wi-?fi)$|^network\s+map$/.test(text)) return { type: 'net', tool: 'map', label: 'Who is on my Wi-Fi' };
+  if (/^speed\s*test$|^how\s+fast\s+is\s+my\s+internet\??$/.test(text)) return { type: 'net', tool: 'speed', label: 'Speed test' };
+  if (/^(?:security\s+check|is\s+my\s+phone\s+secure\??|open\s+ports|scan\s+ports)$/.test(text)) return { type: 'net', tool: 'security', label: 'Phone security check' };
+  if (/^(?:trackers|privacy\s+monitor|who'?s\s+tracking\s+me\??)$/.test(text)) return { type: 'net', tool: 'privacy', label: 'Privacy Monitor' };
+  if (/^(?:terminal|shell|ssh|bash)$/.test(text)) return { type: 'net', tool: 'terminal', label: 'Open the Terminal' };
+  if (/^(?:packets|tcpdump|sniff(?:er)?)$/.test(text)) return { type: 'net', tool: 'packets', label: 'Packet view' };
+  if (/^(?:bluetooth\s+radar|ble|radar)$/.test(text)) return { type: 'net', tool: 'ble', label: 'Bluetooth radar' };
   match = /^(?:theme\s+)?(\w+)\s+theme$|^theme\s+(\w+)$/.exec(text);
   if (match) {
     const id = match[1] ?? match[2];

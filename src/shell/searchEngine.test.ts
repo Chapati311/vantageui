@@ -71,3 +71,15 @@ describe('commands', () => {
     expect(parseCommand('weather')).toBeNull();
   });
 });
+
+describe('Netrunner commands', () => {
+  it('opens the right tool with the right target', () => {
+    expect(parseCommand('ping apple.com')).toMatchObject({ type: 'net', tool: 'ping', target: 'apple.com' });
+    expect(parseCommand('traceroute 1.1.1.1')).toMatchObject({ type: 'net', tool: 'ping', target: '1.1.1.1', action: 'trace' });
+    expect(parseCommand('whois example.com')).toMatchObject({ type: 'net', tool: 'dns', target: 'example.com', action: 'whois' });
+    expect(parseCommand("what's my ip")).toMatchObject({ type: 'net', tool: 'connection' });
+    expect(parseCommand("who's on my wifi")).toMatchObject({ type: 'net', tool: 'map' });
+    expect(parseCommand('speed test')).toMatchObject({ type: 'net', tool: 'speed' });
+    expect(parseCommand('ping')).toBeNull();
+  });
+});

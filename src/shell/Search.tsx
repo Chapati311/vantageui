@@ -17,6 +17,8 @@ import { PRESETS } from '../theme/presets';
 import { SPRING } from '../theme/tokens';
 import { shapeOf, type ScreenRect } from './AppView';
 import { bestScore, calculate, convert, niceNumber, parseCommand, type Command } from './searchEngine';
+import { NetrunnerIcon } from '../apps/netrunner/icons';
+import { setNetrunnerTool } from '../apps/netrunner/netrunnerNav';
 import styles from './Search.module.css';
 
 /** Something search can do that is not an app (lock, mute, ...). */
@@ -76,6 +78,7 @@ const COMMAND_ICON: Record<Command['type'], ComponentType> = {
   note: NotesIcon,
   reminder: RemindersIcon,
   theme: SunIcon,
+  net: NetrunnerIcon,
 };
 
 function describe(command: Command): string {
@@ -92,6 +95,8 @@ function describe(command: Command): string {
       return `Remind me: ${command.text}`;
     case 'theme':
       return `Switch to ${PRESETS.find((preset) => preset.id === command.id)?.name}`;
+    case 'net':
+      return command.label;
   }
 }
 
@@ -121,6 +126,9 @@ function runCommand(command: Command): { message?: string; openApp?: string } {
     case 'theme':
       void runAction('theme.apply', { id: command.id });
       return { message: describe(command) };
+    case 'net':
+      setNetrunnerTool(command.tool, command.target ? { value: command.target, action: command.action } : undefined);
+      return { openApp: 'netrunner' };
   }
 }
 

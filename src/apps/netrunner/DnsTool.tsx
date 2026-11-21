@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Row, Section } from '../../components/kit';
 import { askTool, hasRootTools, useToolRun } from '../../system/rootTools';
 import { Output } from './Output';
+import { takeNetrunnerTarget } from './netrunnerNav';
 import styles from './Netrunner.module.css';
 
 interface Record {
@@ -27,7 +28,8 @@ async function dohLookup(name: string): Promise<Record[]> {
 
 /** 4. DNS & Whois: a domain's records, who registered it, and its HTTPS certificate. */
 export function DnsTool() {
-  const [domain, setDomain] = useState('apple.com');
+  const [start] = useState(takeNetrunnerTarget);
+  const [domain, setDomain] = useState(start?.value ?? 'apple.com');
   const [records, setRecords] = useState<Record[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -51,6 +53,13 @@ export function DnsTool() {
     }
     setBusy(false);
   };
+
+  // Opened from Search / Vantage with a domain ("whois example.com", "dns apple.com"): go
+  useEffect(() => {
+    if (!start) return;
+    void lookup();
+    if (start.action === 'whois' && hasRootTools()) void whois.start('whois', [clean]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // whois: the useful lines, in words
   const pick = (re: RegExp) => whois.lines.map((l) => l.text.match(re)?.[1]?.trim()).find(Boolean);
