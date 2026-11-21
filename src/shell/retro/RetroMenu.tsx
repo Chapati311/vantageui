@@ -2,7 +2,8 @@ import { useState, type ComponentType } from 'react';
 import { GameIcon } from '../../apps/arcade/GameIcon';
 import { openGame } from '../../apps/arcade/arcadeStore';
 import { Pressable } from '../../components/Pressable';
-import { HOME_APPS } from '../../system/appRegistry';
+import { homeApps } from '../../system/appRegistry';
+import { useNativeApps } from '../../system/nativeApps';
 import type { RetroStyle } from '../../theme/presets';
 import { PixelIcon } from './PixelIcon';
 import { SoftKeys } from './SoftKeys';
@@ -31,6 +32,7 @@ const SnakeGlyph = () => <GameIcon game="snake" size={24} />;
 export function RetroMenu({ style, onOpenApp, onBack }: RetroMenuProps) {
   const terminal = style === 'terminal';
   const [page, setPage] = useState(0);
+  useNativeApps(); // on the phone: its real apps arrive from SpringBoard
   const entries: MenuEntry[] = [
     {
       id: 'snake',
@@ -41,7 +43,8 @@ export function RetroMenu({ style, onOpenApp, onBack }: RetroMenuProps) {
         onOpenApp('arcade');
       },
     },
-    ...HOME_APPS.map((app) => ({ id: app.id, name: app.name, icon: app.icon, open: () => onOpenApp(app.id) })),
+    // Every app: Vantage's and, on the phone, all the real iOS apps (A to Z after Vantage's)
+    ...homeApps().map((app) => ({ id: app.id, name: app.name, icon: app.icon, open: () => onOpenApp(app.id) })),
   ];
   const pages = Math.ceil(entries.length / 9);
   const shown = entries.slice(page * 9, page * 9 + 9);

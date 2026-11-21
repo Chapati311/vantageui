@@ -235,10 +235,30 @@
 .menuList {
   display: flex;
   flex-direction: column;
+  /* Long lists (all the phone's apps) scroll; the soft keys stay put */
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  scrollbar-width: none;
+}
+
+.menuList::-webkit-scrollbar {
+  display: none;
+}
+
+/* Room at the end so the last app clears the soft keys (a spacer: iOS 16
+   ignores bottom padding of scrolling flex boxes) */
+.menuList::after {
+  content: '';
+  flex: none;
+  height: calc(var(--space-32) * 3);
 }
 
 .menuLine {
-  height: calc(var(--space-32) + var(--space-8));
+  flex: none;
+  height: calc(var(--space-32) + var(--space-12));
   padding: 0;
   border: 0;
   background: none;
@@ -246,7 +266,11 @@
   font: inherit;
   font-size: var(--text-17);
   text-align: left;
-  touch-action: none;
+  /* A finger on a line can still scroll the list */
+  touch-action: pan-y;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .menuLine:active {
