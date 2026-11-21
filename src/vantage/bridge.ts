@@ -196,11 +196,13 @@ async function execute(card: ActionCard, mode: Mode): Promise<void> {
   // Undo for anything that only changes settings: put the old ones back
   const before: Settings = JSON.parse(JSON.stringify(getSettings()));
   try {
-    await runAction(card.name as ActionId, card.params as never);
+    const answer = await runAction(card.name as ActionId, card.params as never);
     const changed = JSON.stringify(getSettings()) !== JSON.stringify(before);
     const undo = changed ? () => updateSettings(before) : undefined;
-    setCard(card.id, { status: 'done', undo });
-    send(mode, 'actionResult', { requestId: card.id, ok: true, receipt: card.text, undoToken: undo ? card.id : undefined });
+    // An action that answers (Netrunner: "Your public IP is ..."): that is the receipt
+    const receipt = typeof answer === 'string' ? answer : card.text;
+    setCard(card.id, { status: 'done', undo, text: receipt });
+    send(mode, 'actionResult', { requestId: card.id, ok: true, receipt, undoToken: undo ? card.id : undefined });
   } catch (error) {
     setCard(card.id, { status: 'failed', error: (error as Error).message });
     send(mode, 'actionResult', { requestId: card.id, ok: false, error: (error as Error).message });

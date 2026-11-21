@@ -96,17 +96,38 @@ type Toggleable = 'wifi' | 'bluetooth' | 'flashlight' | 'doNotDisturb';
 /** Settings an action may change directly with "settings.set". */
 type SimpleSetting = Exclude<keyof Settings, 'customPresets' | 'windDownSince' | 'mode'>;
 
+/** An action may answer with a sentence (Vantage says it back, e.g. "Your public IP is ..."). */
+type ActionResult = void | string;
+
 interface ActionDef<P> {
   description: string;
-  run: (params: P) => void | Promise<void>;
+  run: (params: P) => ActionResult | Promise<ActionResult>;
 }
 
-const define = <P>(description: string, run: (params: P) => void | Promise<void>): ActionDef<P> => ({
+const netrunnerVoice = () => import('../apps/netrunner/voice');
+
+const define = <P>(description: string, run: (params: P) => ActionResult | Promise<ActionResult>): ActionDef<P> => ({
   description,
   run,
 });
 
 const ACTIONS = {
+  // ---- Netrunner (hacker tools on the jailbroken phone; scans only your own network)
+  'netrunner.open': define<{ tool?: string }>(
+    'Open Netrunner, the hacker app, optionally on one tool: connection, map, ping, dns, speed, privacy, packets, ble, security, toolbox, terminal, learn.',
+    async ({ tool }) => {
+      const { setNetrunnerTool } = await import('../apps/netrunner/netrunnerNav');
+      setNetrunnerTool(tool ?? null);
+      shell?.openApp('netrunner', null);
+    },
+  ),
+  'netrunner.publicIp': define<Record<string, never>>("Say this phone's public IP address, where it is and the provider.", async () => (await netrunnerVoice()).publicIp()),
+  'netrunner.devices': define<Record<string, never>>("Who is on my Wi-Fi: scan the user's own (confirmed) network and say how many devices and which makers.", async () => (await netrunnerVoice()).devices()),
+  'netrunner.topApps': define<Record<string, never>>('Which apps on this phone have the most internet connections open right now.', async () => (await netrunnerVoice()).topTalkers()),
+  'netrunner.security': define<Record<string, never>>('Is my phone secure: check default passwords and open ports, and say what to fix.', async () => (await netrunnerVoice()).securityCheck()),
+  'netrunner.ping': define<{ host: string }>('Ping a host (domain or IP) and say how fast it answers.', async ({ host }) => (await netrunnerVoice()).ping(host)),
+  'netrunner.speedTest': define<Record<string, never>>('Test the internet speed (download and upload) from this phone.', async () => (await netrunnerVoice()).speedTest()),
+
   // ---- Shell
   'app.open': define<{ appId: string; from?: ScreenRect | null }>(
     'Open an app by its id (phone, messages, notes, clock, weather, calculator, music, maps, settings).',
@@ -377,10 +398,10 @@ export type ActionParams<K extends ActionId> = Parameters<(typeof ACTIONS)[K]['r
 const history: { id: ActionId; at: number }[] = [];
 
 /** Runs an action by name. */
-export async function runAction<K extends ActionId>(id: K, params: ActionParams<K>): Promise<void> {
+export async function runAction<K extends ActionId>(id: K, params: ActionParams<K>): Promise<ActionResult> {
   history.push({ id, at: Date.now() });
   if (history.length > 50) history.shift();
-  await (ACTIONS[id].run as (p: ActionParams<K>) => void | Promise<void>)(params);
+  return (ACTIONS[id].run as (p: ActionParams<K>) => ActionResult | Promise<ActionResult>)(params);
 }
 
 /** Every action with its description, e.g. to tell the AI what it can do. */
