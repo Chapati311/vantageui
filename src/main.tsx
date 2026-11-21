@@ -8,13 +8,14 @@ import { initSounds } from './system/sounds';
 import { handleSpotifyRedirect } from './system/spotify';
 import { initTheme } from './system/theme';
 import { onEasterEgg } from './system/easterEgg';
-import { onVolumeChord } from './system/nativeBridge';
+import { isHosted, onVolumeChord } from './system/nativeBridge';
 import { summon } from './vantage/summon';
 import { installRoutes } from './system/route';
 import { installFpsMeter } from './system/fpsMeter';
 import { installNativeApps } from './system/nativeApps';
 import { installPhoneControls } from './system/phoneControls';
 import { installRealNotifications } from './system/notifications';
+import { installAppUpdate } from './system/appUpdate';
 
 preventZoom();
 // Battery: CSS animations pause while the app is in the background (see global.css)
@@ -34,12 +35,14 @@ installPhoneControls();
 installRealNotifications();
 // Hidden FPS meter (?fps=1, `make fps` on the phone): frame times to the log
 installFpsMeter();
+installAppUpdate();
 // Coming back from the Spotify sign-in page: finish connecting
 void handleSpotifyRedirect();
 
-// While developing: the actions can be run from the browser console or by the
-// screenshot scripts, e.g. vantage.runAction('theme.apply', { id: 'ocean' })
-if (import.meta.env.DEV) {
+// While developing (and on the phone, for `make js` device testing): the actions
+// can be run from the console or the test scripts, e.g.
+// vantage.runAction('theme.apply', { id: 'ocean' })
+if (import.meta.env.DEV || isHosted()) {
   (window as unknown as { vantage: object }).vantage = { runAction, listActions };
 }
 
