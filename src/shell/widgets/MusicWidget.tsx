@@ -6,6 +6,8 @@ import { runAction } from '../../system/actions';
 import { currentTrack, getAnalyser, next, previous, togglePlay, usePlayer } from '../../system/musicPlayer';
 import { connectSpotify, spotifyControl, useSpotify } from '../../system/spotify';
 import { hasRealControls, mediaCommand, useControls } from '../../system/phoneControls';
+import { getNativeApp } from '../../system/nativeApps';
+import { openApp as openNativeApp } from '../../system/nativeBridge';
 import styles from './MusicWidget.module.css';
 
 const COLUMNS = 9;
@@ -168,6 +170,11 @@ export function MusicWidget() {
           type="button"
           className={`hit-44 ${styles.connect}`}
           onClick={() => {
+            // On the phone no sign-in is needed: play in Spotify / Music and it shows here
+            if (real) {
+              void openNativeApp(getNativeApp('com.spotify.client') ? 'com.spotify.client' : 'com.apple.Music');
+              return;
+            }
             if (spotify.clientId) {
               void connectSpotify().catch(() => undefined);
               return;
@@ -176,9 +183,9 @@ export function MusicWidget() {
             setCustomiseSection('music');
             void runAction('app.open', { appId: 'customise' });
           }}
-          aria-label="Connect Spotify"
+          aria-label={real ? 'Open a music app' : 'Connect Spotify'}
         >
-          Connect
+          {real ? (getNativeApp('com.spotify.client') ? 'Open Spotify' : 'Open Music') : 'Connect'}
         </button>
       </div>
     </Widget>

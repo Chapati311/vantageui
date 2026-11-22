@@ -72,6 +72,7 @@ function saveAuth(next: SavedAuth): void {
 /** On the phone, Spotify's login comes back to the app itself through iOS's sign-in sheet. */
 const nativeSignIn = () => (window.vantageNative as { signIn?: (url: string, scheme: string) => Promise<string> } | undefined)?.signIn;
 export const PHONE_REDIRECT_URI = 'vantageos://spotify';
+let signingIn = false;
 /** The Redirect URI to register in your Spotify app (it depends on where Vantage runs). */
 export const redirectUri = () => (nativeSignIn() ? PHONE_REDIRECT_URI : `${location.origin}${location.pathname}`);
 
@@ -107,7 +108,11 @@ export async function connectSpotify(): Promise<void> {
     location.assign(url);
     return;
   }
-  // On the phone: iOS's sign-in sheet, Vantage stays open underneath
+  // On the phone: iOS's sign-in sheet, Vantage stays open underneath. One at a time
+  // (a double tap started two and the second cancelled the first).
+  if (signingIn) return;
+  signingIn = true;
+  window.setTimeout(() => (signingIn = false), 1500);
   update({ error: null });
   let callback: string;
   try {

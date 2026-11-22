@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Button, Row, Section as KitSection } from '../../components/kit';
 import { setAppleMusicToken, signInAppleMusic, useAppleMusic } from '../../system/appleMusic';
 import { connectSpotify, disconnectSpotify, redirectUri, setSpotifyClientId, useSpotify } from '../../system/spotify';
+import { hasRealControls } from '../../system/phoneControls';
+import { getNativeApp } from '../../system/nativeApps';
+import { openApp } from '../../system/nativeBridge';
 import { Section, SettingsPage } from '../settings/SettingsPage';
 import styles from '../settings/SettingsApp.module.css';
 
@@ -13,10 +16,22 @@ export function MusicPage({ onBack }: { onBack: () => void }) {
   const [token, setToken] = useState('');
   const [message, setMessage] = useState<string | null>(spotify.error);
 
+  const onPhone = hasRealControls();
+  const spotifyApp = getNativeApp('com.spotify.client');
   return (
     <SettingsPage title="Music" onBack={onBack}>
+      {onPhone && (
+        <Section
+          label="On this iPhone"
+          note="No sign-in needed: Vantage shows and controls whatever plays in ANY app (Spotify, Apple Music, YouTube...) - song, artwork, play, pause, skip - straight from iOS. Start a song and it appears in the music widget and the control center."
+        >
+          <Button kind="primary" onPress={() => void openApp(spotifyApp ? 'com.spotify.client' : 'com.apple.Music')}>
+            {spotifyApp ? 'Open Spotify' : 'Open Music'}
+          </Button>
+        </Section>
+      )}
       <Section
-        label="Spotify"
+        label={onPhone ? 'Spotify account (optional)' : 'Spotify'}
         note={
           message ??
           `Make a free app at developer.spotify.com, add ${redirectUri()} as a Redirect URI (exactly), then paste its Client ID here. Play and skip need Premium.`
