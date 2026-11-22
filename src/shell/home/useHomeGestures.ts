@@ -31,6 +31,8 @@ export interface DropTarget {
   row: number;
   w: number;
   h: number;
+  /** Held over a folder or another app: the app goes INTO it (makes a folder with an app) */
+  into?: string;
 }
 
 interface Options {
@@ -51,6 +53,8 @@ interface Options {
   stopEditing: () => void;
   /** Moves an item and returns where it ended up (unchanged if there was no room). */
   onMoveItem: (id: string, to: { page: number; col: number; row: number }) => HomeItem;
+  /** An app dropped onto a folder (or another app): returns the folder it went into */
+  onDropInto?: (id: string, targetId: string) => HomeItem | null;
   onTapItem: (id: string) => void;
   /** Long-press on an item outside edit mode: its menu */
   onLongPressItem?: (id: string) => void;
@@ -200,8 +204,31 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
         0,
         metrics.rows - dragItem.h,
       );
-      if (!target || target.col !== col || target.row !== row) {
-        target = { col, row, w: dragItem.w, h: dragItem.h };
+      // An app held over the middle of a folder or another app: it will go into it
+      let into: string | undefined;
+      if (dragItem.kind === 'app') {
+        const { layout, page } = latest.current;
+        const fx = (pointerX - metrics.originX) / step;
+        const fy = (pointerY - metrics.originY) / step;
+        const cellX = Math.floor(fx);
+        const cellY = Math.floor(fy);
+        const inMiddle = fx - cellX > 0.12 && fx - cellX < 0.8 && fy - cellY > 0.12 && fy - cellY < 0.8;
+        const over = inMiddle
+          ? layout.find(
+              (i) =>
+                i.page === page &&
+                i.id !== dragItem!.id &&
+                (i.kind === 'folder' || i.kind === 'app') &&
+                cellX >= i.col &&
+                cellX < i.col + i.w &&
+                cellY >= i.row &&
+                cellY < i.row + i.h,
+            )
+          : undefined;
+        into = over?.id;
+      }
+      if (!target || target.col !== col || target.row !== row || target.into !== into) {
+        target = { col, row, w: dragItem.w, h: dragItem.h, into };
         setDropTarget(target);
       }
     };
@@ -255,10 +282,14 @@ export function useHomeGestures(surfaceRef: RefObject<HTMLElement | null>, optio
     const endDrag = (cancelled: boolean) => {
       window.clearTimeout(edgeTimer);
       edgeDirection = 0;
-      const { page, metrics, ghostX, ghostY, onMoveItem } = latest.current;
+      const { page, metrics, ghostX, ghostY, onMoveItem, onDropInto } = latest.current;
       const item = dragItem!;
-      const placed =
-        !cancelled && target ? onMoveItem(item.id, { page, col: target.col, row: target.row }) : item;
+      const intoFolder = !cancelled && target?.into && onDropInto ? onDropInto(item.id, target.into) : null;
+      const placed = intoFolder
+        ? intoFolder
+        : !cancelled && target
+          ? onMoveItem(item.id, { page, col: target.col, row: target.row })
+          : item;
 
       // The dragged copy springs into its final slot, then is removed.
       if (metrics) {

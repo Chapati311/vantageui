@@ -143,6 +143,26 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
     return next.find((item) => item.id === id)!;
   };
 
+  /**
+   * An app dropped onto a folder goes into it; onto another app, the two
+   * become a new folder in that app's place (like iOS).
+   */
+  const dropInto = (id: string, targetId: string): HomeItem | null => {
+    const layout = layoutRef.current;
+    const dragged = layout.find((item) => item.id === id);
+    const target = layout.find((item) => item.id === targetId);
+    if (!dragged || dragged.kind !== 'app' || !target) return null;
+    let folder: HomeItem;
+    if (target.kind === 'folder' && target.folder) {
+      folder = { ...target, folder: { ...target.folder, apps: [...target.folder.apps.filter((a) => a !== dragged.ref), dragged.ref] } };
+    } else if (target.kind === 'app') {
+      const folderId = `folder:${Date.now().toString(36)}`;
+      folder = { ...target, id: folderId, kind: 'folder', ref: folderId, folder: { name: 'Folder', apps: [target.ref, dragged.ref] } };
+    } else return null;
+    commit(layout.filter((item) => item.id !== id && item.id !== targetId).concat(folder));
+    return folder;
+  };
+
   /** Switches a widget to its next size that fits. */
   const resizeItem = (id: string) => {
     const item = layoutRef.current.find((i) => i.id === id);
@@ -291,6 +311,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
     },
     stopEditing,
     onMoveItem: moveItem,
+    onDropInto: dropInto,
     onTapItem: tapItem,
     onLongPressItem: (id) => {
       const shape = shapeOfItem(id);
@@ -341,6 +362,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
                 item={item}
                 {...slotRect(item, metrics)}
                 editing={editing}
+                dropping={dropTarget?.into === item.id}
                 hidden={drag?.id === item.id}
                 index={index}
                 onResize={resizeItem}
@@ -351,7 +373,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
                 offscreen={item.page !== page && !editing}
               />
             ))}
-          {dropRect && (
+          {dropRect && !dropTarget?.into && (
             <div
               className={styles.dropOutline}
               style={{

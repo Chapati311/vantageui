@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { DotLogo } from '../components/DotLogo';
+import { CloseIcon } from '../components/glyphs';
 import { Pressable } from '../components/Pressable';
 import { SPRING } from '../theme/tokens';
 import { FRAME_URL, IS_MOCK, attachFrame, cancelCard, confirmCard, onVantageClose, undoCard, useVantage, type ActionCard } from './bridge';
@@ -84,7 +85,12 @@ export function VantageOverlay() {
     if (!open) return;
     const key = (event: KeyboardEvent) => event.key === 'Escape' && dismiss();
     window.addEventListener('keydown', key);
-    return () => window.removeEventListener('keydown', key);
+    // The home button closes Vantage too (touches inside its window can't reach the swipe-down)
+    window.addEventListener('vantage:home', dismiss);
+    return () => {
+      window.removeEventListener('keydown', key);
+      window.removeEventListener('vantage:home', dismiss);
+    };
   }, [open]);
 
   return createPortal(
@@ -158,6 +164,12 @@ export function VantageOverlay() {
           tabIndex={open ? 0 : -1}
         />
         {IS_MOCK && open && <span className={`label ${styles.mock}`}>Test page: Vantage isn't connected yet</span>}
+        {/* Always a way out: Vantage's window covers the screen, so tap-outside can't be reached */}
+        {open && (
+          <Pressable className={`${styles.close} hit-44`} aria-label="Close Vantage" onClick={dismiss}>
+            <CloseIcon />
+          </Pressable>
+        )}
 
         <div className={styles.cards}>
           <AnimatePresence initial={false}>{open && cards.slice(0, 3).map((card) => <Card key={card.id} card={card} />)}</AnimatePresence>

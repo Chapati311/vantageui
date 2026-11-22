@@ -47,6 +47,8 @@ interface HomeItemViewProps {
   editing: boolean;
   /** Invisible while its dragged copy is on screen */
   hidden: boolean;
+  /** An app is held over it: it will go in (folder) - grows a little */
+  dropping?: boolean;
   /** Used to make neighbours wiggle out of step */
   index: number;
   onResize: (id: string) => void;
@@ -66,7 +68,7 @@ interface HomeItemViewProps {
 /** The color-block widget colors (Pop Ink): coral, butter, cream, sky, mint */
 const BLOCK_COLORS = ['#F2694A', '#F6CE46', '#F3EAD7', '#9EC9F0', '#9FE3C1'];
 
-export function HomeItemView({ item, x, y, width, height, editing, hidden, index, onResize, onRemove, editTick, enterKey = 0, enterOrder = 0, offscreen = false }: HomeItemViewProps) {
+export function HomeItemView({ item, x, y, width, height, editing, hidden, dropping, index, onResize, onRemove, editTick, enterKey = 0, enterOrder = 0, offscreen = false }: HomeItemViewProps) {
   const [scope, animateItem] = useAnimate();
   useEffect(() => {
     if (!enterKey || !scope.current) return;
@@ -82,7 +84,7 @@ export function HomeItemView({ item, x, y, width, height, editing, hidden, index
 
   return (
     <motion.div
-      className={`${styles.frame} ${hidden ? styles.hidden : ''}`}
+      className={`${styles.frame} ${hidden ? styles.hidden : ''} ${dropping ? styles.dropping : ''}`}
       data-item-id={item.id}
       data-offscreen={offscreen || undefined}
       // Color-block packs: each item takes the next color of the set (by its place on the page)

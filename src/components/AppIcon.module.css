@@ -51,6 +51,8 @@
    .vo-face in global.css); the slot draws nothing around it, so the badge
    can still sit on the edge. */
 .icon[data-icon-face='squircle'] {
+  /* The shape the menu ring and the open-app zoom read: close to the iOS squircle */
+  border-radius: 23%;
   border: 0;
   background: none;
   box-shadow: none;
