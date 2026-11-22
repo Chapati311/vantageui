@@ -55,9 +55,10 @@ export function RetroMenu({ style, onOpenApp, onBack }: RetroMenuProps) {
       {terminal ? (
         <div className={styles.menuList}>
           {entries.map((entry, index) => (
-            <Pressable key={entry.id} className={styles.menuLine} onClick={entry.open}>
+            // A plain button (no press animation): a swipe that starts on a line scrolls the list
+            <button key={entry.id} type="button" className={styles.menuLine} onClick={entry.open}>
               {index + 1} {entry.name.toUpperCase()}
-            </Pressable>
+            </button>
           ))}
         </div>
       ) : (

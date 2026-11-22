@@ -266,8 +266,7 @@
   font: inherit;
   font-size: var(--text-17);
   text-align: left;
-  /* A finger on a line can still scroll the list */
-  touch-action: pan-y;
+  /* No touch-action of its own: it follows the list (pan-y), so a swipe on a line scrolls */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
