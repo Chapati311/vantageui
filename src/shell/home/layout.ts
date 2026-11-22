@@ -116,9 +116,8 @@ export function placeItem(
 ): HomeItem[] | null {
   const item = layout.find((i) => i.id === id);
   if (!item || !inBounds(target, rows)) return null;
-  // Moving onto another page is refused when that page is already full.
-  const onTargetPage = layout.filter((i) => i.id !== id && i.page === target.page).length;
-  if (item.page !== target.page && onTargetPage >= capacityOf(layout, target.page)) return null;
+  // Any page takes an item as long as it physically fits (a count limit made every
+  // move onto a full-looking page snap back on the phone); the rest shift aside.
 
   const moved: HomeItem = { ...item, ...target };
   const samePage = layout.filter((i) => i.id !== id && i.page === target.page);

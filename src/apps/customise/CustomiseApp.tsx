@@ -6,6 +6,7 @@ import {
   BoltIcon,
   FlagIcon,
   GridIcon,
+  PlusIcon,
   LockIcon,
   MoonIcon,
   SoundIcon,
@@ -34,6 +35,8 @@ import { WallpaperPage } from '../settings/WallpaperPage';
 import { WidgetsPage } from '../settings/WidgetsPage';
 import { setCustomiseSection, useCustomiseSection } from './customiseNav';
 import { KeyboardPage } from './KeyboardPage';
+import { WidgetStorePage } from './WidgetStorePage';
+import { allWidgets } from '../../shell/widgets/widgetRegistry';
 import { LivePreview } from './LivePreview';
 import { LockScreenPage } from './LockScreenPage';
 import { MusicPage } from './MusicPage';
@@ -64,6 +67,7 @@ type SectionId =
   | 'fonts'
   | 'keyboard'
   | 'widgets'
+  | 'widgetstore'
   | 'widgetlab'
   | 'statusbar'
   | 'controls'
@@ -94,6 +98,7 @@ const LOOK: SectionDef[] = [
   { id: 'icons', name: 'Icons', icon: CircleIcon, page: IconsPage },
   { id: 'fonts', name: 'Fonts', icon: TextIcon, page: FontsPage },
   { id: 'keyboard', name: 'Keyboard', icon: GridIcon, page: KeyboardPage },
+  { id: 'widgetstore', name: 'Widget store', icon: PlusIcon, page: WidgetStorePage },
   { id: 'widgets', name: 'Widget style', icon: LayersIcon, page: WidgetsPage },
   { id: 'widgetlab', name: 'Widget Lab', icon: SparkIcon, page: WidgetLabPage },
 ];
@@ -195,6 +200,7 @@ export function CustomiseApp() {
     fonts: { inter: 'Inter', system: 'System', serif: 'Serif', mono: 'Mono' }[settings.uiFont],
     keyboard: settings.keyboard === 'system' ? 'iOS keyboard' : `Vantage, ${{ theme: 'theme', glass: 'glass', terminal: 'terminal', pixel: 'pixel', minimal: 'plain' }[settings.keyboardStyle]}`,
     widgetlab: labCount ? `${labCount} made` : 'Build your own',
+    widgetstore: `${allWidgets().length} widgets`,
     controls: settings.controlStyle === 'dial' ? 'Round dial' : 'Slider',
     notifications: settings.lockNotifications === 'count' ? 'Count on lock' : 'Hidden on lock',
     pill:
