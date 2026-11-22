@@ -33,6 +33,7 @@ import { ThemesPage } from '../settings/ThemesPage';
 import { WallpaperPage } from '../settings/WallpaperPage';
 import { WidgetsPage } from '../settings/WidgetsPage';
 import { setCustomiseSection, useCustomiseSection } from './customiseNav';
+import { KeyboardPage } from './KeyboardPage';
 import { LivePreview } from './LivePreview';
 import { LockScreenPage } from './LockScreenPage';
 import { MusicPage } from './MusicPage';
@@ -61,6 +62,7 @@ type SectionId =
   | 'home'
   | 'icons'
   | 'fonts'
+  | 'keyboard'
   | 'widgets'
   | 'widgetlab'
   | 'statusbar'
@@ -91,6 +93,7 @@ const LOOK: SectionDef[] = [
   { id: 'home', name: 'Home screen', icon: GridIcon, page: HomeScreenPage },
   { id: 'icons', name: 'Icons', icon: CircleIcon, page: IconsPage },
   { id: 'fonts', name: 'Fonts', icon: TextIcon, page: FontsPage },
+  { id: 'keyboard', name: 'Keyboard', icon: GridIcon, page: KeyboardPage },
   { id: 'widgets', name: 'Widget style', icon: LayersIcon, page: WidgetsPage },
   { id: 'widgetlab', name: 'Widget Lab', icon: SparkIcon, page: WidgetLabPage },
 ];
@@ -190,6 +193,7 @@ export function CustomiseApp() {
     home: { dots: 'Page dots', numbers: 'Page numbers', hidden: 'No indicator' }[settings.pageDots],
     icons: settings.iconLook === 'glyph' ? `Vantage glyph, ${settings.iconShape}` : settings.iconLook === 'tinted' ? 'Tinted' : 'Original',
     fonts: { inter: 'Inter', system: 'System', serif: 'Serif', mono: 'Mono' }[settings.uiFont],
+    keyboard: settings.keyboard === 'system' ? 'iOS keyboard' : `Vantage, ${{ theme: 'theme', glass: 'glass', terminal: 'terminal', pixel: 'pixel', minimal: 'plain' }[settings.keyboardStyle]}`,
     widgetlab: labCount ? `${labCount} made` : 'Build your own',
     controls: settings.controlStyle === 'dial' ? 'Round dial' : 'Slider',
     notifications: settings.lockNotifications === 'count' ? 'Count on lock' : 'Hidden on lock',

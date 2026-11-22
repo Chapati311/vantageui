@@ -40,6 +40,7 @@ import { TimerBanner } from './TimerBanner';
 import { Wallpaper } from './wallpaper/Wallpaper';
 import { AccessGranted } from './hacker/AccessGranted';
 import { HackerBoot } from './hacker/HackerBoot';
+import { VantageKeyboard } from './keyboard/VantageKeyboard';
 import { installHackerPage } from './home/layoutStore';
 import styles from './Shell.module.css';
 
@@ -435,6 +436,7 @@ export function Shell() {
         />
         <LockedApp appId={lockedApp} onClose={() => setLockedApp(null)} />
         <AccessGranted trigger={unlocks} />
+        <VantageKeyboard />
         {/* Time and battery along the top, above home and apps (the lock screen has its own) */}
         <StatusStrip hidden={retro || locked} />
         <AlarmRinging />

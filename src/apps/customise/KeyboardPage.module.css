@@ -1,0 +1,18 @@
+.field {
+  width: 100%;
+  height: calc(var(--space-32) + var(--space-12));
+  padding: 0 var(--space-16);
+  border: var(--border-widget);
+  border-radius: var(--radius-pill);
+  background: var(--surface-widget);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--text-17);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.field:focus {
+  border-color: var(--color-accent);
+}

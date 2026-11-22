@@ -19,6 +19,9 @@ export type IconPack = (typeof ICON_PACKS)[number];
 /** Every app's icon, one consistent look: real icons in the iOS squircle, Vantage glyphs in circles, or all in the accent */
 export const ICON_LOOKS = ['original', 'glyph', 'tinted'] as const;
 export type IconLook = (typeof ICON_LOOKS)[number];
+/** The Vantage keyboard's look: follows the theme, or a fixed style */
+export const KEYBOARD_STYLES = ['theme', 'glass', 'terminal', 'pixel', 'minimal'] as const;
+export type KeyboardStyle = (typeof KEYBOARD_STYLES)[number];
 /** How numbers are drawn everywhere: dot matrix, big serif numerals, or a segmented mono */
 export const NUMERAL_STYLES = ['dot', 'serif', 'segment'] as const;
 export type NumeralStyle = (typeof NUMERAL_STYLES)[number];
@@ -114,6 +117,12 @@ export interface Settings {
   iconPack: IconPack;
   /** Original (default): real icons, iOS squircle. Glyph: Vantage glyphs in circles. Tinted: everything in the accent. */
   iconLook: IconLook;
+  /** Typing in Vantage: its own themed keyboard, or the iOS one */
+  keyboard: 'vantage' | 'system';
+  keyboardStyle: KeyboardStyle;
+  keyboardShape: 'rounded' | 'square' | 'circle';
+  keyboardSound: boolean;
+  keyboardNumberRow: boolean;
   numerals: NumeralStyle;
   uiFont: UiFont;
 
@@ -221,6 +230,11 @@ export const DEFAULT_SETTINGS: Settings = {
   iconStyle: 'outline',
   iconPack: 'line',
   iconLook: 'original',
+  keyboard: 'vantage',
+  keyboardStyle: 'theme',
+  keyboardShape: 'rounded',
+  keyboardSound: true,
+  keyboardNumberRow: false,
   numerals: 'dot',
   uiFont: 'inter',
   bootAnimation: true,
@@ -356,6 +370,11 @@ export function sanitizeSettings(input: unknown): Settings {
     iconStyle: oneOf(raw.iconStyle, ['outline', 'filled', 'tinted'] as const, d.iconStyle),
     iconPack: oneOf(raw.iconPack, ICON_PACKS, d.iconPack),
     iconLook: oneOf(raw.iconLook, ICON_LOOKS, d.iconLook),
+    keyboard: oneOf(raw.keyboard, ['vantage', 'system'] as const, d.keyboard),
+    keyboardStyle: oneOf(raw.keyboardStyle, KEYBOARD_STYLES, d.keyboardStyle),
+    keyboardShape: oneOf(raw.keyboardShape, ['rounded', 'square', 'circle'] as const, d.keyboardShape),
+    keyboardSound: bool(raw.keyboardSound, d.keyboardSound),
+    keyboardNumberRow: bool(raw.keyboardNumberRow, d.keyboardNumberRow),
     numerals: oneOf(raw.numerals, NUMERAL_STYLES, d.numerals),
     uiFont: oneOf(raw.uiFont, ['inter', 'system', 'serif', 'mono'] as const, d.uiFont),
     bootAnimation: bool(raw.bootAnimation, d.bootAnimation),
