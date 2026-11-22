@@ -1,5 +1,5 @@
 import { SoundIcon } from '../components/glyphs';
-import { NetrunnerIcon } from '../apps/netrunner/icons';
+import { FieldGuideIcon, NetrunnerIcon } from '../apps/netrunner/icons';
 import { isHosted } from './nativeBridge';
 import { bundleIdOf, getNativeApp, getNativeApps, isNativeAppId, nativeAppId } from './nativeApps';
 import { lazy, Suspense, type ComponentType } from 'react';
@@ -48,6 +48,7 @@ function lazyApp(load: () => Promise<Record<string, unknown>>, name: string): Co
 const VantageApp = lazyApp(() => import('../vantage/VantageApp'), 'VantageApp');
 const EarbudsApp = lazyApp(() => import('../apps/devices/EarbudsApp'), 'EarbudsApp');
 const NetrunnerApp = lazyApp(() => import('../apps/netrunner/NetrunnerApp'), 'NetrunnerApp');
+const GuideApp = lazyApp(() => import('../apps/guide/GuideApp'), 'GuideApp');
 const ArcadeApp = lazyApp(() => import('../apps/arcade/ArcadeApp'), 'ArcadeApp');
 const BrowserApp = lazyApp(() => import('../apps/browser/BrowserApp'), 'BrowserApp');
 const CalculatorApp = lazyApp(() => import('../apps/calculator/CalculatorApp'), 'CalculatorApp');
@@ -152,6 +153,13 @@ export const APPS: AppDefinition[] = [
     icon: NetrunnerIcon,
     keywords: ['hacker', 'hack', 'network', 'wifi', 'scan', 'nmap', 'ping', 'traceroute', 'dns', 'whois', 'speed test', 'privacy', 'trackers', 'packets', 'tcpdump', 'bluetooth', 'security', 'ports', 'terminal', 'shell', 'ssh', 'hash', 'base64', 'jwt', 'qr', 'ctf'],
     component: NetrunnerApp,
+  },
+  {
+    id: 'guide',
+    name: 'Field Guide',
+    icon: FieldGuideIcon,
+    keywords: ['how to', 'guide', 'tutorial', 'ssh', 'scan', 'devices', 'wifi', 'nmap', 'files', 'scp', 'tcpdump', 'wireshark', 'bluetooth', 'python', 'sileo', 'jailbreak', 'install', 'hack', 'learn'],
+    component: GuideApp,
   },
   { id: 'earbuds', name: 'Earbuds', icon: SoundIcon, keywords: ['airpods', 'headphones', 'battery', 'bluetooth'], component: EarbudsApp, hidden: true },
 ];

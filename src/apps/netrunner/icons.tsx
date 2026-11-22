@@ -136,3 +136,13 @@ export function ProcessIcon() {
     </Icon>
   );
 }
+
+export function FieldGuideIcon() {
+  return (
+    <Icon>
+      <path d="M5 4.5h9.5a2 2 0 0 1 2 2v13H7a2 2 0 0 1-2-2v-13z" />
+      <path d="M5 17.5a2 2 0 0 1 2-2h9.5M9 8.5h4.5M9 11.5h3" />
+      <path d="M19 7v12.5" />
+    </Icon>
+  );
+}
