@@ -16,6 +16,7 @@ import { installNativeApps } from './system/nativeApps';
 import { installPhoneControls } from './system/phoneControls';
 import { installRealNotifications } from './system/notifications';
 import { installAppUpdate } from './system/appUpdate';
+import { installTouchScroll } from './system/touchScroll';
 
 preventZoom();
 // Battery: CSS animations pause while the app is in the background (see global.css)
@@ -36,6 +37,8 @@ installRealNotifications();
 // Hidden FPS meter (?fps=1, `make fps` on the phone): frame times to the log
 installFpsMeter();
 installAppUpdate();
+// Swipes that start on buttons/cards scroll their list too (iOS 16.3 web view)
+installTouchScroll();
 // Coming back from the Spotify sign-in page: finish connecting
 void handleSpotifyRedirect();
 
