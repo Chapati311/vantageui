@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Row, Section as KitSection } from '../../components/kit';
 import { setAppleMusicToken, signInAppleMusic, useAppleMusic } from '../../system/appleMusic';
-import { connectSpotify, disconnectSpotify, setSpotifyClientId, useSpotify } from '../../system/spotify';
+import { connectSpotify, disconnectSpotify, redirectUri, setSpotifyClientId, useSpotify } from '../../system/spotify';
 import { Section, SettingsPage } from '../settings/SettingsPage';
 import styles from '../settings/SettingsApp.module.css';
 
@@ -19,7 +19,7 @@ export function MusicPage({ onBack }: { onBack: () => void }) {
         label="Spotify"
         note={
           message ??
-          `Make a free app at developer.spotify.com, add ${location.origin}${location.pathname} as a Redirect URI, then paste its Client ID here. Play and skip need Premium.`
+          `Make a free app at developer.spotify.com, add ${redirectUri()} as a Redirect URI (exactly), then paste its Client ID here. Play and skip need Premium.`
         }
       >
         <KitSection>

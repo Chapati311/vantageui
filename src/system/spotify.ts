@@ -69,7 +69,11 @@ function saveAuth(next: SavedAuth): void {
   update({ clientId: auth.clientId, connected: Boolean(auth.refreshToken) });
 }
 
-const redirectUri = () => `${location.origin}${location.pathname}`;
+/** On the phone, Spotify's login comes back to the app itself through iOS's sign-in sheet. */
+const nativeSignIn = () => (window.vantageNative as { signIn?: (url: string, scheme: string) => Promise<string> } | undefined)?.signIn;
+export const PHONE_REDIRECT_URI = 'vantageos://spotify';
+/** The Redirect URI to register in your Spotify app (it depends on where Vantage runs). */
+export const redirectUri = () => (nativeSignIn() ? PHONE_REDIRECT_URI : `${location.origin}${location.pathname}`);
 
 const base64Url = (bytes: ArrayBuffer | Uint8Array) =>
   btoa(String.fromCharCode(...new Uint8Array(bytes)))
@@ -97,7 +101,33 @@ export async function connectSpotify(): Promise<void> {
     scope: SCOPES,
     state: 'vantage-spotify',
   });
-  location.assign(`https://accounts.spotify.com/authorize?${params}`);
+  const url = `https://accounts.spotify.com/authorize?${params}`;
+  const signIn = nativeSignIn();
+  if (!signIn) {
+    location.assign(url);
+    return;
+  }
+  // On the phone: iOS's sign-in sheet, Vantage stays open underneath
+  update({ error: null });
+  let callback: string;
+  try {
+    callback = await signIn(url, 'vantageos');
+  } catch (error) {
+    const message = (error as Error).message;
+    update({ error: message === 'cancelled' ? 'Spotify sign-in was cancelled.' : `Spotify sign-in failed: ${message}` });
+    return;
+  }
+  const answer = new URL(callback.replace('vantageos://', 'https://vantageos.invalid/'));
+  const code = answer.searchParams.get('code');
+  if (!code) {
+    update({ error: answer.searchParams.get('error') === 'access_denied' ? 'Spotify sign-in was cancelled.' : `Spotify said: ${answer.searchParams.get('error') ?? 'no code'}. Is ${PHONE_REDIRECT_URI} added as a Redirect URI in your Spotify app?` });
+    return;
+  }
+  try {
+    await tokenRequest({ grant_type: 'authorization_code', code, redirect_uri: PHONE_REDIRECT_URI, code_verifier: verifier });
+  } catch (error) {
+    update({ error: (error as Error).message });
+  }
 }
 
 export function disconnectSpotify(): void {
@@ -128,13 +158,13 @@ export async function handleSpotifyRedirect(): Promise<void> {
   const code = params.get('code');
   const verifier = sessionStorage.getItem(VERIFIER_KEY);
   // Clean the address bar either way
-  history.replaceState(null, '', redirectUri());
+  history.replaceState(null, '', `${location.origin}${location.pathname}`);
   if (!code || !verifier) {
     update({ error: 'Spotify sign-in was cancelled.' });
     return;
   }
   try {
-    await tokenRequest({ grant_type: 'authorization_code', code, redirect_uri: redirectUri(), code_verifier: verifier });
+    await tokenRequest({ grant_type: 'authorization_code', code, redirect_uri: `${location.origin}${location.pathname}`, code_verifier: verifier });
   } catch (error) {
     update({ error: (error as Error).message });
   }
