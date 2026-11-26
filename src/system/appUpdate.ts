@@ -14,6 +14,10 @@ export function installAppUpdate(): void {
   if (!('serviceWorker' in navigator) || !isHosted()) return;
   let lastCheck = 0;
   let pending = false;
+  /** The live site serves a different build: drop the offline copy before reloading */
+  let dropOfflineCopy = false;
+  /** A page without a service worker gets one on its first visit: that is not an update */
+  let hadController = Boolean(navigator.serviceWorker.controller);
   /** The build the live site serves right now, vs. the one running here. */
   const running = () => [...document.scripts].map((s) => s.src).find((src) => /\/assets\/index-/.test(src)) ?? '';
   const live = async () => {
@@ -32,6 +36,7 @@ export function installAppUpdate(): void {
         // Only marked here: the offline copy is dropped right before the reload.
         // Dropping it now broke opening apps (their code was gone: blank screen).
         pending = true;
+        dropOfflineCopy = true;
       })
       .catch(() => {});
   };
@@ -39,6 +44,7 @@ export function installAppUpdate(): void {
     const url = new URL(window.location.href);
     url.searchParams.set('restore', '1');
     const go = () => window.location.replace(url.toString());
+    if (!dropOfflineCopy) return go();
     // Drop the old offline copy first (at most 2 s), so the new version loads
     void Promise.race([
       Promise.all([
@@ -51,7 +57,13 @@ export function installAppUpdate(): void {
       .then(go);
   };
   // A new service worker took control: the new code is ready.
+  // (Not the first one a fresh page gets: treating that as an update reloaded
+  // Vantage again and again in the background, found on the phone 2026-11-26.)
   navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController) {
+      hadController = true;
+      return;
+    }
     if (document.visibilityState === 'hidden') reloadNow();
     else pending = true;
   });
