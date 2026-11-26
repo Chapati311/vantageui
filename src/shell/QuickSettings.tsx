@@ -157,9 +157,6 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
   const backdrop = useTransform(shown, [0, 1], [0, 0.6]);
   // Closed = not drawn at all (nothing can peek in under the status bar)
   const visibility = useTransform(shown, (value) => (value <= 0.002 ? 'hidden' : 'visible'));
-  // ...and not laid out or styled either: closed, it costs the phone nothing
-  const panelDisplay = useTransform(shown, (value) => (value <= 0.002 ? 'none' : 'flex'));
-  const backdropDisplay = useTransform(shown, (value) => (value <= 0.002 ? 'none' : 'block'));
 
   useEffect(() => {
     animate(shown, open ? 1 : 0, SPRING.sheet);
@@ -366,9 +363,9 @@ export function QuickSettings({ open, onClose }: QuickSettingsProps) {
   return (
     <div className={`${styles.layer} ${open ? styles.open : ''}`} aria-hidden={!open}>
       {/* Dark area below the panel: tap it to close */}
-      <motion.div className={styles.backdrop} style={{ opacity: backdrop, visibility, display: backdropDisplay }} onClick={onClose} />
+      <motion.div className={styles.backdrop} style={{ opacity: backdrop, visibility }} onClick={onClose} />
 
-      <motion.div ref={panel} className={styles.panel} style={{ y, visibility, display: panelDisplay }} {...(bind() as object)}>
+      <motion.div ref={panel} className={styles.panel} style={{ y, visibility }} {...(bind() as object)}>
         <div className={styles.head}>
           <span className="label">{editing ? 'Edit controls' : 'Controls'}</span>
           <Pressable className={`label hit-44 ${styles.edit}`} data-no-drag onClick={() => setEditing((value) => !value)}>

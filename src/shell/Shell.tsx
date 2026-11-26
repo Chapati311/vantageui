@@ -385,8 +385,8 @@ export function Shell() {
               initial={false}
               animate={{ scale: openApp ? 0.94 : 1, opacity: openApp ? 0.6 : 1 }}
               transition={SPRING.app}
-              // Under a fully open app it can't be seen: stop drawing it (big win on the A13)
-              style={{ visibility: appCovers && openApp ? 'hidden' : 'visible' }}
+              // Stays drawn under apps: hiding it made closing an app stutter on the
+              // phone (all of home had to be redrawn); its live widgets pause instead
               data-home-layer="1"
             >
               {mode === 'focus' || mode === 'winddown' ? (
