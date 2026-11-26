@@ -3,6 +3,7 @@ import { FieldGuideIcon, NetrunnerIcon } from '../apps/netrunner/icons';
 import { isHosted } from './nativeBridge';
 import { bundleIdOf, getNativeApp, getNativeApps, isNativeAppId, nativeAppId } from './nativeApps';
 import { lazy, Suspense, type ComponentType } from 'react';
+import { CrashGuard, loadOrReload } from './staleBuild';
 import { EmptyState } from '../components/kit/EmptyState';
 import {
   ArcadeIcon,
@@ -35,12 +36,16 @@ import {
  * with just the shell, so a cold start stays fast on the A13.
  */
 function lazyApp(load: () => Promise<Record<string, unknown>>, name: string): ComponentType {
-  const Lazy = lazy(() => load().then((module) => ({ default: module[name] as ComponentType })));
+  // A load that fails because a new version replaced this one reloads onto it
+  const Lazy = lazy(loadOrReload(() => load().then((module) => ({ default: module[name] as ComponentType }))));
   return function LazyApp() {
     return (
-      <Suspense fallback={<EmptyState kind="loading" title="Opening" />}>
-        <Lazy />
-      </Suspense>
+      // One app crashing never blanks the whole of Vantage
+      <CrashGuard fallback={(retry) => <EmptyState kind="error" title="This app hit a problem" message="The rest of Vantage is fine." action={{ label: 'Try again', onPress: retry }} />}>
+        <Suspense fallback={<EmptyState kind="loading" title="Opening" />}>
+          <Lazy />
+        </Suspense>
+      </CrashGuard>
     );
   };
 }
@@ -73,7 +78,7 @@ const SettingsApp = lazyApp(() => import('../apps/settings/SettingsApp'), 'Setti
 const WeatherApp = lazyApp(() => import('../apps/weather/WeatherApp'), 'WeatherApp');
 
 // Maps carries a big map library: it is only downloaded when Maps opens.
-const LazyMaps = lazy(() => import('../apps/maps/MapsApp').then((module) => ({ default: module.MapsApp })));
+const LazyMaps = lazy(loadOrReload(() => import('../apps/maps/MapsApp').then((module) => ({ default: module.MapsApp }))));
 function MapsApp() {
   return (
     <Suspense fallback={null}>

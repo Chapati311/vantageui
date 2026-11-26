@@ -17,7 +17,10 @@ import { installPhoneControls } from './system/phoneControls';
 import { installRealNotifications } from './system/notifications';
 import { installAppUpdate } from './system/appUpdate';
 import { installTouchScroll } from './system/touchScroll';
+import { CrashGuard, installStaleBuildRecovery } from './system/staleBuild';
 
+// A new version replaced this one's files: reload onto it instead of going blank
+installStaleBuildRecovery();
 preventZoom();
 // Battery: CSS animations pause while the app is in the background (see global.css)
 document.addEventListener('visibilitychange', () => document.documentElement.toggleAttribute('data-hidden', document.visibilityState === 'hidden'));
@@ -51,6 +54,21 @@ if (import.meta.env.DEV || isHosted()) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Shell />
+    {/* Never a blank screen: if the shell itself crashes, offer a reload */}
+    <CrashGuard
+      fallback={() => (
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          style={{ position: 'fixed', inset: 0, border: 0, background: '#000', color: '#fff', font: '600 17px system-ui', padding: 32 }}
+        >
+          Vantage hit a problem.
+          <br />
+          Tap to reload.
+        </button>
+      )}
+    >
+      <Shell />
+    </CrashGuard>
   </StrictMode>,
 );

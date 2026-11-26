@@ -29,16 +29,26 @@ export function installAppUpdate(): void {
     void live()
       .then((latest) => {
         if (!latest || running().endsWith(latest)) return;
+        // Only marked here: the offline copy is dropped right before the reload.
+        // Dropping it now broke opening apps (their code was gone: blank screen).
         pending = true;
-        void navigator.serviceWorker.getRegistrations().then((list) => Promise.all(list.map((r) => r.unregister())));
-        void caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))));
       })
       .catch(() => {});
   };
   const reloadNow = () => {
     const url = new URL(window.location.href);
     url.searchParams.set('restore', '1');
-    window.location.replace(url.toString());
+    const go = () => window.location.replace(url.toString());
+    // Drop the old offline copy first (at most 2 s), so the new version loads
+    void Promise.race([
+      Promise.all([
+        navigator.serviceWorker.getRegistrations().then((list) => Promise.all(list.map((r) => r.unregister()))),
+        caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))),
+      ]),
+      new Promise((resolve) => window.setTimeout(resolve, 2000)),
+    ])
+      .catch(() => {})
+      .then(go);
   };
   // A new service worker took control: the new code is ready.
   navigator.serviceWorker.addEventListener('controllerchange', () => {
