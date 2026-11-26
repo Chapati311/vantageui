@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { DotNumber } from '../../components/DotNumber';
 import { Pressable } from '../../components/Pressable';
 import { Temperature } from '../../components/Temperature';
@@ -30,7 +30,9 @@ function greeting(hour: number): string {
  * weather, what's next (lessons and events), homework due, today's focus
  * ring, a quote, and "Plan my day", which lays out the rest of the day.
  */
-export function TodayView({ onOpenApp }: { onOpenApp: (appId: string) => void }) {
+export const TodayView = memo(TodayViewImpl);
+
+function TodayViewImpl({ onOpenApp }: { onOpenApp: (appId: string) => void }) {
   const now = useClock();
   const settings = useSettings();
   const lockIn = useLockIn();

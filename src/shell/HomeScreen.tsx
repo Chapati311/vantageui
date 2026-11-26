@@ -64,6 +64,12 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
     const width = surfaceRef.current?.offsetWidth || window.innerWidth;
     homePageProgress.set(-value / width);
   });
+  // The page the row of pages has finished springing to. Widgets on other pages
+  // pause their animations; switching that waits until the spring has ended,
+  // so the restyling never lands in the middle of the swipe.
+  const [settledPage, setSettledPage] = useState(0);
+  const pageNow = useRef(0);
+  useMotionValueEvent(trackX, 'animationComplete', () => setSettledPage(pageNow.current));
   const ghostX = useMotionValue(0); // the copy of an item that follows the finger
   const ghostY = useMotionValue(0);
 
@@ -90,6 +96,18 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
   const editingRef = useRef(editing);
   editingRef.current = editing;
   const [page, setPage] = useState(0);
+  pageNow.current = page;
+  // Steady callbacks for Today and the App Library, so a page change doesn't re-render them
+  const openAppLatest = useRef(onOpenApp);
+  openAppLatest.current = onOpenApp;
+  const openFromToday = useCallback((appId: string) => openAppLatest.current?.(appId, null), []);
+  const openFromLibrary = useCallback((appId: string, from: ScreenRect | null) => openAppLatest.current?.(appId, from), []);
+  const openGroup = useCallback((group: { name: string; apps: string[] }) => setOpenFolder(group), []);
+  // In case the pages jumped without a spring (or it was interrupted)
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSettledPage(page), 900);
+    return () => window.clearTimeout(timer);
+  }, [page]);
   const [galleryOpen, setGalleryOpen] = useState(false);
 
   // Widgets added or removed from elsewhere (the gallery, actions): reload
@@ -342,7 +360,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
               style={{ transform: `translate3d(${-metrics.pitch}px, 0, 0)`, width: metrics.pitch - 2 * metrics.originX }}
               aria-hidden={page !== -1}
             >
-              <TodayView onOpenApp={(appId) => onOpenApp?.(appId, null)} />
+              <TodayView onOpenApp={openFromToday} />
             </div>
           )}
           {/* App Library: one page to the right of the last page */}
@@ -352,7 +370,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
               style={{ transform: `translate3d(${pageCount * metrics.pitch}px, 0, 0)`, width: metrics.pitch - 2 * metrics.originX }}
               aria-hidden={page !== pageCount}
             >
-              <AppLibrary onOpenApp={(appId, from) => onOpenApp?.(appId, from)} onOpenGroup={(group) => setOpenFolder(group)} />
+              <AppLibrary onOpenApp={openFromLibrary} onOpenGroup={openGroup} />
             </div>
           )}
           {metrics &&
@@ -370,7 +388,7 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
                 editTick={editTicks[item.id]}
                 enterKey={item.page === page ? enterKey : 0}
                 enterOrder={item.row * 4 + item.col}
-                offscreen={item.page !== page && !editing}
+                offscreen={item.page !== settledPage && !editing}
               />
             ))}
           {dropRect && !dropTarget?.into && (

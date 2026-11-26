@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { AppIcon } from '../../components/AppIcon';
 import { Pressable } from '../../components/Pressable';
 import { allApps, HOST_VANTAGE_APPS, type AppDefinition } from '../../system/appRegistry';
@@ -38,7 +38,9 @@ function groupOf(app: AppDefinition): string {
  * The App Library: the page after the last home page. Every app on the phone
  * in rounded group tiles (3 big icons + the rest small), with search on top.
  */
-export function AppLibrary({ onOpenApp, onOpenGroup }: AppLibraryProps) {
+export const AppLibrary = memo(AppLibraryImpl);
+
+function AppLibraryImpl({ onOpenApp, onOpenGroup }: AppLibraryProps) {
   useNativeApps(); // installs, removals and badges show up live
   const [query, setQuery] = useState('');
   const apps = allApps();

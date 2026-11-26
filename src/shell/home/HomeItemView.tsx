@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { motion, useAnimate } from 'motion/react';
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { AppTile, FolderTile } from '../../components/AppTile';
 import { WidgetEditContext } from './widgetEdit';
 import { Icon } from '../../components/Icon';
@@ -68,7 +68,21 @@ interface HomeItemViewProps {
 /** The color-block widget colors (Pop Ink): coral, butter, cream, sky, mint */
 const BLOCK_COLORS = ['#F2694A', '#F6CE46', '#F3EAD7', '#9EC9F0', '#9FE3C1'];
 
-export function HomeItemView({ item, x, y, width, height, editing, hidden, dropping, index, onResize, onRemove, editTick, enterKey = 0, enterOrder = 0, offscreen = false }: HomeItemViewProps) {
+/**
+ * Changing home page re-rendered every app and widget on every page, right as
+ * the page sprang into place (a stutter on the phone). Now an item only
+ * re-renders when something about IT changed. The two callbacks are ignored:
+ * HomeScreen's always read the latest layout, so an older one does the same.
+ */
+export const HomeItemView = memo(HomeItemViewImpl, (before, after) => {
+  for (const key of Object.keys({ ...before, ...after }) as (keyof HomeItemViewProps)[]) {
+    if (key === 'onResize' || key === 'onRemove') continue;
+    if (before[key] !== after[key]) return false;
+  }
+  return true;
+});
+
+function HomeItemViewImpl({ item, x, y, width, height, editing, hidden, dropping, index, onResize, onRemove, editTick, enterKey = 0, enterOrder = 0, offscreen = false }: HomeItemViewProps) {
   const [scope, animateItem] = useAnimate();
   useEffect(() => {
     if (!enterKey || !scope.current) return;
