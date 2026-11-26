@@ -97,6 +97,18 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
   editingRef.current = editing;
   const [page, setPage] = useState(0);
   pageNow.current = page;
+  // Widgets on pages you can't see pause their animations (data-offscreen, see
+  // global.css). Set straight on the elements: as a React prop it re-rendered
+  // those widgets right as a swipe settled (a stutter measured on the phone).
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    const pages = new Map(layout.map((item) => [item.id, item.page]));
+    grid.querySelectorAll<HTMLElement>('[data-item-id]').forEach((element) => {
+      const itemPage = pages.get(element.dataset.itemId ?? '');
+      element.toggleAttribute('data-offscreen', itemPage !== undefined && itemPage !== settledPage && !editing);
+    });
+  }, [settledPage, editing, layout]);
   // Steady callbacks for Today and the App Library, so a page change doesn't re-render them
   const openAppLatest = useRef(onOpenApp);
   openAppLatest.current = onOpenApp;
@@ -388,7 +400,6 @@ export function HomeScreen({ onOpenApp, onSwipeDown, onSwipeDownFromTop, enterKe
                 editTick={editTicks[item.id]}
                 enterKey={item.page === page ? enterKey : 0}
                 enterOrder={item.row * 4 + item.col}
-                offscreen={item.page !== settledPage && !editing}
               />
             ))}
           {dropRect && !dropTarget?.into && (
