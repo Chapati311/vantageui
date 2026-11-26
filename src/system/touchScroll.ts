@@ -12,6 +12,10 @@
  * then gliding on with momentum). When native scrolling does work, this does
  * nothing. A swipe never counts as a tap. Sliders, dials, text fields,
  * sideways swipes and anything marked data-no-touch-scroll are left alone.
+ *
+ * Every listener is PASSIVE: a non-passive touchmove on the window makes iOS
+ * wait for JavaScript before every scroll step anywhere in Vantage, which is
+ * what made scrolling and swiping feel laggy whenever the page was busy.
  */
 
 const SKIP = '[role="slider"], input, textarea, select, [contenteditable="true"], [data-no-touch-scroll], [data-no-drag]';
@@ -35,6 +39,8 @@ export function installTouchScroll(): void {
   let velocity = 0;
   let mode: 'undecided' | 'native' | 'ours' | 'ignore' = 'ignore';
   let nativeTopAtDecision = 0;
+  /** scrollTop right after we last moved the list (to notice iOS taking over) */
+  let ourTop = 0;
   let swallowClick = false;
   let frame = 0;
 
@@ -82,17 +88,20 @@ export function installTouchScroll(): void {
         nativeTopAtDecision = scroller.scrollTop;
         mode = nativeTopAtDecision !== startTop ? 'native' : 'ours';
         if (mode === 'native') return;
+      } else if (Math.abs(scroller.scrollTop - ourTop) > 1) {
+        // iOS started scrolling it after all: let iOS carry on alone
+        mode = 'native';
+        return;
       }
-      const top = startTop + (startY - y);
-      scroller.scrollTop = top;
+      scroller.scrollTop = startTop + (startY - y);
+      ourTop = scroller.scrollTop;
       swallowClick = true;
-      if (event.cancelable) event.preventDefault();
       const now = performance.now();
       velocity = 0.8 * ((lastY - y) / Math.max(1, now - lastT)) + 0.2 * velocity;
       lastY = y;
       lastT = now;
     },
-    { passive: false, capture: true },
+    { passive: true, capture: true },
   );
 
   const end = () => {

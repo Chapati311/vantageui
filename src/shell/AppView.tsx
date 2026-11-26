@@ -40,6 +40,8 @@ interface AppViewProps {
   onSwitchApp?: (direction: 1 | -1) => void;
   /** Pulled down from the top edge (gets where it started, px from the left) */
   onSwipeDownFromTop?: (x: number) => void;
+  /** True while the app fully covers the screen and is still: the home screen behind can stop drawing */
+  onCovered?: (covered: boolean) => void;
 }
 
 /** Without a flick, swipe up further than this (px) from the bottom edge to go home. */
@@ -56,7 +58,7 @@ const FALLBACK_SIZE = 72;
  * edge (it follows the finger first; a quick flick is enough).
  * Only transform and opacity change.
  */
-export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, onSwitchApp, onSwipeDownFromTop }: AppViewProps) {
+export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, onSwitchApp, onSwipeDownFromTop, onCovered }: AppViewProps) {
   const ref = useRef<HTMLDivElement>(null);
   const closing = useRef(false);
   const holdTimer = useRef(0);
@@ -106,12 +108,22 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
   const stopAll = () => [x, y, scaleX, scaleY, opacity].forEach((value) => value.stop());
 
   /** Springs everything to a position. Returns a promise that ends with the spring. */
+  const covered = useRef(onCovered);
+  covered.current = onCovered;
+  /** Bumped by every new spring or touch, so an interrupted spring can't report "covered" */
+  const motionId = useRef(0);
   const springTo = (to: { x: number; y: number; scaleX: number; scaleY: number }, fade: number) => {
+    covered.current?.(false);
+    const id = ++motionId.current;
+    const full = to.x === 0 && to.y === 0 && to.scaleX === 1 && to.scaleY === 1 && fade === 1;
     animate(y, to.y, SPRING.app);
     animate(scaleX, to.scaleX, SPRING.app);
     animate(scaleY, to.scaleY, SPRING.app);
     animate(opacity, fade, SPRING.app);
-    return animate(x, to.x, SPRING.app);
+    const done = animate(x, to.x, SPRING.app);
+    // Fully open and at rest: nothing shows through, so home can stop drawing
+    if (full) void done.then(() => id === motionId.current && !closing.current && covered.current?.(true));
+    return done;
   };
 
   // Opening: start squeezed into the icon, then spring to full-screen.
@@ -124,7 +136,10 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
     scaleY.set(start.scaleY);
     opacity.set(0);
     springTo({ x: 0, y: 0, scaleX: 1, scaleY: 1 }, 1);
-    return stopAll;
+    return () => {
+      stopAll();
+      covered.current?.(false);
+    };
     // Only on first show
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -161,7 +176,11 @@ export function AppView({ app, from, getReturnRect, onClosed, onOpenSwitcher, on
   const bind = useDrag(
     ({ first, last, movement: [movedX, moved], velocity: [, speed], direction: [, direction], memo }) => {
       if (closing.current) return;
-      if (first) stopAll(); // catch it mid-spring
+      if (first) {
+        stopAll(); // catch it mid-spring
+        motionId.current++;
+        covered.current?.(false); // home shows again behind the shrinking app
+      }
       const { width, height } = size();
       // Decide once which way this swipe goes
       const axis: 'x' | 'y' | undefined =

@@ -8,6 +8,7 @@ import { connectSpotify, spotifyControl, useSpotify } from '../../system/spotify
 import { hasRealControls, mediaCommand, useControls } from '../../system/phoneControls';
 import { getNativeApp } from '../../system/nativeApps';
 import { openApp as openNativeApp } from '../../system/nativeBridge';
+import { watchOnScreen } from '../../system/onScreen';
 import styles from './MusicWidget.module.css';
 
 const COLUMNS = 9;
@@ -24,10 +25,16 @@ function Dots({ playing, live }: { playing: boolean; live: boolean }) {
     if (!element || !playing) return;
     const dots = Array.from(element.children) as HTMLElement[];
     const data = new Uint8Array(32);
+    const shown = new Array<string>(dots.length).fill('');
     let frame = 0;
     let time = 0;
-    const draw = () => {
-      time += 1;
+    let lastDraw = 0;
+    const draw = (now = 0) => {
+      frame = requestAnimationFrame(draw);
+      // 20 updates a second is plenty for dots (60 kept the phone busy)
+      if (now - lastDraw < 48) return;
+      lastDraw = now;
+      time += 3;
       const analyser = live ? getAnalyser() : null;
       if (analyser) analyser.getByteFrequencyData(data);
       for (let column = 0; column < COLUMNS; column += 1) {
@@ -37,13 +44,23 @@ function Dots({ playing, live }: { playing: boolean; live: boolean }) {
         const lit = Math.round(level * ROWS);
         for (let row = 0; row < ROWS; row += 1) {
           const dot = dots[row * COLUMNS + column];
-          if (dot) dot.style.opacity = ROWS - row <= lit ? '1' : 'var(--ghost, 0.08)';
+          const index = row * COLUMNS + column;
+          const opacity = ROWS - row <= lit ? '1' : 'var(--ghost, 0.08)';
+          // Only touch the dots that change
+          if (dot && shown[index] !== opacity) {
+            dot.style.opacity = opacity;
+            shown[index] = opacity;
+          }
         }
       }
-      frame = requestAnimationFrame(draw);
     };
-    draw();
+    // Only while it can be seen (not on another page, not behind an app)
+    const stopWatching = watchOnScreen(element, (visible) => {
+      cancelAnimationFrame(frame);
+      if (visible) frame = requestAnimationFrame(draw);
+    });
     return () => {
+      stopWatching();
       cancelAnimationFrame(frame);
       dots.forEach((dot) => (dot.style.opacity = ''));
     };

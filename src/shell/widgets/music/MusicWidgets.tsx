@@ -5,6 +5,7 @@ import { appleMusicControl, useAppleMusic } from '../../../system/appleMusic';
 import { currentTrack, getAnalyser, togglePlay, usePlayer } from '../../../system/musicPlayer';
 import { spotifyControl, useSpotify } from '../../../system/spotify';
 import type { WidgetProps } from '../types';
+import { watchOnScreen } from '../../../system/onScreen';
 import styles from './MusicWidgets.module.css';
 
 function Controls({ playing, onToggle, onNext, onPrevious }: { playing: boolean; onToggle: () => void; onNext: () => void; onPrevious: () => void }) {
@@ -111,9 +112,15 @@ export function VisualizerWidget({ size }: WidgetProps) {
     const styles = getComputedStyle(element);
     const ink = styles.color;
     let frame = 0;
+    let lastDraw = 0;
+    let visible = true;
     const data = new Uint8Array(32);
 
-    const draw = () => {
+    const draw = (now = 0) => {
+      if (player.playing && visible) frame = requestAnimationFrame(draw);
+      // 30 updates a second is smooth enough and halves the work
+      if (now && now - lastDraw < 32) return;
+      lastDraw = now;
       const { width, height } = element;
       context2d.clearRect(0, 0, width, height);
       const analyser = getAnalyser();
@@ -133,10 +140,18 @@ export function VisualizerWidget({ size }: WidgetProps) {
           context2d.fill();
         }
       }
-      if (player.playing) frame = requestAnimationFrame(draw);
     };
     draw();
-    return () => cancelAnimationFrame(frame);
+    // Only while it can be seen (not on another page, not behind an app)
+    const stopWatching = watchOnScreen(element, (shown) => {
+      visible = shown;
+      cancelAnimationFrame(frame);
+      if (shown && player.playing) frame = requestAnimationFrame(draw);
+    });
+    return () => {
+      stopWatching();
+      cancelAnimationFrame(frame);
+    };
   }, [columns, player.playing]);
 
   return (

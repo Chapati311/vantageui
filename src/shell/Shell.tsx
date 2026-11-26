@@ -42,6 +42,7 @@ import { AccessGranted } from './hacker/AccessGranted';
 import { HackerBoot } from './hacker/HackerBoot';
 import { VantageKeyboard } from './keyboard/VantageKeyboard';
 import { installHackerPage } from './home/layoutStore';
+import { setHomeCovered } from '../system/onScreen';
 import styles from './Shell.module.css';
 
 /**
@@ -135,6 +136,10 @@ export function Shell() {
   lockedRef.current = locked;
   const [searchOpen, setSearchOpen] = useState(false);
   const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
+  /** An app fully covers the screen (home behind it is hidden) */
+  const [appCovers, setAppCovers] = useState(false);
+  // Home's live widgets stop drawing while an app covers them
+  useEffect(() => setHomeCovered(appCovers && openApp !== null), [appCovers, openApp]);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [switcherOpen, setSwitcherOpen] = useState(false);
   const [passcodeOpen, setPasscodeOpen] = useState(false);
@@ -380,6 +385,9 @@ export function Shell() {
               initial={false}
               animate={{ scale: openApp ? 0.94 : 1, opacity: openApp ? 0.6 : 1 }}
               transition={SPRING.app}
+              // Under a fully open app it can't be seen: stop drawing it (big win on the A13)
+              style={{ visibility: appCovers && openApp ? 'hidden' : 'visible' }}
+              data-home-layer="1"
             >
               {mode === 'focus' || mode === 'winddown' ? (
                 <ModeHome mode={mode} onOpenApp={openAppFrom} />
@@ -405,6 +413,7 @@ export function Shell() {
             // Back into what it came out of (a widget), or its icon
             getReturnRect={() => openApp.from ?? findIconRect(openApp.app.id)}
             onClosed={() => setOpenApp(null)}
+            onCovered={setAppCovers}
             onOpenSwitcher={() => void runAction('shell.openAppSwitcher', {})}
             onSwipeDownFromTop={swipeDownFromTop}
             onSwitchApp={(direction) => {

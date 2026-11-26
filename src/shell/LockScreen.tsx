@@ -47,6 +47,9 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
   const clockY = useTransform(progress, [0, 1], [0, -80]);
   const clockOpacity = useTransform(progress, [0, 0.6], [1, 0]);
   const target = useRef(locked ? 0 : 1);
+  // Slid fully away: switched off completely (its clock, widgets and looping
+  // animations stop costing the phone anything while you use it)
+  const display = useTransform(progress, (value) => (value >= 0.999 ? 'none' : 'block'));
 
   const settle = (open: boolean, velocity: number) => {
     target.current = open ? 1 : 0;
@@ -90,7 +93,7 @@ export function LockScreen({ locked, onUnlock }: LockScreenProps) {
       ref={ref}
       {...(bind() as object)}
       className={`${styles.lock} ${locked ? '' : styles.unlocked}`}
-      style={{ y }}
+      style={{ y, display }}
       aria-hidden={!locked}
     >
       {/* Paused while unlocked: nobody can see it, so it saves battery */}
